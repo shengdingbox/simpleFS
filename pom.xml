@@ -27,7 +27,7 @@
         <useragentutils.version>1.20</useragentutils.version>
         <javax.validation.version>2.0.1.Final</javax.validation.version>
         <hibernate.validator.version>6.0.9.Final</hibernate.validator.version>
-        <tomcat.version>8.5.34</tomcat.version>
+        <tomcat.version>8.5.55</tomcat.version>
         <blog-hunter.version>1.0.1</blog-hunter.version>
         <braum.version>1.0.0-alpha</braum.version>
         <hutool.version>4.1.21</hutool.version>
