@@ -2,7 +2,7 @@ package com.zzf.blog.util;
 
 import org.junit.Test;
 
-import com.shengdingbox.blog.util.PasswordUtil;
+import com.zhouzifei.tool.util.PasswordUtil;
 
 /**
  * 密码加密测试工具类
