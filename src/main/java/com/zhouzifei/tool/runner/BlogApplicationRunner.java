@@ -1,6 +1,6 @@
 package com.zhouzifei.tool.runner;
 
-import com.zhouzifei.tool.config.RedisProperties;
+import com.zhouzifei.tool.config.properties.RedisProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

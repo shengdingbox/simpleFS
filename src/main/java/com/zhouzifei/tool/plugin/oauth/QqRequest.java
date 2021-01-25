@@ -1,6 +1,6 @@
 package com.zhouzifei.tool.plugin.oauth;
 
-import com.zhouzifei.tool.config.JustAuthProperties;
+import com.zhouzifei.tool.config.properties.JustAuthProperties;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

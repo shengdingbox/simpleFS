@@ -1,4 +1,4 @@
-package com.zhouzifei.tool.config;
+package com.zhouzifei.tool.config.properties;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

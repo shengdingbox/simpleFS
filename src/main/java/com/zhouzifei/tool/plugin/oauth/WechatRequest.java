@@ -1,6 +1,6 @@
 package com.zhouzifei.tool.plugin.oauth;
 
-import com.zhouzifei.tool.config.JustAuthProperties;
+import com.zhouzifei.tool.config.properties.JustAuthProperties;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.request.AuthRequest;
 import me.zhyd.oauth.request.AuthWeChatRequest;
