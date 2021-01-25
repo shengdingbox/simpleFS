@@ -14,9 +14,9 @@ import redis.clients.jedis.JedisPoolConfig;
  * 该自定义的Manager扩展的功能：<br/>
  * 1.增加database参数，可跟随配置文件的数据库索引选择redis数据库保存相关数据，避免了多个项目共用一个redis database所潜在的问题<br/>
  * 2.修改expire参数，默认值为30天 = 2592000s <br/>
- * @author Dabao (17611555590@163.com)
+ * @author Dabao (17600004572@163.com)
  * @version 1.0
- * @website https://www.shengdingbox.com
+ * @website https://www.zhouzifei.com
  * @date 2019年7月16日
  * @since 1.0
  */

@@ -1,5 +1,6 @@
 package com.zhouzifei.tool.util;
 
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.ConvertingCursor;
@@ -104,17 +105,6 @@ public class RedisUtils {
         }
     }
     //============================String=============================
-
-    /**
-     * 普通缓存获取
-     *
-     * @param key 键
-     * @return 值
-     */
-    public Object get(String key) {
-        return key == null ? null : redisTemplate.opsForValue().get(key);
-    }
-
     /**
      * 普通缓存放入
      *
@@ -647,5 +637,41 @@ public class RedisUtils {
             e.printStackTrace();
         }
         return result;
+    }
+    public void delBatch(String keyPrefix) {
+        Set<String> keys = this.keySet(keyPrefix + "*");
+        if (!CollectionUtils.isEmpty(keys)) {
+            delBatch(keys);
+        }
+    }
+    public <T> T get(String key) {
+        return (T) redisTemplate.opsForValue().get(key);
+    }
+    
+    public void del(String key) {
+        redisTemplate.opsForValue().getOperations().delete(key);
+    }
+    
+    public void delBatch(Set<String> keys) {
+        redisTemplate.delete(keys);
+    }
+    
+    public <T> void setList(String key, List<T> list) {
+        String value = JSON.toJSONString(list);
+        set(key, value);
+    }
+    public <T> List<T> getList(String key, Class<T> clz) {
+        String json = get(key);
+        if (json != null) {
+            return JSON.parseArray(json, clz);
+        }
+        return null;
+    }
+    public Set<String> keySet(String keyPrefix) {
+        return redisTemplate.keys(keyPrefix + "*");
+    }
+
+    public void set(String key, String result, long expire, TimeUnit unit) {
+        redisTemplate.opsForValue().set(key, result, expire, unit);
     }
 }

@@ -1,8 +1,8 @@
 package com.zhouzifei.tool.aspect;
 
 import com.zhouzifei.tool.annotation.RedisCache;
-import com.zhouzifei.tool.service.RedisService;
 import com.zhouzifei.tool.util.AspectUtil;
+import com.zhouzifei.tool.util.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -16,9 +16,9 @@ import java.lang.reflect.Method;
 
 /**
  * Redis业务层数据缓存
- * @author Dabao (17611555590@163.com)
+ * @author Dabao (17600004572@163.com)
  * @version 1.0
- * @website https://www.shengdingbox.com
+ * @website https://www.zhouzifei.com
  * @date 2019年7月16日
  * @since 1.0
  */
@@ -30,7 +30,7 @@ public class RedisCacheAspect {
     private static final String BIZ_CACHE_PREFIX = "biz_cache_";
 
     @Autowired
-    private RedisService redisService;
+    private RedisUtils redisUtils;
 
     @Pointcut(value = "@annotation(com.zhouzifei.tool.annotation.RedisCache)")
     public void pointcut() {
@@ -49,22 +49,22 @@ public class RedisCacheAspect {
         if (flush) {
             String classPrefix = AspectUtil.INSTANCE.getKey(point, BIZ_CACHE_PREFIX);
             log.info("清空缓存 - {}*", classPrefix);
-            redisService.delBatch(classPrefix);
+            redisUtils.delBatch(classPrefix);
             return point.proceed();
         }
         String key = AspectUtil.INSTANCE.getKey(point, cache.key(), BIZ_CACHE_PREFIX);
-        boolean hasKey = redisService.hasKey(key);
+        boolean hasKey = redisUtils.hasKey(key);
         if (hasKey) {
             try {
                 log.info("{}从缓存中获取数据", key);
-                return redisService.get(key);
+                return redisUtils.get(key);
             } catch (Exception e) {
                 log.error("从缓存中获取数据失败！", e);
             }
         }
         //先执行业务
         Object result = point.proceed();
-        redisService.set(key, result, cache.expire(), cache.unit());
+        redisUtils.set(key, (String) result, cache.expire(), cache.unit());
         log.info("{}从数据库中获取数据", key);
         return result;
     }

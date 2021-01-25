@@ -2,9 +2,9 @@ package com.zhouzifei.tool.aspect;
 
 /**
  * 
- * @author Dabao (17611555590@163.com)
+ * @author Dabao (17600004572@163.com)
  * @version 1.0
- * @website https://www.shengdingbox.com
+ * @website https://www.zhouzifei.com
  * @date 2019年7月16日
  * @since 1.0
  */
@@ -190,9 +190,9 @@ public enum ConfigKeyEnum {
 
     /**
 <<<<<<< HEAD:blog-service/src/main/java/com/shengdingbox/blog/business/enums/ConfigKeyEnum.java
-     * 当切换浏览器tab时，在原tab上的标题https://www.shengdingbox.comox.com上的“麻溜儿回来~~~”
+     * 当切换浏览器tab时，在原tab上的标题https://www.zhouzifei.comox.com上的“麻溜儿回来~~~”
 =======
-     * 当切换浏览器tab时，在原tab上的标题。比如https://www.shengdingbox.com上的“麻溜儿回来~~~”
+     * 当切换浏览器tab时，在原tab上的标题。比如https://www.zhouzifei.com上的“麻溜儿回来~~~”
 >>>>>>> origin/origin:blog-service/src/main/java/com/shengdingbox/blog/business/enums/ConfigKeyEnum.java
      */
     DYNAMIC_TITLE("dynamicTitle"),

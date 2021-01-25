@@ -2,19 +2,19 @@ package com.zhouzifei.tool.exception;
 
 /**
  * 
- * @author Dabao (17611555590@163.com)
+ * @author Dabao (17600004572@163.com)
  * @version 1.0
- * @website https://www.shengdingbox.com
+ * @website https://www.zhouzifei.com
  * @date 2019年7月16日
  * @since 1.0
  */
-public class DaoBaoArticleException extends DabaoException {
+public class CommentException extends ServiceException {
     /**
      * Constructs a new runtime exception with {@code null} as its
      * detail message.  The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
      */
-    public DaoBaoArticleException() {
+    public CommentException() {
         super();
     }
 
@@ -27,7 +27,7 @@ public class DaoBaoArticleException extends DabaoException {
      *         the detail message. The detail message is saved for
      *         later retrieval by the {@link #getMessage()} method.
      */
-    public DaoBaoArticleException(String message) {
+    public CommentException(String message) {
         super(message);
     }
 }

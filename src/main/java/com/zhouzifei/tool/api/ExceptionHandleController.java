@@ -24,9 +24,9 @@ import java.lang.reflect.UndeclaredThrowableException;
 /**
  * 统一异常处理类
  * 捕获程序所有异常，针对不同异常，采取不同的处理方式
- * @author Dabao (17611555590@163.com)
+ * @author Dabao (17600004572@163.com)
  * @version 1.0
- * @website https://www.shengdingbox.com
+ * @website https://www.zhouzifei.com
  * @date 2019年7月16日
  * @since 1.0
  */
