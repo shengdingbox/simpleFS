@@ -7,7 +7,7 @@ import com.zhouzifei.tool.exception.GlobalFileException;
 import com.zhouzifei.tool.plugin.GlobalFileUploader;
 import com.zhouzifei.tool.util.FileClient.FileUploader;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;

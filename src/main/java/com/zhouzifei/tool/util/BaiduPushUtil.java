@@ -1,6 +1,6 @@
 package com.zhouzifei.tool.util;
 
-import com.zhouzifei.tool.exception.DaoBaoCommentException;
+import com.zhouzifei.tool.exception.CommentException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
@@ -30,7 +30,7 @@ public class BaiduPushUtil extends RestClientUtil {
      */
     public static String doPush(String urlString, String params, String cookie) {
         if (StringUtils.isEmpty(cookie)) {
-            throw new DaoBaoCommentException("尚未设置百度站长平台的Cookie信息，该功能不可用！");
+            throw new CommentException("尚未设置百度站长平台的Cookie信息，该功能不可用！");
         }
         log.info("{} REST url: {}", new Date(), urlString);
         HttpURLConnection connection = null;

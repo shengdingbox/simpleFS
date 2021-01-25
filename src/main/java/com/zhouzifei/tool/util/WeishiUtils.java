@@ -50,7 +50,7 @@ public class WeishiUtils {
                 videoUrl.setOriginalUrl(url);
                 return videoUrl;
             } else {
-               log.info("卫视失败了{}",res);
+                log.info("卫视失败了{}", res);
                 return new VideoUrl();
             }
         } catch (Exception e) {

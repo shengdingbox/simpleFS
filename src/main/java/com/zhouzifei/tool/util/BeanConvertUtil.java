@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 
-import com.zhouzifei.tool.exception.DabaoException;
+import com.zhouzifei.tool.exception.ServiceException;
 
 
 /**
@@ -60,11 +60,11 @@ public class BeanConvertUtil {
             BeanUtils.copyProperties(source, t);
             return t;
         } catch (InstantiationException e) {
-            throw new DabaoException(target + " - 可能为一个抽象类、接口、数组类、基本类型或者该类缺少无参构造方法！", e);
+            throw new ServiceException(target + " - 可能为一个抽象类、接口、数组类、基本类型或者该类缺少无参构造方法！", e);
         } catch (IllegalAccessException e) {
-            throw new DabaoException(target + " - 该类或其构造方法是不可访问的，或该类缺少无参构造方法！", e);
+            throw new ServiceException(target + " - 该类或其构造方法是不可访问的，或该类缺少无参构造方法！", e);
         } catch (FatalBeanException e) {
-            throw new DabaoException(target + " - 序列化失败！", e);
+            throw new ServiceException(target + " - 序列化失败！", e);
         }
     }
 

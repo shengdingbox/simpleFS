@@ -2,7 +2,7 @@ package com.zhouzifei.tool.util.FileClient;
 
 
 import com.zhouzifei.tool.aspect.ConfigKeyEnum;
-import com.zhouzifei.tool.exception.DabaoException;
+import com.zhouzifei.tool.exception.ServiceException;
 import com.zhouzifei.tool.exception.GlobalFileException;
 import org.springframework.util.StringUtils;
 
@@ -22,7 +22,7 @@ public class BaseFileUploader {
     protected ApiClient getApiClient(String uploadType, Map<String, Object> config) {
         String storageType = null;
         if (null == config || StringUtils.isEmpty((storageType = (String) config.get(ConfigKeyEnum.STORAGE_TYPE.getKey())))) {
-            throw new DabaoException("[文件服务]当前系统暂未配置文件服务相关的内容！");
+            throw new ServiceException("[文件服务]当前系统暂未配置文件服务相关的内容！");
         }
 
         ApiClient res = null;

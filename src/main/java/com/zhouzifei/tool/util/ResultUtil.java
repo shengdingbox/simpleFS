@@ -1,14 +1,10 @@
 package com.zhouzifei.tool.util;
 
-import com.github.pagehelper.PageInfo;
 import com.zhouzifei.tool.consts.CommonConst;
 import com.zhouzifei.tool.consts.ResponseStatus;
-import com.zhouzifei.tool.dto.PageResult;
 import com.zhouzifei.tool.dto.ResponseVO;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -67,17 +63,6 @@ public class ResultUtil {
 
     public static ResponseVO vo(int code, String message, Object data) {
         return new ResponseVO<>(code, message, data);
-    }
-
-    public static PageResult tablePage(Long total, List<?> list) {
-        return new PageResult(total, list);
-    }
-
-    public static PageResult tablePage(PageInfo info) {
-        if (info == null) {
-            return new PageResult(0L, new ArrayList());
-        }
-        return tablePage(info.getTotal(), info.getList());
     }
 
 }

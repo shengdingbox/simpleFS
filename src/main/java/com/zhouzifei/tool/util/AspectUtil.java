@@ -9,7 +9,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSON;
-import com.zhouzifei.tool.exception.DabaoException;
+import com.zhouzifei.tool.exception.ServiceException;
 
 /**
  * AOP相关的工具
@@ -34,7 +34,7 @@ public enum AspectUtil {
     public String getKey(JoinPoint point, String extra, String prefix) throws NoSuchMethodException {
         Method currentMethod = this.getMethod(point);
         if (null == currentMethod) {
-            throw new DabaoException("Invalid operation! Method not found.");
+            throw new ServiceException("Invalid operation! Method not found.");
         }
         String methodName = currentMethod.getName();
         return getKey(point, prefix) +

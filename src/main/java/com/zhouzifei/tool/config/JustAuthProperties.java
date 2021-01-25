@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * @since 1.0
  */
 @Component
-@ConfigurationProperties(prefix = "com.shengdingbox.blog")
+@ConfigurationProperties(prefix = "com.zhouzifei.tool")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Order(-1)

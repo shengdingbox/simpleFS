@@ -4,7 +4,7 @@ package com.zhouzifei.tool.api;
 import com.zhouzifei.tool.consts.CommonConst;
 import com.zhouzifei.tool.consts.ResponseStatus;
 import com.zhouzifei.tool.dto.ResponseVO;
-import com.zhouzifei.tool.exception.DabaoException;
+import com.zhouzifei.tool.exception.ServiceException;
 import com.zhouzifei.tool.exception.GlobalFileException;
 import com.zhouzifei.tool.holder.RequestHolder;
 import com.zhouzifei.tool.util.RequestUtil;
@@ -79,7 +79,7 @@ public class ExceptionHandleController {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public ResponseVO handle(Throwable e) {
-        if (e instanceof DabaoException || e instanceof GlobalFileException) {
+        if (e instanceof ServiceException || e instanceof GlobalFileException) {
             return ResultUtil.error(e.getMessage());
         }
         if (e instanceof UndeclaredThrowableException) {

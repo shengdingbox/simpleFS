@@ -4,7 +4,7 @@ package com.zhouzifei.tool.util;
 import com.google.common.collect.Maps;
 import com.zhouzifei.tool.consts.VideoTypeConst;
 import com.zhouzifei.tool.dto.VideoUrl;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,8 +29,6 @@ public class VideoSaveUtils {
 
     @Autowired
     RedisUtils redisUtils;
-
-
     /**
      *
      * @param videoUrl 解析原型实体
@@ -119,24 +117,5 @@ public class VideoSaveUtils {
         }
 
         return fileUrl + filePath + fileName;
-    }
-
-    public static void main(String[] args) throws Exception {
-//        VideoSaveUtils videoSaveUtils = new VideoSaveUtils();
-//        String url = "https://m3u8.htv009.com/video.m3u8?v=bHRsd3Q0QjBSVE5LMVVWdGtyeHJjQnhSUy9udmlJbG0=";
-//        VideoUrl videoUrl = new VideoUrl();
-//        videoUrl.setUrl();
-//        String qiyi = videoSaveUtils.saveLocal(url, "", "qiyi");
-//        HttpResponse get = HttpUtils.doGet(url, "", "GET", new HashMap<>(), new HashMap<>());
-//        System.out.println(EntityUtils.toString(get.getEntity()));
-//
-        String s = "https://vali.cp31.ott.cibntv.net/youku/67756D6080932713CFC02204E/03000700005FD616D1FC3AA942AE890900D654-66AA-4207-96AC-08D6DE237241-00001.ts?ccode=0501&duration=2781&expire=18000&psid=6e7e6e79b6a77c31882b29005d17f2ee475a3&ups_client_netip=7e111a1a&ups_ts=1610012166&ups_userid=1000010000&t=fb8260a7cab3a3b&utid=Vx5dGKhBF2UCAW4qCsGiZZVu&vid=XNDk2MzA5Nzc2MA&s=adbd5cc3e8e64e668546&sp=&bc=2&si=5&eo=1&vkey=B960ae77f60e3c2c3c451bace43237842";
-        if(!s.contains("http://")){
-            System.out.println("http");
-        }
-        if(!s.contains("https://")){
-            System.out.println("https");
-        }
-//        System.out.println(qiyi);
     }
 }
