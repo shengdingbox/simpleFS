@@ -184,7 +184,7 @@
 //
 //    public static void main(String[] args) {
 //        com.yingshivip.admin.utils.CollectUtils collectUtils = new com.yingshivip.admin.utils.CollectUtils();
-//        String login = collectUtils.login("feifei", "feifei", "https://www.dabaotv.cn/admin1.php");
+//        String login = collectUtils.login("feifei", "feifei", "https://www.周子斐tv.cn/admin1.php");
 //        System.out.println(login);
 //    }
 //}

@@ -2,7 +2,7 @@ package com.zzf.blog.util;
 
 import org.junit.Test;
 
-import com.zhouzifei.tool.util.XssKillerUtil;
+import com.zhouzifei.tool.html.XssKillerUtil;
 
 public class XssKillerTest {
 

@@ -1,6 +1,6 @@
 package com.zhouzifei.tool.config;
 
-import com.zhouzifei.tool.util.media.video.ParseUtils;
+import com.zhouzifei.tool.media.video.ParseUtils;
 import com.zhouzifei.tool.util.RedisUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;

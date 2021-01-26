@@ -9,6 +9,11 @@
       "name": "spring.redis",
       "type": "com.zhouzifei.tool.config.properties.RedisProperties",
       "sourceType": "com.zhouzifei.tool.config.properties.RedisProperties"
+    },
+    {
+      "name": "tool.oss",
+      "type": "com.zhouzifei.tool.config.properties.FileOSSProperties",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
     }
   ],
   "properties": [
@@ -118,6 +123,78 @@
       "name": "spring.redis.timeout",
       "type": "java.lang.String",
       "sourceType": "com.zhouzifei.tool.config.properties.RedisProperties"
+    },
+    {
+      "name": "tool.oss.aliyun-access-key",
+      "type": "java.lang.String",
+      "description": "阿里云Access Key",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.oss.aliyun-access-key-secret",
+      "type": "java.lang.String",
+      "description": "阿里云Access Key Secret",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.oss.aliyun-bucket-name",
+      "type": "java.lang.String",
+      "description": "阿里云Bucket 名称",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.oss.aliyun-endpoint",
+      "type": "java.lang.String",
+      "description": "阿里云地域节点（EndPoint）",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.oss.aliyun-file-url",
+      "type": "java.lang.String",
+      "description": "阿里云Bucket 域名",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.oss.local-file-path",
+      "type": "java.lang.String",
+      "description": "文件存储路径",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.oss.local-file-url",
+      "type": "java.lang.String",
+      "description": "文件服务器域名",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.oss.path-prefix",
+      "type": "java.lang.String",
+      "description": "文件前缀",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.oss.qiniu-access-key",
+      "type": "java.lang.String",
+      "description": "七牛云AccessKey",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.oss.qiniu-base-path",
+      "type": "java.lang.String",
+      "description": "七牛云cdn域名",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.oss.qiniu-bucket-name",
+      "type": "java.lang.String",
+      "description": "七牛云Bucket 名称",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.oss.qiniu-secret-key",
+      "type": "java.lang.String",
+      "description": "七牛云Secret Key",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
     }
   ],
   "hints": []

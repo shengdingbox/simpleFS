@@ -2,11 +2,11 @@ package com.zzf.blog.util;
 
 import org.junit.Test;
 
-import com.zhouzifei.tool.util.PasswordUtil;
+import com.zhouzifei.tool.html.encryption.PasswordUtil;
 
 /**
  * 密码加密测试工具类
- * @author Dabao (17600004572@163.com)
+ * @author 周子斐 (17600004572@163.com)
  * @version 1.0
  * @website https://www.zhouzifei.com
  * @date 2019年7月16日
