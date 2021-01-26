@@ -178,20 +178,6 @@
     <build>
         <plugins>
             <!-- 发布Jar到Maven仓库 Begin -->
-            <!--生成Source jar文件-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <!--生成Javadoc，关闭doclint,避免注解检查不通过-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
