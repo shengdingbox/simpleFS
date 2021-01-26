@@ -24,8 +24,6 @@ public class ParseUtils {
 
     @Autowired
     RedisUtils redisUtils;
-    @Autowired
-    VideoSaveUtils videoSaveUtils;
 
     /**
      *
@@ -64,7 +62,7 @@ public class ParseUtils {
             }
             //保存m3u8文件
             if(VideoTypeConst.M3U8.getType().equals(videoUrlDTO.getType())||VideoTypeConst.HLS.getType().equals(videoUrlDTO.getType())){
-                videoUrlDTO = videoSaveUtils.saveVideo(videoUrlDTO,fileLocal,fileUrl);
+                VideoSaveUtils.saveVideo(videoUrlDTO, fileLocal, fileUrl);
                 videoUrlDTO.setType(VideoTypeConst.M3U8.getType());
             }
             if (redisUtils.hasKey(url)) {

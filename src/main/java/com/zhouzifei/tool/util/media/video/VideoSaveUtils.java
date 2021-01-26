@@ -25,12 +25,8 @@ import java.util.UUID;
  * @date 2020/7/24
  * @Description
  */
-@Component
 public class VideoSaveUtils {
 
-
-    @Autowired
-    RedisUtils redisUtils;
     /**
      *
      * @param videoUrlDTO 解析原型实体
@@ -38,7 +34,7 @@ public class VideoSaveUtils {
      * @param fileUrl 返回的域名
      * @return
      */
-    public VideoUrlDTO saveVideo(VideoUrlDTO videoUrlDTO, String fileLocal, String fileUrl) {
+    public static VideoUrlDTO saveVideo(VideoUrlDTO videoUrlDTO, String fileLocal, String fileUrl) {
         String domain = null;
         if (videoUrlDTO.getDomain() != null) {
             domain = videoUrlDTO.getDomain();
@@ -64,7 +60,7 @@ public class VideoSaveUtils {
      * @param fileUrl 返回的域名
      * @return
      */
-    public String saveLocal(String url, String domain, VideoUrlDTO videoUrlDTO, String fileLocal, String fileUrl) {
+    public static String saveLocal(String url, String domain, VideoUrlDTO videoUrlDTO, String fileLocal, String fileUrl) {
         String prefixType = videoUrlDTO.getPrefixType();
         String prefixUrl = videoUrlDTO.getPrefixUrl();
         //默认不指定key的情况下，以文件内容的hash值作为文件名
