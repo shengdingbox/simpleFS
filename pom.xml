@@ -16,7 +16,7 @@
     <groupId>com.zhouzifei</groupId>
     <artifactId>common-tool</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1.RELEASE</version>
+    <version>1.0.2.RELEASE</version>
     <name>common-tool</name>
     <description>核心依赖代码</description>
     <properties>
@@ -189,6 +189,20 @@
     <build>
         <plugins>
             <!-- 发布Jar到Maven仓库 Begin -->
+            <!--生成Source jar文件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!--生成Javadoc，关闭doclint,避免注解检查不通过-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -272,7 +286,7 @@
     </developers>
     <distributionManagement>
             <snapshotRepository>
-                <id>ossrh</id>
+                <id>sonatype-nexus-staging</id>
                 <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             </snapshotRepository>
     </distributionManagement>
