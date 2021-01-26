@@ -26,7 +26,7 @@ public class RedisProperties {
     private String host;
     private Integer port;
     private String password;
-    private Duration timeout;
+    private String timeout;
     /**
      * 默认30天 = 2592000s
      */

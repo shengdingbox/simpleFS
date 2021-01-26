@@ -1,4 +1,4 @@
-package com.zhouzifei.tool.util.FileClient;
+package com.zhouzifei.tool.util.media.images.service;
 
 import com.zhouzifei.tool.entity.VirtualFile;
 import org.springframework.web.multipart.MultipartFile;

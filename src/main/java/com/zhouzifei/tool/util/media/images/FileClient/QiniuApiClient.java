@@ -1,4 +1,5 @@
-package com.zhouzifei.tool.util.FileClient;
+package com.zhouzifei.tool.util.media.images.FileClient;
+
 
 import com.alibaba.fastjson.JSON;
 import com.qiniu.common.QiniuException;
@@ -12,7 +13,7 @@ import com.qiniu.util.Auth;
 import com.qiniu.util.StringUtils;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.QiniuApiException;
-import com.zhouzifei.tool.util.FileUtil;
+import com.zhouzifei.tool.util.media.images.FileUtil;
 
 import java.io.InputStream;
 import java.util.Date;

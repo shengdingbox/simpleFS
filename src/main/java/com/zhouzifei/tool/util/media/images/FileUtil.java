@@ -1,4 +1,4 @@
-package com.zhouzifei.tool.util;
+package com.zhouzifei.tool.util.media.images;
 
 import java.io.File;
 import java.util.Arrays;

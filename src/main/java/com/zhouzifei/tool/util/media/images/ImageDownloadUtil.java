@@ -1,11 +1,11 @@
-package com.zhouzifei.tool.util;
+package com.zhouzifei.tool.util.media.images;
 
 
 import com.zhouzifei.tool.consts.FileUploadType;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.GlobalFileException;
 import com.zhouzifei.tool.plugin.GlobalFileUploader;
-import com.zhouzifei.tool.util.FileClient.FileUploader;
+import com.zhouzifei.tool.util.media.images.service.FileUploader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;

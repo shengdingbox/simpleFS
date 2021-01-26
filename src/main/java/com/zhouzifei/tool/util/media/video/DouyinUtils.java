@@ -1,8 +1,8 @@
-package com.zhouzifei.tool.util;
+package com.zhouzifei.tool.util.media.video;
 
 
 import com.zhouzifei.tool.consts.VideoTypeConst;
-import com.zhouzifei.tool.dto.VideoUrl;
+import com.zhouzifei.tool.dto.VideoUrlDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -27,7 +27,7 @@ public class DouyinUtils {
      * @param info 解析的地址
      * @return 解析实体
      */
-    public static VideoUrl getinfo(String info) {
+    public static VideoUrlDTO getinfo(String info) {
         try {
             //获取短连接
             String regex = "https://v.douyin.com/(.*?)/";
@@ -87,14 +87,14 @@ public class DouyinUtils {
             } else {
                 log.info("提取视频链接失败！");
             }
-            VideoUrl videoUrl = new VideoUrl();
-            videoUrl.setType(VideoTypeConst.MP4.getType());
-            videoUrl.setCode("404");
-            videoUrl.setSuccess("1");
-            videoUrl.setPlayer("ckplayer");
-            videoUrl.setUrl("https://api.dabaotv.cn/404.mp4");
-            videoUrl.setOriginalUrl(url);
-            return videoUrl;
+            VideoUrlDTO videoUrlDTO = new VideoUrlDTO();
+            videoUrlDTO.setType(VideoTypeConst.MP4.getType());
+            videoUrlDTO.setCode("404");
+            videoUrlDTO.setSuccess("1");
+            videoUrlDTO.setPlayer("ckplayer");
+            videoUrlDTO.setUrl("https://api.dabaotv.cn/404.mp4");
+            videoUrlDTO.setOriginalUrl(url);
+            return videoUrlDTO;
         } catch (Exception e) {
             return null;
         }
@@ -102,19 +102,19 @@ public class DouyinUtils {
 
 
     //连接视频，重定向到无水印视频
-    public static VideoUrl jiexi(String url) throws IOException {
+    public static VideoUrlDTO jiexi(String url) throws IOException {
         Connection conn = Jsoup.connect(url).ignoreContentType(true);
         conn.header("User-Agent", "Dalvik/2.1.0 (Linux; U; Android 10; COL-AL10 Build/HUAWEICOL-AL10)");
         String src = conn.execute().url().toString();
         log.info("\n解析完成,开始下载！\n");
-        VideoUrl videoUrl = new VideoUrl();
-        videoUrl.setType(VideoTypeConst.MP4.getType());
-        videoUrl.setCode("200");
-        videoUrl.setUrl(src);
-        videoUrl.setSuccess("1");
-        videoUrl.setPlayer("ckplayer");
-        videoUrl.setOriginalUrl(url);
-        return videoUrl;
+        VideoUrlDTO videoUrlDTO = new VideoUrlDTO();
+        videoUrlDTO.setType(VideoTypeConst.MP4.getType());
+        videoUrlDTO.setCode("200");
+        videoUrlDTO.setUrl(src);
+        videoUrlDTO.setSuccess("1");
+        videoUrlDTO.setPlayer("ckplayer");
+        videoUrlDTO.setOriginalUrl(url);
+        return videoUrlDTO;
         //down(src ,path,name);
     }
 

@@ -1,4 +1,4 @@
-package com.zhouzifei.tool.util;
+package com.zhouzifei.tool.util.media.images;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

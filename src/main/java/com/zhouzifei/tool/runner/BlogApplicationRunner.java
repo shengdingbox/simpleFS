@@ -30,15 +30,11 @@ public class BlogApplicationRunner extends ContextLoaderListener implements Appl
 
     @Value("${server.port}")
     private int port;
-    @Value("${spring.profiles.active}")
-    private String profile;
     @Value("${app.enabledConfigLog}")
     private Boolean enabledConfigLog;
 
     @Autowired
     private DataSourceProperties dataSourceProperties;
-    @Autowired
-    private RedisProperties redisProperties;
 
     @Autowired
     private ConfigurableApplicationContext configurableApplicationContext;
@@ -64,12 +60,6 @@ public class BlogApplicationRunner extends ContextLoaderListener implements Appl
             log.info("  - url：{}", dataSourceProperties.getUrl());
             log.info("  - username：{}", dataSourceProperties.getUsername());
             log.info("  - password：{}", dataSourceProperties.getPassword());
-
-            log.info("Redis：");
-            log.info("  - database：{}", redisProperties.getDatabase());
-            log.info("  - host：{}", redisProperties.getHost());
-            log.info("  - port：{}", redisProperties.getPort());
-            log.info("  - password：{}", redisProperties.getPassword());
         }
     }
 }

@@ -1,7 +1,7 @@
-package com.zhouzifei.tool.aspect;
+package com.zhouzifei.tool.consts;
 
 /**
- * 
+ *
  * @author Dabao (17600004572@163.com)
  * @version 1.0
  * @website https://www.zhouzifei.com
@@ -189,11 +189,11 @@ public enum ConfigKeyEnum {
     INSTALLDATE("installdate"),
 
     /**
-<<<<<<< HEAD:blog-service/src/main/java/com/shengdingbox/blog/business/enums/ConfigKeyEnum.java
+     <<<<<<< HEAD:blog-service/src/main/java/com/shengdingbox/blog/business/enums/ConfigKeyEnum.java
      * 当切换浏览器tab时，在原tab上的标题https://www.zhouzifei.comox.com上的“麻溜儿回来~~~”
-=======
+     =======
      * 当切换浏览器tab时，在原tab上的标题。比如https://www.zhouzifei.com上的“麻溜儿回来~~~”
->>>>>>> origin/origin:blog-service/src/main/java/com/shengdingbox/blog/business/enums/ConfigKeyEnum.java
+     >>>>>>> origin/origin:blog-service/src/main/java/com/shengdingbox/blog/business/enums/ConfigKeyEnum.java
      */
     DYNAMIC_TITLE("dynamicTitle"),
     ;

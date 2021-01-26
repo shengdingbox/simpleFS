@@ -1,9 +1,11 @@
-package com.zhouzifei.tool.util;
+package com.zhouzifei.tool.util.media.video;
 
 
 import com.google.common.collect.Maps;
 import com.zhouzifei.tool.consts.VideoTypeConst;
-import com.zhouzifei.tool.dto.VideoUrl;
+import com.zhouzifei.tool.dto.VideoUrlDTO;
+import com.zhouzifei.tool.util.HttpUtils;
+import com.zhouzifei.tool.util.RedisUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,40 +33,40 @@ public class VideoSaveUtils {
     RedisUtils redisUtils;
     /**
      *
-     * @param videoUrl 解析原型实体
+     * @param videoUrlDTO 解析原型实体
      * @param fileLocal 保存的本地路径
      * @param fileUrl 返回的域名
      * @return
      */
-    public VideoUrl saveVideo(VideoUrl videoUrl, String fileLocal, String fileUrl) {
+    public VideoUrlDTO saveVideo(VideoUrlDTO videoUrlDTO, String fileLocal, String fileUrl) {
         String domain = null;
-        if (videoUrl.getDomain() != null) {
-            domain = videoUrl.getDomain();
+        if (videoUrlDTO.getDomain() != null) {
+            domain = videoUrlDTO.getDomain();
         }
-        String parseUrl = videoUrl.getUrl();
+        String parseUrl = videoUrlDTO.getUrl();
         if (StringUtils.isBlank(parseUrl)) {
-            return videoUrl;
+            return videoUrlDTO;
         }
         int i = parseUrl.lastIndexOf("/");
         String substring = parseUrl.substring(0, i);
-        videoUrl.setPrefixUrl(substring + "/");
-        String playUrl = saveLocal(parseUrl, domain, videoUrl, fileLocal,fileUrl);
-        videoUrl.setUrl(playUrl);
-        return videoUrl;
+        videoUrlDTO.setPrefixUrl(substring + "/");
+        String playUrl = saveLocal(parseUrl, domain, videoUrlDTO, fileLocal,fileUrl);
+        videoUrlDTO.setUrl(playUrl);
+        return videoUrlDTO;
     }
 
     /**
      *
      * @param url 视频的原始地址
      * @param domain 请求地址
-     * @param videoUrl 返回的视频实体
+     * @param videoUrlDTO 返回的视频实体
      * @param fileLocal 本地路径
      * @param fileUrl 返回的域名
      * @return
      */
-    public String saveLocal(String url, String domain, VideoUrl videoUrl, String fileLocal,String fileUrl) {
-        String prefixType = videoUrl.getPrefixType();
-        String prefixUrl = videoUrl.getPrefixUrl();
+    public String saveLocal(String url, String domain, VideoUrlDTO videoUrlDTO, String fileLocal, String fileUrl) {
+        String prefixType = videoUrlDTO.getPrefixType();
+        String prefixUrl = videoUrlDTO.getPrefixUrl();
         //默认不指定key的情况下，以文件内容的hash值作为文件名
         String replace = UUID.randomUUID().toString().replace("-", "");
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhh");

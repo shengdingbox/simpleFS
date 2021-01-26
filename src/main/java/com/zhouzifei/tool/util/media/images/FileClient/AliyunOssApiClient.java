@@ -1,10 +1,10 @@
-package com.zhouzifei.tool.util.FileClient;
+package com.zhouzifei.tool.util.media.images.FileClient;
 
 import com.zhouzifei.tool.api.OssApi;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.OssApiException;
-import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.StreamUtil;
+import com.zhouzifei.tool.util.media.images.FileUtil;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 

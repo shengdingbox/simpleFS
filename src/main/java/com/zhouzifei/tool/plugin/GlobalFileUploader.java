@@ -2,9 +2,9 @@ package com.zhouzifei.tool.plugin;
 
 
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.util.FileClient.ApiClient;
-import com.zhouzifei.tool.util.FileClient.BaseFileUploader;
-import com.zhouzifei.tool.util.FileClient.FileUploader;
+import com.zhouzifei.tool.util.media.images.service.ApiClient;
+import com.zhouzifei.tool.util.media.images.service.BaseFileUploader;
+import com.zhouzifei.tool.util.media.images.service.FileUploader;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;

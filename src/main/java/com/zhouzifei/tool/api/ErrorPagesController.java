@@ -168,7 +168,6 @@ public class ErrorPagesController implements ErrorController {
      *
      * @return
      */
-    @Override
     public String getErrorPath() {
         return "";
     }

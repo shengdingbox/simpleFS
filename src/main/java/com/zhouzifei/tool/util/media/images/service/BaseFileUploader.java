@@ -1,9 +1,12 @@
-package com.zhouzifei.tool.util.FileClient;
+package com.zhouzifei.tool.util.media.images.service;
 
 
-import com.zhouzifei.tool.aspect.ConfigKeyEnum;
+import com.zhouzifei.tool.consts.ConfigKeyEnum;
 import com.zhouzifei.tool.exception.ServiceException;
 import com.zhouzifei.tool.exception.GlobalFileException;
+import com.zhouzifei.tool.util.media.images.FileClient.AliyunOssApiClient;
+import com.zhouzifei.tool.util.media.images.FileClient.LocalApiClient;
+import com.zhouzifei.tool.util.media.images.FileClient.QiniuApiClient;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;

@@ -232,7 +232,7 @@ public class OssApi {
             SetBucketCORSRequest request = new SetBucketCORSRequest(corsRole.getBucketName());
 
             //CORS规则的容器,每个bucket最多允许10条规则
-            ArrayList<SetBucketCORSRequest.CORSRule> putCorsRules = new ArrayList<>();
+            ArrayList<SetBucketCORSRequest.CORSRule> putCorsRules = new ArrayList<SetBucketCORSRequest.CORSRule>();
             SetBucketCORSRequest.CORSRule corRule = new SetBucketCORSRequest.CORSRule();
 
             corRule.setAllowedMethods(corsRole.getAllowedMethod());

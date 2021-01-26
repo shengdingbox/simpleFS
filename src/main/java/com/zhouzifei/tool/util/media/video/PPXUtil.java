@@ -1,9 +1,9 @@
-package com.zhouzifei.tool.util;
+package com.zhouzifei.tool.util.media.video;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.zhouzifei.tool.consts.VideoTypeConst;
-import com.zhouzifei.tool.dto.VideoUrl;
+import com.zhouzifei.tool.dto.VideoUrlDTO;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import java.util.Base64;
 @Component
 public  class PPXUtil {
 
-    public static VideoUrl pPXParse(String url) {
+    public static VideoUrlDTO pPXParse(String url) {
         try {
         url = Jsoup.connect(url).get().baseUri();
         boolean lzl = url.contains("cell_id");
@@ -27,14 +27,14 @@ public  class PPXUtil {
             object = lzl ? object.getJSONObject("comment_info") : object.getJSONObject("item");
             String video = getVideo(lzl ? object.getJSONObject("video").getString("uri")
                     : object.getJSONObject("video").getString("video_id"));
-            VideoUrl videoUrl = new VideoUrl();
-            videoUrl.setType(VideoTypeConst.MP4.getType());
-            videoUrl.setCode("200");
-            videoUrl.setUrl(video);
-            videoUrl.setSuccess("1");
-            videoUrl.setPlayer("ckplayer");
-            videoUrl.setOriginalUrl(url);
-            return videoUrl;
+            VideoUrlDTO videoUrlDTO = new VideoUrlDTO();
+            videoUrlDTO.setType(VideoTypeConst.MP4.getType());
+            videoUrlDTO.setCode("200");
+            videoUrlDTO.setUrl(video);
+            videoUrlDTO.setSuccess("1");
+            videoUrlDTO.setPlayer("ckplayer");
+            videoUrlDTO.setOriginalUrl(url);
+            return videoUrlDTO;
         } catch (Exception e) {
             return null;
 //            try {

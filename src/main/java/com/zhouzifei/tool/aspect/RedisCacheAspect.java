@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
 @Component
 public class RedisCacheAspect {
 
-    private static final String BIZ_CACHE_PREFIX = "biz_cache_";
+    private static final String BIZ_CACHE_PREFIX = "redis_cache_";
 
     @Autowired
     private RedisUtils redisUtils;

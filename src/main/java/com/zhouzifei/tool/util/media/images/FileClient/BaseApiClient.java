@@ -1,12 +1,13 @@
-package com.zhouzifei.tool.util.FileClient;
+package com.zhouzifei.tool.util.media.images.FileClient;
 
 import cn.hutool.core.date.DateUtil;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.GlobalFileException;
 import com.zhouzifei.tool.exception.OssApiException;
 import com.zhouzifei.tool.exception.QiniuApiException;
-import com.zhouzifei.tool.util.FileUtil;
-import com.zhouzifei.tool.util.ImageUtil;
+import com.zhouzifei.tool.util.media.images.FileUtil;
+import com.zhouzifei.tool.util.media.images.ImageUtil;
+import com.zhouzifei.tool.util.media.images.service.ApiClient;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;

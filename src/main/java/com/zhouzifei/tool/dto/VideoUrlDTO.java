@@ -8,7 +8,7 @@ import lombok.Data;
  * @Description
  */
 @Data
-public class VideoUrl {
+public class VideoUrlDTO {
     private int id;
     private String metareferer;
     private String code;
