@@ -50,12 +50,12 @@ public class GifCaptcha extends Captcha {
             gifEncoder.setRepeat(0);
             BufferedImage frame;
             char[] rands = alphas();
-            Color fontcolor[] = new Color[len];
+            Color[] fontColor = new Color[len];
             for (int i = 0; i < len; i++) {
-                fontcolor[i] = new Color(20 + Randoms.num(110), 20 + Randoms.num(110), 20 + Randoms.num(110));
+                fontColor[i] = new Color(20 + Randoms.num(110), 20 + Randoms.num(110), 20 + Randoms.num(110));
             }
             for (int i = 0; i < len; i++) {
-                frame = graphicsImage(fontcolor, rands, i);
+                frame = graphicsImage(fontColor, rands, i);
                 gifEncoder.addFrame(frame);
                 frame.flush();
             }

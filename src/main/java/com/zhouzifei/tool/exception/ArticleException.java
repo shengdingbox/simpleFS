@@ -10,22 +10,18 @@ package com.zhouzifei.tool.exception;
  */
 public class ArticleException extends ServiceException {
     /**
-     * Constructs a new runtime exception with {@code null} as its
-     * detail message.  The cause is not initialized, and may subsequently be
-     * initialized by a call to {@link #initCause}.
+     * 使用{@code null}作为其*详细消息构造一个新的运行时异常。原因尚未初始化，随后可以通过调用{@link #initCause}进行初始化。
      */
     public ArticleException() {
         super();
     }
 
+
     /**
-     * Constructs a new runtime exception with the specified detail message.
-     * The cause is not initialized, and may subsequently be initialized by a
-     * call to {@link #initCause}.
+     * 使用指定的详细消息构造一个新的运行时异常。 *原因尚未初始化，并且可能随后通过调用{@link #initCause}进行初始化。
      *
      * @param message
-     *         the detail message. The detail message is saved for
-     *         later retrieval by the {@link #getMessage()} method.
+     *         详细信息。保存详细消息以供以后通过{@link #getMessage（）}方法检索。
      */
     public ArticleException(String message) {
         super(message);

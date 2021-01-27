@@ -1,13 +1,13 @@
 package com.zhouzifei.tool.media.file.service;
 
 
-import com.zhouzifei.tool.consts.FileOSSConfig;
+import com.zhouzifei.tool.config.properties.FileOSSProperties;
+import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.exception.GlobalFileException;
 import com.zhouzifei.tool.exception.ServiceException;
 import com.zhouzifei.tool.media.file.FileClient.AliyunOssApiClient;
 import com.zhouzifei.tool.media.file.FileClient.LocalApiClient;
 import com.zhouzifei.tool.media.file.FileClient.QiniuApiClient;
-import org.springframework.util.StringUtils;
 
 
 /**
@@ -19,36 +19,28 @@ import org.springframework.util.StringUtils;
  */
 public class BaseFileUploader {
 
-    protected ApiClient getApiClient(String pathPrefix, String storageType,FileOSSConfig ossConfig) {
-        if (StringUtils.isEmpty(storageType)) {
-            throw new ServiceException("[文件服务]当前系统暂未配置文件服务相关的内容！");
-        }
+    protected ApiClient getApiClient(String pathPrefix, FileOSSProperties fileOSSProperties) {
         ApiClient res = null;
-        switch (storageType) {
-            case "local":
-                String localFileUrl = ossConfig.getLocalFileUrl();
-                String localFilePath = ossConfig.getLocalFilePath();
-                res = new LocalApiClient().init(localFileUrl, localFilePath, pathPrefix);
-                break;
-            case "qiniu":
-                String accessKey = ossConfig.getQiniuAccessKey();
-                String secretKey = ossConfig.getQiniuSecretKey();
-                String qiniuBucketName = ossConfig.getQiniuBucketName();
-                String baseUrl = ossConfig.getQiniuBasePath();
-                res = new QiniuApiClient().init(accessKey, secretKey, qiniuBucketName, baseUrl, pathPrefix);
-                break;
-            case "aliyun":
-                String endpoint = ossConfig.getAliyunEndpoint();
-                String accessKeyId = ossConfig.getAliyunAccessKey();
-                String accessKeySecret = ossConfig.getAliyunAccessKeySecret();
-                String url = ossConfig.getAliyunFileUrl();
-                String aliYunBucketName = ossConfig.getAliyunBucketName();
-                res = new AliyunOssApiClient().init(endpoint, accessKeyId, accessKeySecret, url, aliYunBucketName, pathPrefix);
-                break;
-            case "youpaiyun":
-                break;
-            default:
-                break;
+        String storageType = fileOSSProperties.getStorageTypeConst().getStorageType();
+        if(storageType.equals(StorageTypeConst.LOCAL.getStorageType())) {
+            String localFileUrl = fileOSSProperties.getLocalFileUrl();
+            String localFilePath = fileOSSProperties.getLocalFilePath();
+            res = new LocalApiClient().init(localFileUrl, localFilePath, pathPrefix);
+        }else if(storageType.equals(StorageTypeConst.QINIUYUN.getStorageType())){
+            String accessKey = fileOSSProperties.getQiniuAccessKey();
+            String secretKey = fileOSSProperties.getQiniuSecretKey();
+            String qiniuBucketName = fileOSSProperties.getQiniuBucketName();
+            String baseUrl = fileOSSProperties.getQiniuBasePath();
+            res = new QiniuApiClient().init(accessKey, secretKey, qiniuBucketName, baseUrl, pathPrefix);
+        }else if(storageType.equals(StorageTypeConst.ALIYUN.getStorageType())){
+            String endpoint = fileOSSProperties.getAliyunEndpoint();
+            String accessKeyId = fileOSSProperties.getAliyunAccessKey();
+            String accessKeySecret = fileOSSProperties.getAliyunAccessKeySecret();
+            String url = fileOSSProperties.getAliyunFileUrl();
+            String aliYunBucketName = fileOSSProperties.getAliyunBucketName();
+            res = new AliyunOssApiClient().init(endpoint, accessKeyId, accessKeySecret, url, aliYunBucketName, pathPrefix);
+        }else{
+            throw new ServiceException("[文件服务]请选择文件存储类型！");
         }
         if (null == res) {
             throw new GlobalFileException("[文件服务]当前系统暂未配置文件服务相关的内容！");

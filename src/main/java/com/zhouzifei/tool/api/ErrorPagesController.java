@@ -40,7 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @EnableConfigurationProperties({ServerProperties.class})
 public class ErrorPagesController implements ErrorController {
 
-    private ErrorAttributes errorAttributes;
+    private final ErrorAttributes errorAttributes;
 
     @Autowired
     private ServerProperties serverProperties;
@@ -168,6 +168,7 @@ public class ErrorPagesController implements ErrorController {
      *
      * @return
      */
+    @Override
     public String getErrorPath() {
         return "";
     }

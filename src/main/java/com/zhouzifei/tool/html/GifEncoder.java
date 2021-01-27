@@ -212,7 +212,9 @@ public class GifEncoder {
      * @return
      */
     public void setQuality(int quality) {
-        if (quality < 1) quality = 1;
+        if (quality < 1) {
+            quality = 1;
+        }
         sample = quality;
     }
 

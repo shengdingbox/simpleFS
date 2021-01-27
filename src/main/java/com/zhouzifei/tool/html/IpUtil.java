@@ -19,7 +19,7 @@ public class IpUtil {
     private static final String LOCALHOST = "127.0.0.1";
     private static final String SEPARATOR = ",";
 
-    public static String getIpAddr(HttpServletRequest request) {
+    public static String getIpAddress(HttpServletRequest request) {
         log.info(request.toString());
         String ipAddress;
         try {
@@ -36,10 +36,10 @@ public class IpUtil {
                     InetAddress inet = null;
                     try {
                         inet = InetAddress.getLocalHost();
+                        ipAddress = inet.getHostAddress();
                     } catch (UnknownHostException e) {
                         e.printStackTrace();
                     }
-                    ipAddress = inet.getHostAddress();
                 }
             }
             // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割

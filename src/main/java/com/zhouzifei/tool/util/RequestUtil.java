@@ -65,7 +65,7 @@ public class RequestUtil {
         if (null == request) {
             return null;
         }
-        return IpUtil.getIpAddr(request);
+        return IpUtil.getIpAddress(request);
     }
 
     public static String getRequestUrl() {

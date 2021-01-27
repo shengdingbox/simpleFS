@@ -25,7 +25,7 @@ public class HtmlUtil {
      * @return
      */
     public static Element getElementById(Document htmlDocument, String id) {
-        if (htmlDocument == null || id == null || id.equals("")) {
+        if (htmlDocument == null || id == null || "".equals(id)) {
             return null;
         }
         return htmlDocument.getElementById(id);
@@ -42,8 +42,8 @@ public class HtmlUtil {
             return "";
         }
         // 定义HTML标签的正则表达式
-        String regEx_html = "<[^>]+>";
-        content = content.replaceAll(regEx_html, "").replaceAll(" ", "");
+        String regExHtml = "<[^>]+>";
+        content = content.replaceAll(regExHtml, "").replaceAll(" ", "");
         content = content.replaceAll("&quot;", "\"")
                 .replaceAll("&nbsp;", "")
                 .replaceAll("&amp;", "&")

@@ -10,9 +10,7 @@ package com.zhouzifei.tool.exception;
  */
 public class FileException extends ServiceException {
     /**
-     * Constructs a new runtime exception with {@code null} as its
-     * detail message.  The cause is not initialized, and may subsequently be
-     * initialized by a call to {@link #initCause}.
+     * 使用{@code null}作为其*详细消息构造一个新的运行时异常。原因尚未初始化，随后可以通过调用{@link #initCause}进行初始化。
      */
     public FileException() {
         super();

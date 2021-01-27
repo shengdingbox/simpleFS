@@ -23,7 +23,7 @@ import java.util.Date;
  * @since 1.0
  */
 public class LocalApiClient extends BaseApiClient {
-    private static final String DEFAULT_PREFIX = "blog/";
+    private static final String DEFAULT_PREFIX = "local/";
 
     private String url;
     private String rootPath;

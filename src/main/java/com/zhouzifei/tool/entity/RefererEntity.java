@@ -22,8 +22,4 @@ public class RefererEntity extends AbstractEntity {
     public RefererEntity(String bucketName) {
         super(bucketName);
     }
-
-    public void setRefererList(List<String> refererList) {
-        this.refererList = refererList;
-    }
 }

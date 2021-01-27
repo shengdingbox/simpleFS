@@ -45,7 +45,7 @@ public class StreamUtil {
                 InputStream inputStream = is;
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, encoding))
         ) {
-            String line = "";
+            String line;
             while ((line = reader.readLine()) != null) {
                 fileContent.append(line);
                 fileContent.append("\n");

@@ -1,6 +1,8 @@
 package com.zhouzifei.tool.html.verification;
 
 import com.zhouzifei.tool.html.Randoms;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -14,12 +16,29 @@ import java.io.OutputStream;
  * @date 2019年7月16日
  * @since 1.0
  */
+@EqualsAndHashCode(callSuper = true)
+@Data
 public abstract class Captcha extends Randoms {
-    protected Font font = new Font("Verdana", Font.ITALIC | Font.BOLD, 28); // 字体
-    protected int len = 5; // 验证码随机字符长度
-    protected int width = 150; // 验证码显示跨度
-    protected int height = 40; // 验证码显示高度
-    private String chars = null; // 随机字符串
+    /**
+     *  字体
+     */
+    protected Font font = new Font("Verdana", Font.ITALIC | Font.BOLD, 28);
+    /**
+     * // 验证码随机字符长度
+     */
+    protected int len = 5;
+    /**
+     * // 验证码显示跨度
+     */
+    protected int width = 150;
+    /**
+     * // 验证码显示高度
+     */
+    protected int height = 40;
+    /**
+     * // 随机字符串
+     */
+    private String chars = null;
 
     /**
      * 生成随机字符数组
@@ -27,46 +46,11 @@ public abstract class Captcha extends Randoms {
      * @return 字符数组
      */
     protected char[] alphas() {
-        char[] cs = new char[len];
-        for (int i = 0; i < len; i++) {
-            cs[i] = alpha();
-        }
-        chars = new String(cs);
-        return cs;
+        String alpha = alpha(len);
+        char[] chars = alpha.toCharArray();
+        this.chars = alpha;
+        return chars;
     }
-
-    public Font getFont() {
-        return font;
-    }
-
-    public void setFont(Font font) {
-        this.font = font;
-    }
-
-    public int getLen() {
-        return len;
-    }
-
-    public void setLen(int len) {
-        this.len = len;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
     /**
      * 给定范围获得随机颜色
      *

@@ -1,6 +1,6 @@
 package com.zhouzifei.tool.media.file.FileClient;
 
-import com.zhouzifei.tool.api.OssApi;
+import com.zhouzifei.tool.media.file.service.OssApi;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.OssApiException;
 import com.zhouzifei.tool.media.file.StreamUtil;

@@ -14,6 +14,11 @@
       "name": "tool.oss",
       "type": "com.zhouzifei.tool.config.properties.FileOSSProperties",
       "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.sms",
+      "type": "com.zhouzifei.tool.config.properties.SendSmsProperties",
+      "sourceType": "com.zhouzifei.tool.config.properties.SendSmsProperties"
     }
   ],
   "properties": [
@@ -195,6 +200,42 @@
       "type": "java.lang.String",
       "description": "七牛云Secret Key",
       "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.oss.storage-type-const",
+      "type": "com.zhouzifei.tool.consts.StorageTypeConst",
+      "description": "云存储类型",
+      "sourceType": "com.zhouzifei.tool.config.properties.FileOSSProperties"
+    },
+    {
+      "name": "tool.sms.aliyun-access-key",
+      "type": "java.lang.String",
+      "description": "阿里云Access Key",
+      "sourceType": "com.zhouzifei.tool.config.properties.SendSmsProperties"
+    },
+    {
+      "name": "tool.sms.aliyun-secret",
+      "type": "java.lang.String",
+      "description": "阿里云Access Key Secret",
+      "sourceType": "com.zhouzifei.tool.config.properties.SendSmsProperties"
+    },
+    {
+      "name": "tool.sms.aliyun-sign-name",
+      "type": "java.lang.String",
+      "description": "阿里云签名名称",
+      "sourceType": "com.zhouzifei.tool.config.properties.SendSmsProperties"
+    },
+    {
+      "name": "tool.sms.aliyun-template-code",
+      "type": "java.lang.String",
+      "description": "阿里云模板编号",
+      "sourceType": "com.zhouzifei.tool.config.properties.SendSmsProperties"
+    },
+    {
+      "name": "tool.sms.storage-type-const",
+      "type": "com.zhouzifei.tool.consts.StorageTypeConst",
+      "description": "云存储类型",
+      "sourceType": "com.zhouzifei.tool.config.properties.SendSmsProperties"
     }
   ],
   "hints": []

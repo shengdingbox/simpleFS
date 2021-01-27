@@ -57,7 +57,7 @@ public class WebLogAspect {
         // 打印调用 controller 的全路径以及执行方法
 //        log.info("Class Method   : {}.{}", joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
         // 打印请求的 IP
-        log.info("IP: {}", IpUtil.getIpAddr(request));
+        log.info("IP: {}", IpUtil.getIpAddress(request));
         // 打印请求入参
         log.info("Request Args   : {}", new Gson().toJson(joinPoint.getArgs()));
     }

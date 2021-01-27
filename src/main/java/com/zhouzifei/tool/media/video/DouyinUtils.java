@@ -27,7 +27,7 @@ public class DouyinUtils {
      * @param info 解析的地址
      * @return 解析实体
      */
-    public static VideoUrlDTO getinfo(String info) {
+    public static VideoUrlDTO dyParse(String info) {
         try {
             //获取短连接
             String regex = "https://v.douyin.com/(.*?)/";
@@ -93,7 +93,7 @@ public class DouyinUtils {
             videoUrlDTO.setSuccess("1");
             videoUrlDTO.setPlayer("ckplayer");
             videoUrlDTO.setUrl("https://api.周子斐tv.cn/404.mp4");
-            videoUrlDTO.setOriginalUrl(url);
+            videoUrlDTO.setOriginalUrl(info);
             return videoUrlDTO;
         } catch (Exception e) {
             return null;
@@ -117,57 +117,5 @@ public class DouyinUtils {
         return videoUrlDTO;
         //down(src ,path,name);
     }
-
-    //下载视频
-    public static void down(String src, String path, String name) {
-        int byteRead;
-        URL url = null;
-        try {
-            url = new URL(src);
-        } catch (MalformedURLException e1) {
-            e1.printStackTrace();
-        }
-
-        try {
-            // 2.获取链接
-            URLConnection conn = url.openConnection();
-            long length = conn.getContentLengthLong();
-            // 3.输入流
-            InputStream inStream = conn.getInputStream();
-            // 3.写入文件
-            File file = new File(path);
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-            String saveFile = path + name + ".mp4";
-            FileOutputStream fs = new FileOutputStream(saveFile);
-            byte[] buffer = new byte[1024];
-            int i = 0, j = 0;
-            while ((byteRead = inStream.read(buffer)) != -1) {
-                i++;
-                fs.write(buffer, 0, byteRead);
-                if (i % 500 == 0) {
-                    j++;
-                    File file2 = new File(saveFile);
-                    //控制输出小数点后的位数
-                    DecimalFormat df = new DecimalFormat("#.##");
-                    float f = (file2.length() / (float) length) * 100;
-                    System.out.print("已下载：" + df.format(f) + "%\t\t");
-                    if (j % 5 == 0) {
-                        log.info("下载完成");
-                    }
-                }
-            }
-            log.info("\n已下载：100.00%");
-            inStream.close();
-            fs.close();
-        } catch (IOException e) {
-            e.toString();
-        } catch (Exception e) {
-            e.toString();
-        }
-    }
-
-
 }
 

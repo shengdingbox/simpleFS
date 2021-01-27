@@ -1,6 +1,7 @@
 package com.zhouzifei.tool.media.file;
 
-import java.awt.Image;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -86,5 +87,20 @@ public class ImageUtil {
         } catch (Exception e) {
             throw new GlobalFileException("获取图片信息发生异常！", e);
         }
+    }
+    public static BufferedImage addWatermark(InputStream input,String watermark) throws IOException {
+        BufferedImage bufImg = ImageIO.read(input);
+        int height = bufImg.getHeight();
+        int width = bufImg.getWidth();
+        Graphics2D graphics = bufImg.createGraphics();
+        Font font = new Font("宋体", 0, 60);
+        graphics.setColor(Color.CYAN);
+        graphics.setFont(font);
+        int i = graphics.getFontMetrics(graphics.getFont()).charsWidth(watermark.toCharArray(), 0, watermark.length());
+        int x = width - i - 10;
+        int y = height - 10;
+        graphics.drawString(watermark, x, y);
+        graphics.dispose();
+        return bufImg;
     }
 }

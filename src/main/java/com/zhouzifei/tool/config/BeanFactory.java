@@ -1,5 +1,8 @@
 package com.zhouzifei.tool.config;
 
+import com.zhouzifei.tool.config.properties.FileOSSProperties;
+import com.zhouzifei.tool.config.properties.SendSmsProperties;
+import com.zhouzifei.tool.media.file.FileUploadUtil;
 import com.zhouzifei.tool.media.video.ParseUtils;
 import com.zhouzifei.tool.util.RedisUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;

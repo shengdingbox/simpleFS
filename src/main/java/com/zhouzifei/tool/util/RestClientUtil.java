@@ -77,19 +77,17 @@ public class RestClientUtil {
             connection.setDoOutput(true);
 
             if (!CollectionUtils.isEmpty(params)) {
-                final OutputStream outputStream = connection.getOutputStream();
-                StringBuilder paramsStr = new StringBuilder();
-                Set<Map.Entry<String, Object>> set = params.entrySet();
-                for (Map.Entry<String, Object> stringObjectEntry : set) {
-                    paramsStr.append(stringObjectEntry.getKey()).append("=").append(stringObjectEntry.getValue()).append("&");
+                try (final OutputStream outputStream = connection.getOutputStream();){
+                    StringBuilder paramsStr = new StringBuilder();
+                    Set<Map.Entry<String, Object>> set = params.entrySet();
+                    for (Map.Entry<String, Object> stringObjectEntry : set) {
+                        paramsStr.append(stringObjectEntry.getKey()).append("=").append(stringObjectEntry.getValue()).append("&");
+                    }
+                    paramsStr.setLength(paramsStr.length() - 1);
+                    writeOutput(outputStream, paramsStr.toString());
                 }
-                paramsStr.setLength(paramsStr.length() - 1);
-                writeOutput(outputStream, paramsStr.toString());
-                outputStream.close();
             }
-
             log.info("RestClientUtil url: {}, response: {} : {}", urlString, connection.getResponseCode(), connection.getResponseMessage());
-
             if (connection.getResponseCode() == HttpsURLConnection.HTTP_OK) {
                 return readInput(connection.getInputStream(), encode);
             } else {

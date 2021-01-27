@@ -19,34 +19,36 @@ public interface FileUploader {
     /**
      * 上传文件
      *  @param file       待上传的文件流
-     * @param uploadType 文件上传类型，用来区分文件
-     * @param suffix     文件后缀
+     * @param pathPrefix 图片前缀
+     * @param imageUrl     网络地址
      */
-    VirtualFile upload(InputStream file, String uploadType, String suffix,String storageType);
+    VirtualFile upload(InputStream file, String pathPrefix, String imageUrl);
 
     /**
      * 上传文件
      *
      * @param file       待上传的文件
-     * @param uploadType 文件上传类型，用来区分文件
-     * @param storageType       配置
+     * @param pathPrefix 图片前缀
      */
-    VirtualFile upload(File file, String uploadType,String storageType);
+    VirtualFile upload(File file, String pathPrefix);
 
     /**
      * 上传文件
      *
      * @param file       待上传的文件
-     * @param uploadType 文件上传类型，用来区分文件
-     * @param storageType       配置
+     * @param pathPrefix 图片前缀
      */
-    VirtualFile upload(MultipartFile file, String uploadType,String storageType);
+    VirtualFile upload(MultipartFile file, String pathPrefix);
 
     /**
      * 删除文件
      *
      * @param filePath   文件路径
-     * @param uploadType 文件类型
+     * @param imageUrl 文件类型
      */
-    boolean delete(String filePath, String uploadType);
+    boolean delete(String filePath, String imageUrl);
+
+    String download(String imgUrl, String referer, String localPath);
+
+    VirtualFile saveToCloudStorage(String imgUrl, String referer);
 }

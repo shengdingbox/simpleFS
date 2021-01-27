@@ -1,5 +1,6 @@
 package com.zhouzifei.tool.html.encryption;
 
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -36,7 +37,7 @@ public class AesUtil {
         // 创建密码器
         Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
 
-        byte[] byteContent = content.getBytes("utf-8");
+        byte[] byteContent = content.getBytes(StandardCharsets.UTF_8);
 
         // 初始化为加密模式的密码器
         cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(passwd));
@@ -68,7 +69,7 @@ public class AesUtil {
         //执行操作
         byte[] result = cipher.doFinal(Base64.decodeBase64(encrypted));
 
-        return new String(result, "utf-8");
+        return new String(result, StandardCharsets.UTF_8);
     }
 
     /**

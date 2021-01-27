@@ -20,7 +20,7 @@ public interface ApiClient {
 
     VirtualFile uploadImg(File file);
 
-    VirtualFile uploadImg(InputStream is, String key);
+    VirtualFile uploadImg(InputStream is, String imageUrl);
 
     boolean removeFile(String key);
 }

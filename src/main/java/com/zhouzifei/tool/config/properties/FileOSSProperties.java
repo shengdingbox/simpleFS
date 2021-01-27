@@ -1,5 +1,6 @@
 package com.zhouzifei.tool.config.properties;
 
+import com.zhouzifei.tool.consts.StorageTypeConst;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -17,6 +18,10 @@ import org.springframework.stereotype.Component;
 @EqualsAndHashCode(callSuper = false)
 @Order(-1)
 public class FileOSSProperties {
+    /**
+     * 云存储类型
+     */
+    private StorageTypeConst storageTypeConst;
     /**
      * 文件前缀
      */

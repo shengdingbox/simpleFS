@@ -4,6 +4,7 @@ import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.GlobalFileException;
 import com.zhouzifei.tool.exception.OssApiException;
 import com.zhouzifei.tool.exception.QiniuApiException;
+import com.zhouzifei.tool.html.Randoms;
 import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.media.file.ImageUtil;
 import com.zhouzifei.tool.media.file.service.ApiClient;
@@ -54,15 +55,14 @@ public abstract class BaseApiClient implements ApiClient {
         if (file == null) {
             throw new QiniuApiException("[" + this.storageType + "]文件上传失败：文件不可为空");
         }
-        try {
-            InputStream is = new BufferedInputStream(new FileInputStream(file));
+        try(InputStream is = new BufferedInputStream(new FileInputStream(file))){
             VirtualFile res = this.uploadImg(is, "temp" + FileUtil.getSuffix(file));
             VirtualFile imageInfo = ImageUtil.getInfo(file);
             return res.setSize(imageInfo.getSize())
                     .setOriginalFileName(file.getName())
                     .setWidth(imageInfo.getWidth())
                     .setHeight(imageInfo.getHeight());
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw new GlobalFileException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
     }
@@ -72,7 +72,7 @@ public abstract class BaseApiClient implements ApiClient {
 //        if (!FileUtil.isPicture(this.suffix)) {
 //            throw new GlobalFileException("[" + this.storageType + "] 非法的图片文件[" + key + "]！目前只支持以下图片格式：[jpg, jpeg, png, gif, bmp]");
 //        }
-        String fileName = UUID.randomUUID().toString().replace("-","");
+        String fileName = Randoms.alpha(16);
         this.newFileName = pathPrefix + (fileName + this.suffix);
     }
 
