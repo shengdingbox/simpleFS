@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.zhouzifei.tool.config.FileOSSAutoConfiguration;com.zhouzifei.tool.config.BeanFactory
+  com.zhouzifei.tool.config.FileOSSAutoConfiguration,\
+  com.zhouzifei.tool.config.BeanFactory

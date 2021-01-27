@@ -16,7 +16,7 @@
     <groupId>com.zhouzifei</groupId>
     <artifactId>common-tool</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.2.RELEASE</version>
+    <version>1.0.2.BATE</version>
     <name>common-tool</name>
     <description>核心依赖代码</description>
     <properties>
@@ -163,11 +163,6 @@
                 <optional>true</optional>
             </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>3.3.3</version>
@@ -207,7 +202,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
