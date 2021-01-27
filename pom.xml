@@ -14,10 +14,10 @@
         <version>7</version>
     </parent>
     <groupId>com.zhouzifei</groupId>
-    <artifactId>common-tool</artifactId>
+    <artifactId>commonTool</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.2.BATE</version>
-    <name>common-tool</name>
+    <version>1.0.1</version>
+    <name>commonTool</name>
     <description>核心依赖代码</description>
     <properties>
         <fastjson.version>1.2.44</fastjson.version>
