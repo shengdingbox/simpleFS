@@ -209,9 +209,9 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                        <configuration>
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                        </configuration>
+<!--                        <configuration>-->
+<!--                            <additionalparam>-Xdoclint:none</additionalparam>-->
+<!--                        </configuration>-->
                     </execution>
                 </executions>
             </plugin>
@@ -268,9 +268,9 @@
     </licenses>
     <scm>
         <tag>master</tag>
-        <url>git@gitee.com:yiqijava/common-tool.git</url>
-        <connection>scm:git:git@gitee.com:yiqijava/common-tool.git</connection>
-        <developerConnection>scm:git:git@gitee.com:yiqijava/common-tool.git</developerConnection>
+        <url>git@gitee.com:zifeiZhou/commonTool.git</url>
+        <connection>scm:git:git@gitee.com:zifeiZhou/commonTool.git</connection>
+        <developerConnection>scm:git:git@gitee.com:zifeiZhou/commonTool.git</developerConnection>
     </scm>
     <developers>
         <developer>
