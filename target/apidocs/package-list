@@ -2,6 +2,7 @@ com.zhouzifei.tool.annotation
 com.zhouzifei.tool.api
 com.zhouzifei.tool.aspect
 com.zhouzifei.tool.config
+com.zhouzifei.tool.config.autoconfiguratiom
 com.zhouzifei.tool.config.properties
 com.zhouzifei.tool.consts
 com.zhouzifei.tool.dto

@@ -1,11 +1,6 @@
 {
   "groups": [
     {
-      "name": "aas",
-      "type": "com.zhouzifei.tool.config.properties.testKDKAD",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
       "name": "spring.redis",
       "type": "com.zhouzifei.tool.config.properties.RedisProperties",
       "sourceType": "com.zhouzifei.tool.config.properties.RedisProperties"
@@ -22,89 +17,6 @@
     }
   ],
   "properties": [
-    {
-      "name": "aas.aliyun-access-key",
-      "type": "java.lang.String",
-      "description": "阿里云Access Key",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
-      "name": "aas.aliyun-access-key-secret",
-      "type": "java.lang.String",
-      "description": "阿里云Access Key Secret",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
-      "name": "aas.aliyun-bucket-name",
-      "type": "java.lang.String",
-      "description": "阿里云Bucket 名称",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
-      "name": "aas.aliyun-endpoint",
-      "type": "java.lang.String",
-      "description": "阿里云地域节点（EndPoint）",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
-      "name": "aas.aliyun-file-url",
-      "type": "java.lang.String",
-      "description": "阿里云Bucket 域名",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
-      "name": "aas.local-file-path",
-      "type": "java.lang.String",
-      "description": "文件存储路径",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
-      "name": "aas.local-file-url",
-      "type": "java.lang.String",
-      "description": "文件服务器域名",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
-      "name": "aas.path-prefix",
-      "type": "java.lang.String",
-      "description": "文件前缀",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
-      "name": "aas.qiniu-access-key",
-      "type": "java.lang.String",
-      "description": "七牛云AccessKey",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
-      "name": "aas.qiniu-base-path",
-      "type": "java.lang.String",
-      "description": "七牛云cdn域名",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
-      "name": "aas.qiniu-bucket-name",
-      "type": "java.lang.String",
-      "description": "七牛云Bucket 名称",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
-      "name": "aas.qiniu-secret-key",
-      "type": "java.lang.String",
-      "description": "七牛云Secret Key",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
-      "name": "aas.storage-type-const",
-      "type": "com.zhouzifei.tool.consts.StorageTypeConst",
-      "description": "云存储类型",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
-    {
-      "name": "aas.test",
-      "type": "java.lang.String",
-      "sourceType": "com.zhouzifei.tool.config.properties.testKDKAD"
-    },
     {
       "name": "spring.redis.database",
       "type": "java.lang.Integer",

@@ -8,7 +8,7 @@ commonTool，如你所见，它是一个小型整合型的工具类，带有整�
 <dependency>
   <groupId>com.zhouzifei</groupId>
   <artifactId>commonTool</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
 </dependency>
 ```
 
