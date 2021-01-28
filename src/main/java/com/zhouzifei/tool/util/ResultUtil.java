@@ -16,7 +16,6 @@ import java.util.Map;
  * 接口返回工具类，支持ModelAndView、ResponseVO、PageResult
  * @author 周子斐 (17611555590@163.com)
  * @version 1.0
- * @note https://www.shengdingbox.com
  * @remark 2019年7月16日
  * @since 1.0
  */

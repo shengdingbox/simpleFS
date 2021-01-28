@@ -22,7 +22,7 @@ import java.io.OutputStream;
  * *，但是，请参见Unisys LZW专利以获取有关使用相关的Encoder类的限制
  * *。请将所有更正*转发至fmsware.com上的问题。
  *
- * @author wuhongjun
+ * @author 周子斐 (17600004572@163.com)
  * @version 1.03 November 2003
  */
 public class GifEncoder {

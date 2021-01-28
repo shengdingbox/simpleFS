@@ -8,8 +8,10 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
+ * 短信配置类
  * @author 周子斐
  * @remark 2021/1/26
+
  * @Description
  */
 @Component

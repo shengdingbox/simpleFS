@@ -3,9 +3,8 @@ package com.zhouzifei.tool.consts;
 /**
  * 常量
  *
- * @author liyaling
- * @email ts_liyaling@qq.com
- * @date 2019/12/23 10:11
+ * @author 周子斐 (17600004572@163.com)
+ * @remark  2019/12/23 10:11
  */
 
 public class Constants {

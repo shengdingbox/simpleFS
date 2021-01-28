@@ -4,8 +4,9 @@ package com.zhouzifei.tool.html.encryption;
 import java.security.MessageDigest;
 
 /**
- * @author 周子斐
+ * @author 周子斐 (17600004572@163.com)
  * @remark 2020/4/20
+
  * @Description
  */
 public class    SHA1Util {

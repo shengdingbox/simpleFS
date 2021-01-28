@@ -3,14 +3,18 @@ package com.zhouzifei.tool.media.file;
 import com.zhouzifei.tool.media.file.service.DownloadListener;
 import com.zhouzifei.tool.media.file.service.M3u8DownloadFactory;
 import com.zhouzifei.tool.util.StringUtils;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author 周子斐
- * @date 2021/1/28
+ * @author 周子斐 (17600004572@163.com)
+ * @remark  2021/1/28
+ * @version 1.0
+
  * @Description
  */
 @Slf4j
+@Data
 public class M3u8DownloadUtil {
     /**
      * 文件保存的路径

@@ -7,9 +7,9 @@ import java.math.BigDecimal;
 import java.util.regex.Pattern;
 
 /**
- * @author liyaling
- * @email ts_liyaling@qq.com
- * @date 2019/12/14 16:27
+ * @author 周子斐 (17600004572@163.com)
+ * @remark  2019/12/14 16:27
+ * @version 1.0
  */
 
 public class StringUtils extends org.apache.commons.lang.StringUtils {

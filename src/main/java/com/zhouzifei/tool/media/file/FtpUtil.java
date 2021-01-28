@@ -16,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * ftp上传下载工具类
  * <p>Title: FtpUtil</p>
  * <p>Description: </p>
- *
+ * @author 周子斐 (17600004572@163.com)
  * @version 1.0
  */
 @Slf4j

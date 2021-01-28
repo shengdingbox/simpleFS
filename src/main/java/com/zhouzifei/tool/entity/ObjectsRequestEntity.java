@@ -6,7 +6,6 @@ import lombok.Data;
  * https://help.aliyun.com/document_detail/32015.html?spm=5176.doc32021.6.665.PqGkRT
  * @author 周子斐 (17600004572@163.com)
  * @version 1.0
- * @note https://www.zhouzifei.com
  * @remark 2019年7月16日
  * @since 1.0
  */

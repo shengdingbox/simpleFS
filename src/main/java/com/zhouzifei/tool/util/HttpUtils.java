@@ -31,10 +31,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author 周子斐 (zhouzf@asp.citic.com)
+ * @author 周子斐 (17600004572@163.com)
  * @remark 2020/4/19
+
  * @Description
- * @Copyright 中信网络科技有限公司 Copyright (c)
  */
 public class HttpUtils {
 

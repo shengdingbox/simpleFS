@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
  * MD5加密工具类
  * @author 周子斐 (17600004572@163.com)
  * @version 1.0
- * @note https://www.zhouzifei.com
  * @remark 2019年7月16日
  * @since 1.0
  */

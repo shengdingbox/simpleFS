@@ -7,7 +7,6 @@ import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.exceptions.ClientException;
-import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import net.jodah.expiringmap.ExpirationPolicy;
@@ -16,6 +15,11 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 短信发送工具类
+ * @author 周子斐 (17600004572@163.com)
+ * @version 1.0
+ */
 public class SmsUtil {
 
     public static ExpiringMap<String, String> map = ExpiringMap.builder()

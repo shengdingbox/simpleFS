@@ -3,8 +3,9 @@ package com.zhouzifei.tool.dto;
 import lombok.Data;
 
 /**
- * @author 周子斐
+ * @author 周子斐 (17600004572@163.com)
  * @remark 2021/1/25
+
  * @Description
  */
 @Data

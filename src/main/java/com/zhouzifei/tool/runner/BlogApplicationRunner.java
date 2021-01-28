@@ -1,6 +1,5 @@
 package com.zhouzifei.tool.runner;
 
-import com.zhouzifei.tool.config.properties.RedisProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +19,6 @@ import javax.servlet.ServletContextEvent;
  * 程序启动后通过ApplicationRunner处理一些事务
  * @author 周子斐 (17600004572@163.com)
  * @version 1.0
- * @note https://www.zhouzifei.com
  * @remark 2019年7月16日
  * @since 1.0
  */

@@ -1,8 +1,8 @@
 package com.zhouzifei.tool.media.file.service;
 
 /**
- * 下载监听器
- * @author daixf
+ * m3u8下载监听器
+ * @author 周子斐 (17600004572@163.com)
  * @date 2020/3/8
  */
 public interface DownloadListener {

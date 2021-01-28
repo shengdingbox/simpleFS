@@ -4,7 +4,6 @@ package com.zhouzifei.tool.media.file.service;
 import com.zhouzifei.tool.consts.Constants;
 import com.zhouzifei.tool.exception.M3u8Exception;
 import com.zhouzifei.tool.util.StringUtils;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -28,7 +27,7 @@ import java.util.concurrent.*;
 
 /**
  * M3u8视频下载工厂
- * @author daixf
+ * @author 周子斐 (17600004572@163.com)
  * @date 2020/3/8
  */
 @Slf4j
@@ -268,7 +267,7 @@ public class M3u8DownloadFactory {
         private void deleteFiles() {
             File file = new File(tempDir);
             for (File f : file.listFiles()) {
-                if (f.getName().endsWith(".xy") || f.getName().endsWith(".xyz")) {
+                if (f.getName().endsWith(".ts") || f.getName().endsWith(".xyz")) {
                     f.delete();
                 }
             }
@@ -286,7 +285,7 @@ public class M3u8DownloadFactory {
                 int count = 1;
                 HttpURLConnection httpURLConnection = null;
                 //xy为未解密的ts片段，如果存在，则删除
-                File file2 = new File(tempDir+"/"+i+".xy");
+                File file2 = new File(tempDir+"/"+i+".ts");
                 if (file2.exists()) {
                     file2.delete();
                 }

@@ -1,8 +1,7 @@
 package com.zhouzifei.tool.exception;
 
 /**
- * @author liyaling
- * @email ts_liyaling@qq.com
+ * @author 周子斐 (17600004572@163.com)
  * @date 2019/12/14 16:23
  */
 
