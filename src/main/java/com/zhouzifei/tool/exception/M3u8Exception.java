@@ -5,7 +5,7 @@ package com.zhouzifei.tool.exception;
  * @date 2019/12/14 16:23
  */
 
-public class M3u8Exception extends RuntimeException {
+public class M3u8Exception extends ServiceException {
     public M3u8Exception() {
         super();
     }

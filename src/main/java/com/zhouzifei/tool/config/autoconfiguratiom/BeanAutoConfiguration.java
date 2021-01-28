@@ -1,4 +1,4 @@
-package com.zhouzifei.tool.config;
+package com.zhouzifei.tool.config.autoconfiguratiom;
 
 import com.zhouzifei.tool.media.video.ParseUtils;
 import com.zhouzifei.tool.util.RedisUtils;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnWebApplication
-public class BeanFactory {
+public class BeanAutoConfiguration {
 
     @Bean
     public ParseUtils ParseUtil() {

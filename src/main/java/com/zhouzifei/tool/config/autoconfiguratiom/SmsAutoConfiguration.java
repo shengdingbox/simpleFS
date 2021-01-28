@@ -1,4 +1,4 @@
-package com.zhouzifei.tool.config;
+package com.zhouzifei.tool.config.autoconfiguratiom;
 
 import com.zhouzifei.tool.config.properties.SendSmsProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

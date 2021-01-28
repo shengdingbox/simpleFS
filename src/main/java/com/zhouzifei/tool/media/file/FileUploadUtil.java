@@ -2,7 +2,6 @@ package com.zhouzifei.tool.media.file;
 
 
 import com.zhouzifei.tool.config.properties.FileOSSProperties;
-import com.zhouzifei.tool.config.properties.SendSmsProperties;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.GlobalFileException;
 import com.zhouzifei.tool.html.Randoms;
@@ -18,7 +17,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
 
 
 /**

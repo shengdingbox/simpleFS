@@ -1,5 +1,5 @@
 # 什么是 commonTool？
-commonTool，如你所见，它是一个小型整合型的工具类，它可以让我们脱离繁琐的开发流程，让开发变得**So easy!**
+commonTool，如你所见，它是一个小型整合型的工具类，带有整合(阿里云,七牛云,本地)OSS上传,短信发送(阿里云,腾讯云,七牛云),文件加工类,，它可以让我们脱离繁琐的开发流程，让开发变得**So easy!**
 
 ### 快速开始
 
@@ -32,10 +32,26 @@ tool:
     local-file-url: 本地外网地址
     path-prefix: 图片文件夹
 ```
-
+### m3u8下载类
+```java
+public class M3u8DownloadUtil {
+    public static void main(String[] args) {
+        M3u8DTO m3u8Download = M3u8DTO.builder()
+                .m3u8Url("下载地址")
+                .fileName("下载完的文件名,不带后缀")
+                .filePath("下载后的地址")
+                .retryCount("重试次数")
+                .threadCount("线程数")
+                .timeout("超时时间").build();
+        M3u8DownloadFactory.M3u8Download instance = M3u8DownloadFactory.getInstance(m3u8Download);
+        instance.runDownloadTask();//开始下载
+        M3u8DownloadFactory.destroy();//销毁实例
+    }
+}
+```
 
 ## 开源推荐
 - `spring-boot-demo` 深度学习并实战 spring boot 的项目: [https://github.com/xkcoding/spring-boot-demo](https://github.com/xkcoding/spring-boot-demo)
 
 ## 在线文档
- <a href = "http://zifeizhou.gitee.io/commontool/">http://zifeizhou.gitee.io/commontool/</a>
+- <a href = "http://zifeizhou.gitee.io/commontool/">http://zifeizhou.gitee.io/commontool/</a>

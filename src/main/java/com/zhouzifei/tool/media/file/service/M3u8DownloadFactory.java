@@ -2,7 +2,9 @@ package com.zhouzifei.tool.media.file.service;
 
 
 import com.zhouzifei.tool.consts.Constants;
+import com.zhouzifei.tool.dto.M3u8DTO;
 import com.zhouzifei.tool.exception.M3u8Exception;
+import com.zhouzifei.tool.media.file.MediaFormat;
 import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -44,20 +46,33 @@ public class M3u8DownloadFactory {
 
     /**
      * 获取m3u8Download实例
-     * @param downloadUrl 要下载的链接
+     * @param m3u8DTO 要下载的实例
      * @return 返回m3u8下载实例
      */
-    public static M3u8Download getInstance(String downloadUrl) {
+    public static M3u8Download getInstance(M3u8DTO m3u8DTO) {
         if (m3u8Download == null) {
             synchronized (M3u8Download.class) {
                 if (m3u8Download == null) {
-                    m3u8Download = new M3u8Download(downloadUrl);
+                    m3u8Download = new M3u8Download(m3u8DTO.getM3u8Url());
+
                 }
             }
         }
         else {
-            m3u8Download.setDownloadUrl(downloadUrl);
+            m3u8Download.setDownloadUrl(m3u8DTO.getM3u8Url());
         }
+        //设置生成目录
+        m3u8Download.setDir(m3u8DTO.getFilePath());
+        //设置视频名称
+        m3u8Download.setFileName(m3u8DTO.getFileName());
+        //设置线程数
+        m3u8Download.setThreadCount(Integer.parseInt(m3u8DTO.getThreadCount()));
+        //设置重试次数
+        m3u8Download.setRetryCount(Integer.parseInt(m3u8DTO.getRetryCount()));
+        //设置连接超时时间（单位：毫秒）
+        m3u8Download.setTimeoutMillisecond(Long.parseLong(m3u8DTO.getTimeout()) * 1000);
+        //设置监听器间隔（单位：毫秒）
+        m3u8Download.setInterval(1000L);
         return m3u8Download;
     }
     /**
@@ -137,7 +152,11 @@ public class M3u8DownloadFactory {
         /**
          * 开始执行任务
          */
-        public void runTask() {
+        public void runDownloadTask() {
+            //校验字段
+            if (!checkFields()) {
+                return;
+            }
             setThreadCount(30);
             tempDir = dir+"temp";
             finishedCount = 0;
@@ -154,7 +173,7 @@ public class M3u8DownloadFactory {
                 while (step == 1) {
                     try {
                         Thread.sleep(1000);
-                        listener.prepare(step, "正在解析视频地址，请稍后...");
+                        log.info("正在解析视频地址，请稍后...");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -196,13 +215,15 @@ public class M3u8DownloadFactory {
 
         private void startListener(ExecutorService fixedThreadPool) {
             new Thread(() -> {
-                listener.start(totalCount);
-
+                log.info("检测到" + totalCount + "个视频片段，开始下载！");
+                log.info("0% (0/" + totalCount + ")");
                 //轮询是否下载成功
                 while (!fixedThreadPool.isTerminated()) {
                     try {
                         Thread.sleep(interval);
-                        listener.process(downloadUrl, finishedCount, totalCount, new BigDecimal(finishedCount).divide(new BigDecimal(totalCount), 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue());
+                        float percent = new BigDecimal(finishedCount).divide(new BigDecimal(totalCount), 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+                        log.info("已下载" + finishedCount + "个\t一共" + totalCount + "个\t已完成" + percent + "%");
+                        log.info(percent + "% (" + finishedCount + "/" + totalCount + ")");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -222,7 +243,7 @@ public class M3u8DownloadFactory {
                     try {
                         BigDecimal bigDecimal = new BigDecimal(downloadBytes.toString());
                         Thread.sleep(1000L);
-                        listener.speed(StringUtils.convertToDownloadSpeed(new BigDecimal(downloadBytes.toString()).subtract(bigDecimal), 2) + "/s");
+                        log.info("下载速度：" + StringUtils.convertToDownloadSpeed(new BigDecimal(downloadBytes.toString()).subtract(bigDecimal), 2) + "/s");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -595,48 +616,99 @@ public class M3u8DownloadFactory {
             }
             this.threadCount = threadCount;
         }
-
+        /**
+         * 校验字段
+         *
+         * @return
+         */
+        public boolean checkFields() {
+            if (StringUtils.isBlank(downloadUrl)) {
+                log.info("请填写视频地址");
+                return false;
+            }
+            if ("m3u8".compareTo(MediaFormat.getMediaFormat(downloadUrl)) != 0) {
+                log.info(downloadUrl + "不是一个完整m3u8链接!");
+                return false;
+            }
+            if (StringUtils.isBlank(dir)) {
+                log.info("请选择或输入保存目录！");
+                return false;
+            }
+            //保存目录设置为以“/”结尾
+            if (!dir.endsWith("/")) {
+                dir = dir + "/";
+            }
+            if (StringUtils.isBlank(fileName)) {
+                log.info("保存文件名不得为空！");
+                return false;
+            }
+            if (StringUtils.isBlank(String.valueOf(threadCount))) {
+                log.info("线程数不得为空！");
+                return false;
+            }
+            if (!StringUtils.isMatch("^[1-9]\\d*$", String.valueOf(threadCount))) {
+                log.info("线程数必须为正整数！");
+                return false;
+            }
+            if (StringUtils.isBlank(String.valueOf(threadCount))) {
+                log.info("重试次数不得为空！");
+                return false;
+            }
+            if (!StringUtils.isMatch("^\\d+$", String.valueOf(threadCount))) {
+                log.info("重试次数必须为大于或等于0的整数！");
+                return false;
+            }
+            if (StringUtils.isBlank(String.valueOf(timeoutMillisecond))) {
+                log.info("连接超时时间不得为空！");
+                return false;
+            }
+            if (!StringUtils.isMatch("^[1-9]\\d*$", String.valueOf(timeoutMillisecond))) {
+                log.info("连接超时时间必须为正整数！");
+                return false;
+            }
+            return true;
+        }
         public int getRetryCount() {
             return retryCount;
         }
 
-        public void setRetryCount(int retryCount) {
+        private void setRetryCount(int retryCount) {
             this.retryCount = retryCount;
         }
 
-        public long getTimeoutMillisecond() {
+        private long getTimeoutMillisecond() {
             return timeoutMillisecond;
         }
 
-        public void setTimeoutMillisecond(long timeoutMillisecond) {
+        private void setTimeoutMillisecond(long timeoutMillisecond) {
             this.timeoutMillisecond = timeoutMillisecond;
         }
 
-        public String getDir() {
+        private String getDir() {
             return dir;
         }
 
-        public void setDir(String dir) {
+        private void setDir(String dir) {
             this.dir = dir;
         }
 
-        public String getFileName() {
+        private String getFileName() {
             return fileName;
         }
 
-        public void setFileName(String fileName) {
+        private void setFileName(String fileName) {
             this.fileName = fileName;
         }
 
-        public int getFinishedCount() {
+        private int getFinishedCount() {
             return finishedCount;
         }
 
-        public void setInterval(long interval) {
+        private void setInterval(long interval) {
             this.interval = interval;
         }
 
-        public void addListener(DownloadListener downloadListener) {
+        private void addListener(DownloadListener downloadListener) {
             this.listener = downloadListener;
         }
 
