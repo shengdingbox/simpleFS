@@ -1,7 +1,6 @@
 package com.zhouzifei.tool.media.video;
 
 
-import com.google.common.collect.Maps;
 import com.zhouzifei.tool.consts.VideoTypeConst;
 import com.zhouzifei.tool.dto.VideoUrlDTO;
 import com.zhouzifei.tool.util.HttpUtils;
@@ -14,12 +13,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
  * @author 周子斐
  * parse
- * @date 2020/7/24
+ * @remark 2020/7/24
  * @Description
  */
 public class VideoSaveUtils {
@@ -69,7 +69,7 @@ public class VideoSaveUtils {
         }
         String filePath = "/" + prefixType + "/" + format + "/";
         String fileName = replace + ".m3u8";
-        HashMap<String, String> hear = Maps.newHashMap();
+        Map<String, String> hear = new HashMap<>();
         hear.put("User-Agent", "Mozilla/4.0 (compatible;MSIE 7.0; Windows NT 5.1; Maxthon;)");
         hear.put("Accept-Encoding", "UTF-8");
         hear.put("referer", domain);

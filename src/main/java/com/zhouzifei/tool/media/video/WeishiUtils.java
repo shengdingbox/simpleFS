@@ -3,7 +3,6 @@ package com.zhouzifei.tool.media.video;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Maps;
 import com.zhouzifei.tool.consts.VideoTypeConst;
 import com.zhouzifei.tool.dto.VideoUrlDTO;
 import com.zhouzifei.tool.exception.ServiceException;
@@ -17,7 +16,7 @@ import java.util.Map;
 
 /**
  * @author 周子斐
- * @date 2021/1/22
+ * @remark 2021/1/22
  * @Description
  */
 @Slf4j
@@ -28,14 +27,14 @@ public class WeishiUtils {
         try {
             String substring = url.substring(url.indexOf("&id="));
             String wsId = substring.replace("&id=", "");
-            Map<String, String> hears = Maps.newHashMap();
-            Map<String, String> body = Maps.newHashMap();
+            Map<String, String> hears = new HashMap<>();
+            Map<String, String> body = new HashMap<>();
             body.put("feedid", wsId);
             body.put("recommendtype", "0");
             body.put("datalvl", "all");
             body.put("_weishi_mapExt", "{}");
             HttpResponse httpResponse = HttpUtils.doPost("https://h5.weishi.qq.com/webapp/json/weishi/WSH5GetPlayPage?t=0.10597698498408281&g_tk="
-                    , "", "POST", hears, new HashMap<>(), body);
+                    , "", hears, new HashMap<>(), body);
             String post = EntityUtils.toString(httpResponse.getEntity());
             JSONObject res = JSON.parseObject(post);
             if (0 == res.getIntValue("ret")) {

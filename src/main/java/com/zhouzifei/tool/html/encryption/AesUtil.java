@@ -15,8 +15,8 @@ import org.apache.commons.codec.binary.Base64;
  * 
  * @author 周子斐 (17600004572@163.com)
  * @version 1.0
- * @website https://www.zhouzifei.com
- * @date 2019年9月12日
+ * @note https://www.zhouzifei.com
+ * @remark 2019年9月12日
  * @since 1.0
  */
 public class AesUtil {

@@ -1,11 +1,6 @@
 {
   "groups": [
     {
-      "name": "com.zhouzifei.tool",
-      "type": "com.zhouzifei.tool.config.properties.JustAuthProperties",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
       "name": "spring.redis",
       "type": "com.zhouzifei.tool.config.properties.RedisProperties",
       "sourceType": "com.zhouzifei.tool.config.properties.RedisProperties"
@@ -22,81 +17,6 @@
     }
   ],
   "properties": [
-    {
-      "name": "com.zhouzifei.tool.alipay",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.baidu",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.coding",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.csdn",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.dingtalk",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.facebook",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.gitee",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.github",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.google",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.oschina",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.qq",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.taobao",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.tencent-cloud",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.wechat",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
-    {
-      "name": "com.zhouzifei.tool.weibo",
-      "type": "me.zhyd.oauth.config.AuthConfig",
-      "sourceType": "com.zhouzifei.tool.config.properties.JustAuthProperties"
-    },
     {
       "name": "spring.redis.database",
       "type": "java.lang.Integer",

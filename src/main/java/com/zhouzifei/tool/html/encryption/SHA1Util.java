@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 
 /**
  * @author 周子斐
- * @date 2020/4/20
+ * @remark 2020/4/20
  * @Description
  */
 public class    SHA1Util {
