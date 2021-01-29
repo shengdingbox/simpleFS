@@ -201,6 +201,7 @@
                         <configuration>
                             <additionalJOption>-Xdoclint:none</additionalJOption>
                             <show>private</show>
+                            <outputDirectory>${user.home}/apidocs</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

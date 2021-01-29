@@ -73,11 +73,9 @@ public class AliyunOssApiClient extends BaseApiClient {
     @Override
     public boolean removeFile(String key) {
         this.check();
-
         if (StringUtils.isEmpty(key)) {
             throw new OssApiException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
-
         try {
             this.ossApi.deleteFile(key, bucketName);
             return true;

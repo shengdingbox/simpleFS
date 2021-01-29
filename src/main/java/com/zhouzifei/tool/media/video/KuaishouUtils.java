@@ -5,6 +5,7 @@ import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.zhouzifei.tool.consts.VideoTypeConst;
 import com.zhouzifei.tool.dto.VideoUrlDTO;
+import com.zhouzifei.tool.media.file.StreamUtil;
 import com.zhouzifei.tool.util.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
@@ -83,7 +84,9 @@ public class KuaishouUtils {
         System.out.println(headerFields);
         conn.connect();
         //往服务器端写内容 也就是发起http请求需要带的参数
-        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        //BufferedReader br = new BufferedReader();
+        String string = StreamUtil.toString(conn.getInputStream(), "UTF-8");
+        System.out.println(string);
         Map<String, List<String>> headerField = conn.getHeaderFields();
         System.out.println(headerFields);
 
