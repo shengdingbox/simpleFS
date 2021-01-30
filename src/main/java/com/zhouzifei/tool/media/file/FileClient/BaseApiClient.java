@@ -11,7 +11,6 @@ import com.zhouzifei.tool.media.file.service.ApiClient;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.UUID;
 
 /**
  * 
@@ -74,6 +73,19 @@ public abstract class BaseApiClient implements ApiClient {
         String fileName = Randoms.alpha(16);
         this.newFileName = pathPrefix + (fileName + this.suffix);
     }
-
+    /**
+     * 将网络图片转存到云存储中
+     *
+     * @param imgUrl  网络图片地址
+     * @param referer 为了预防某些网站做了权限验证，不加referer可能会403
+     */
+    @Override
+    public VirtualFile saveToCloudStorage(String imgUrl, String referer) {
+        try (InputStream is = FileUtil.getInputStreamByUrl(imgUrl, referer)) {
+            return this.uploadImg(is, imgUrl);
+        } catch (Exception e) {
+            throw new GlobalFileException(e.getMessage());
+        }
+    }
     protected abstract void check();
 }

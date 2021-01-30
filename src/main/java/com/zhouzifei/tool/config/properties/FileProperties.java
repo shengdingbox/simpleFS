@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Order(-1)
-public class FileOSSProperties {
+public class FileProperties {
     /**
      * 云存储类型
      */
@@ -28,47 +28,35 @@ public class FileOSSProperties {
      */
     private String pathPrefix;
     /**
-     * 文件服务器域名
+     * 服务器域名
      */
-    private String localFileUrl;
+    private String domainUrl;
     /**
      * 文件存储路径
      */
     private String localFilePath;
     /**
-     * 七牛云Bucket 名称
+     * Bucket 名称
      */
-    private String qiniuBucketName;
+    private String bucketName;
     /**
-     * 七牛云AccessKey
+     * AccessKey
      */
-    private String qiniuAccessKey;
+    private String accessKey;
     /**
-     * 七牛云Secret Key
+     * Secret Key
      */
-    private String qiniuSecretKey;
-    /**
-     * 七牛云cdn域名
-     */
-    private String qiniuBasePath;
-    /**
-     * 阿里云Bucket 名称
-     */
-    private String aliyunBucketName;
+    private String secretKey;
     /**
      * 阿里云地域节点（EndPoint）
      */
-    private String aliyunEndpoint;
+    private String aliEndpoint;
     /**
-     * 阿里云Bucket 域名
+     * 又拍云账号
      */
-    private String aliyunFileUrl;
+    private String operatorName;
     /**
-     * 阿里云Access Key
+     * 又拍云密码
      */
-    private String aliyunAccessKey;
-    /**
-     * 阿里云Access Key Secret
-     */
-    private String aliyunAccessKeySecret;
+    private String operatorPwd;
 }

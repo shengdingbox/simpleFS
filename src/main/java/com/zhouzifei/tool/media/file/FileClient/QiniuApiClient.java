@@ -10,7 +10,7 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
-import com.qiniu.util.StringUtils;
+import com.zhouzifei.tool.util.StringUtils;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.QiniuApiException;
 import com.zhouzifei.tool.media.file.FileUtil;

@@ -1,5 +1,6 @@
 package com.zhouzifei.tool.media.file;
 
+import com.zhouzifei.tool.html.Randoms;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -242,5 +243,29 @@ public class FileUtil{
     }
     public static boolean isFileSeparator(char c) {
         return '/' == c || '\\' == c;
+    }
+
+    public  String download(String imgUrl, String referer, String localPath) {
+
+        String fileName = localPath + File.separator + Randoms.alpha(16) + FileUtil.getSuffixByUrl(imgUrl);
+        try (InputStream is = FileUtil.getInputStreamByUrl(imgUrl, referer);
+             FileOutputStream fos = new FileOutputStream(fileName)) {
+            if (null == is) {
+                return null;
+            }
+            File file = new File(localPath);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            int bytesWritten = 0, byteCount = 0;
+            byte[] b = new byte[1024];
+            while ((byteCount = is.read(b)) != -1) {
+                fos.write(b, bytesWritten, byteCount);
+            }
+        } catch (IOException e) {
+            log.error("Error.", e);
+            return null;
+        }
+        return fileName;
     }
 }

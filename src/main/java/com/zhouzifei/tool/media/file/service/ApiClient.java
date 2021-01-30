@@ -22,4 +22,6 @@ public interface ApiClient {
     VirtualFile uploadImg(InputStream is, String imageUrl);
 
     boolean removeFile(String key);
+
+    VirtualFile saveToCloudStorage(String imgUrl, String referer);
 }

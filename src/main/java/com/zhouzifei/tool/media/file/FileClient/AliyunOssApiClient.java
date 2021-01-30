@@ -6,7 +6,7 @@ import com.zhouzifei.tool.exception.OssApiException;
 import com.zhouzifei.tool.media.file.StreamUtil;
 import com.zhouzifei.tool.media.file.FileUtil;
 import org.springframework.util.DigestUtils;
-import org.springframework.util.StringUtils;
+import com.zhouzifei.tool.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

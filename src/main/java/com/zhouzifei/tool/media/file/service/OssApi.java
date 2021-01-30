@@ -36,7 +36,7 @@ import com.aliyun.oss.model.StorageClass;
  */
 public class OssApi {
 
-    private OSSClient client;
+    private final OSSClient client;
 
     public OssApi(OSSClient client) {
         this.client = client;

@@ -1,13 +1,11 @@
 package com.zhouzifei.tool.media.file.service;
 
 
-import com.zhouzifei.tool.config.properties.FileOSSProperties;
+import com.zhouzifei.tool.config.properties.FileProperties;
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.exception.GlobalFileException;
 import com.zhouzifei.tool.exception.ServiceException;
-import com.zhouzifei.tool.media.file.FileClient.AliyunOssApiClient;
-import com.zhouzifei.tool.media.file.FileClient.LocalApiClient;
-import com.zhouzifei.tool.media.file.FileClient.QiniuApiClient;
+import com.zhouzifei.tool.media.file.FileClient.*;
 
 
 /**
@@ -17,33 +15,47 @@ import com.zhouzifei.tool.media.file.FileClient.QiniuApiClient;
  * @since 1.0
  */
 public class BaseFileUploader {
-
-    protected ApiClient getApiClient(String pathPrefix, FileOSSProperties fileOSSProperties) {
-        ApiClient res = null;
-        String storageType = fileOSSProperties.getStorageTypeConst().getStorageType();
+    public ApiClient getApiClient(FileProperties fileProperties) {
+        String storageType = fileProperties.getStorageTypeConst().getStorageType();
         if(storageType.equals(StorageTypeConst.LOCAL.getStorageType())) {
-            String localFileUrl = fileOSSProperties.getLocalFileUrl();
-            String localFilePath = fileOSSProperties.getLocalFilePath();
-            res = new LocalApiClient().init(localFileUrl, localFilePath, pathPrefix);
+            String domainUrl = fileProperties.getDomainUrl();
+            String localFilePath = fileProperties.getLocalFilePath();
+            return new LocalApiClient().init(domainUrl, localFilePath, fileProperties.getPathPrefix());
         }else if(storageType.equals(StorageTypeConst.QINIUYUN.getStorageType())){
-            String accessKey = fileOSSProperties.getQiniuAccessKey();
-            String secretKey = fileOSSProperties.getQiniuSecretKey();
-            String qiniuBucketName = fileOSSProperties.getQiniuBucketName();
-            String baseUrl = fileOSSProperties.getQiniuBasePath();
-            res = new QiniuApiClient().init(accessKey, secretKey, qiniuBucketName, baseUrl, pathPrefix);
+            String accessKey = fileProperties.getAccessKey();
+            String secretKey = fileProperties.getSecretKey();
+            String bucketName = fileProperties.getBucketName();
+            String baseUrl = fileProperties.getDomainUrl();
+            return new QiniuApiClient().init(accessKey, secretKey, bucketName, baseUrl, fileProperties.getPathPrefix());
         }else if(storageType.equals(StorageTypeConst.ALIYUN.getStorageType())){
-            String endpoint = fileOSSProperties.getAliyunEndpoint();
-            String accessKeyId = fileOSSProperties.getAliyunAccessKey();
-            String accessKeySecret = fileOSSProperties.getAliyunAccessKeySecret();
-            String url = fileOSSProperties.getAliyunFileUrl();
-            String aliYunBucketName = fileOSSProperties.getAliyunBucketName();
-            res = new AliyunOssApiClient().init(endpoint, accessKeyId, accessKeySecret, url, aliYunBucketName, pathPrefix);
+            String endpoint = fileProperties.getAliEndpoint();
+            String accessKeyId = fileProperties.getAccessKey();
+            String accessKeySecret = fileProperties.getSecretKey();
+            String url = fileProperties.getDomainUrl();
+            String bucketName = fileProperties.getBucketName();
+            return new AliyunOssApiClient().init(endpoint, accessKeyId, accessKeySecret, url, bucketName, fileProperties.getPathPrefix());
+        }else if(storageType.equals(StorageTypeConst.YOUPAIYUN.getStorageType())) {
+            String operatorName = fileProperties.getOperatorName();
+            String operatorPwd = fileProperties.getOperatorPwd();
+            String url = fileProperties.getDomainUrl();
+            String bucketName = fileProperties.getBucketName();
+            return new UpaiyunOssApiClient().init(operatorName, operatorPwd,bucketName,url, fileProperties.getPathPrefix());
+        }else if(storageType.equals(StorageTypeConst.TENGXUNYUN.getStorageType())) {
+            String accessKeyId = fileProperties.getAccessKey();
+            String accessKeySecret = fileProperties.getSecretKey();
+            String endpoint = fileProperties.getAliEndpoint();
+            String url = fileProperties.getDomainUrl();
+            String bucketName = fileProperties.getBucketName();
+            return new QCloudOssApiClient().init(accessKeyId, accessKeySecret,endpoint,bucketName,url, fileProperties.getPathPrefix());
+        }else if(storageType.equals(StorageTypeConst.HUAWEIYUN.getStorageType())) {
+            String accessKeyId = fileProperties.getAccessKey();
+            String accessKeySecret = fileProperties.getSecretKey();
+            String endpoint = fileProperties.getAliEndpoint();
+            String url = fileProperties.getDomainUrl();
+            String bucketName = fileProperties.getBucketName();
+            return new HuaweiCloudOssApiClient().init(accessKeyId, accessKeySecret,endpoint,bucketName,url, fileProperties.getPathPrefix());
         }else{
             throw new ServiceException("[文件服务]请选择文件存储类型！");
         }
-        if (null == res) {
-            throw new GlobalFileException("[文件服务]当前系统暂未配置文件服务相关的内容！");
-        }
-        return res;
     }
 }

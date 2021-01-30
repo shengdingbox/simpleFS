@@ -16,7 +16,8 @@ public enum StorageTypeConst {
     QINIUYUN("qiniu"),
     LOCAL("local"),
     TENGXUNYUN("tengxunyun"),
-    YOUPAIXUN("youpaiyun"),
+    YOUPAIYUN("youpaiyun"),
+    HUAWEIYUN("huaweiyun"),
     ;
 
     private String storageType;

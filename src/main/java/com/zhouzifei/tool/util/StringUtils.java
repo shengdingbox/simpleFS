@@ -88,4 +88,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     public static boolean isMatch(Pattern pattern, String content) {
         return (content != null && pattern != null) && pattern.matcher(content).matches();
     }
+    public static boolean isNullOrEmpty(String s) {
+        return isBlank(s) || isEmpty(s);
+    }
 }

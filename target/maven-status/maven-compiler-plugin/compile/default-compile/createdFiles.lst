@@ -1,3 +1,4 @@
+com/zhouzifei/tool/media/file/service/UpaiManager$1.class
 com/zhouzifei/tool/media/file/FileClient/AliyunOssApiClient.class
 com/zhouzifei/tool/util/CacheKeyUtil.class
 com/zhouzifei/tool/holder/RequestHolder.class
@@ -5,9 +6,9 @@ com/zhouzifei/tool/util/FreeMarkerUtil.class
 com/zhouzifei/tool/media/file/service/M3u8DownloadFactory$1.class
 com/zhouzifei/tool/util/RestClientUtil.class
 com/zhouzifei/tool/media/file/service/DownloadListener.class
-com/zhouzifei/tool/media/file/FileUploadUtil.class
 com/zhouzifei/tool/config/properties/SendSmsProperties.class
 com/zhouzifei/tool/util/ResultUtil.class
+com/zhouzifei/tool/media/file/FileClient/HuaweiCloudOssApiClient.class
 com/zhouzifei/tool/util/RequestUtil.class
 com/zhouzifei/tool/html/encryption/SHA1Util.class
 com/zhouzifei/tool/consts/Constants.class
@@ -18,9 +19,11 @@ com/zhouzifei/tool/html/XssKillerUtil.class
 com/zhouzifei/tool/util/WebLogAspect.class
 com/zhouzifei/tool/aspect/BusinessLogAspect.class
 com/zhouzifei/tool/media/video/ParseUtils.class
+com/zhouzifei/tool/media/file/service/UpaiManager.class
 com/zhouzifei/tool/html/Quant.class
 com/zhouzifei/tool/runner/BlogApplicationRunner.class
 com/zhouzifei/tool/consts/StorageTypeConst.class
+com/zhouzifei/tool/html/encryption/Base64Coder.class
 com/zhouzifei/tool/html/IpUtil.class
 com/zhouzifei/tool/config/AsyncConfig$ContextAwarePoolExecutor.class
 com/zhouzifei/tool/exception/M3u8Exception.class
@@ -35,6 +38,8 @@ com/zhouzifei/tool/annotation/BusinessLog.class
 com/zhouzifei/tool/entity/RefererEntity.class
 com/zhouzifei/tool/html/encryption/PasswordUtil.class
 com/zhouzifei/tool/api/ErrorPagesController.class
+com/zhouzifei/tool/media/file/FileClient/QCloudOssApiClient.class
+com/zhouzifei/tool/config/properties/FileProperties.class
 com/zhouzifei/tool/config/ErrorPagesConfig.class
 com/zhouzifei/tool/html/seo/HtmlUtil.class
 com/zhouzifei/tool/util/BeanConvertUtil$CustomBeanUtils.class
@@ -44,14 +49,16 @@ com/zhouzifei/tool/media/file/service/M3u8DownloadFactory$M3u8Download.class
 META-INF/spring-configuration-metadata.json
 com/zhouzifei/tool/util/RedisUtils.class
 com/zhouzifei/tool/config/AsyncConfig$ContextAwareCallable.class
+com/zhouzifei/tool/util/UpYunUtils.class
 com/zhouzifei/tool/exception/ArticleException.class
 com/zhouzifei/tool/media/file/FtpUtil.class
 com/zhouzifei/tool/dto/M3u8DTO$M3u8DTOBuilder.class
 com/zhouzifei/tool/exception/LocalApiException.class
 com/zhouzifei/tool/dto/PageResult.class
 com/zhouzifei/tool/config/AsyncConfig$SpringAsyncExceptionHandler.class
+com/zhouzifei/tool/media/file/service/UpaiManager$PARAMS.class
 com/zhouzifei/tool/media/file/FileClient/QiniuApiClient.class
-com/zhouzifei/tool/config/properties/FileOSSProperties.class
+com/zhouzifei/tool/config/autoconfiguratiom/FileAutoConfiguration.class
 com/zhouzifei/tool/exception/LinkException.class
 com/zhouzifei/tool/util/BeanConvertUtil.class
 com/zhouzifei/tool/config/TomcatConfig.class
@@ -74,7 +81,6 @@ com/zhouzifei/tool/html/verification/SpecCaptcha.class
 com/zhouzifei/tool/consts/ResponseStatus.class
 com/zhouzifei/tool/media/file/FileClient/BaseApiClient.class
 com/zhouzifei/tool/dto/VideoUrlDTO.class
-com/zhouzifei/tool/media/file/M3u8DownloadUtil.class
 com/zhouzifei/tool/util/StringUtils.class
 com/zhouzifei/tool/html/WebSpiderUtils.class
 com/zhouzifei/tool/exception/ServiceException.class
@@ -90,7 +96,6 @@ com/zhouzifei/tool/exception/OssApiException.class
 com/zhouzifei/tool/util/HttpData.class
 com/zhouzifei/tool/consts/HttpConsts.class
 com/zhouzifei/tool/media/message/SmsUtil.class
-com/zhouzifei/tool/config/autoconfiguratiom/FileOssAutoConfiguration.class
 com/zhouzifei/tool/aspect/RedisCacheAspect.class
 com/zhouzifei/tool/consts/CommonConst.class
 com/zhouzifei/tool/html/verification/GifCaptcha.class
@@ -113,4 +118,5 @@ com/zhouzifei/tool/consts/ApiUrlConst.class
 com/zhouzifei/tool/html/encryption/RegexUtils.class
 com/zhouzifei/tool/exception/GlobalFileException.class
 com/zhouzifei/tool/entity/ObjectsRequestEntity.class
+com/zhouzifei/tool/media/file/FileClient/UpaiyunOssApiClient.class
 com/zhouzifei/tool/media/video/DouyinUtils.class

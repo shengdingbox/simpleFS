@@ -1,9 +1,11 @@
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/util/BeanConvertUtil.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/ErrorPagesConfig.java
+/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/service/UpaiManager.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/exception/LinkException.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/video/PPXUtil.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/util/CollectUtils.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/html/XssKillerUtil.java
+/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/properties/FileProperties.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/properties/SendSmsProperties.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/holder/SpringContextHolder.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/FileUtil.java
@@ -11,6 +13,7 @@
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/util/StringUtils.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/service/DownloadListener.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/MediaFormat.java
+/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/FileClient/UpaiyunOssApiClient.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/exception/CommentException.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/video/WeishiUtils.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/html/encryption/AesUtil.java
@@ -24,13 +27,13 @@
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/aspect/BusinessLogAspect.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/FileClient/BaseApiClient.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/message/SmsUtil.java
-/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/properties/FileOSSProperties.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/video/DouyinUtils.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/consts/DateConst.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/SchedulingConfig.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/service/FileUploader.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/html/seo/HtmlUtil.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/entity/CorsRoleEntity.java
+/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/autoconfiguratiom/FileAutoConfiguration.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/consts/CachePrefixEnum.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/consts/ResponseStatus.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/util/HttpUtils.java
@@ -55,8 +58,8 @@
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/html/verification/Captcha.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/StreamUtil.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/consts/VideoTypeConst.java
-/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/FileUploadUtil.java
-/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/autoconfiguratiom/FileOssAutoConfiguration.java
+/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/FileClient/QCloudOssApiClient.java
+/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/html/encryption/Base64Coder.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/consts/CommonConst.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/util/AspectUtil.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/FileClient/LocalApiClient.java
@@ -68,7 +71,6 @@
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/util/RequestUtil.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/exception/GlobalFileException.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/html/verification/SpecCaptcha.java
-/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/M3u8DownloadUtil.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/video/KuaishouUtils.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/html/encryption/SHA1Util.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/html/LinksUtil.java
@@ -77,6 +79,7 @@
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/exception/ArticleException.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/consts/HttpConsts.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/exception/FileException.java
+/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/FileClient/HuaweiCloudOssApiClient.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/util/WebLog.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/html/verification/GifCaptcha.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/holder/RequestHolder.java
@@ -93,6 +96,7 @@
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/util/RedisUtils.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/properties/RedisProperties.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/api/ErrorPagesController.java
+/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/util/UpYunUtils.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/ValidatorConfig.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/TomcatConfig.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/dto/M3u8DTO.java
