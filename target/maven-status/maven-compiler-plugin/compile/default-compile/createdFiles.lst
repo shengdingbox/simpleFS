@@ -13,7 +13,6 @@ com/zhouzifei/tool/util/RequestUtil.class
 com/zhouzifei/tool/html/encryption/SHA1Util.class
 com/zhouzifei/tool/consts/Constants.class
 com/zhouzifei/tool/media/file/service/OssApi.class
-com/zhouzifei/tool/media/file/service/FileUploader.class
 com/zhouzifei/tool/config/properties/RedisProperties.class
 com/zhouzifei/tool/html/XssKillerUtil.class
 com/zhouzifei/tool/util/WebLogAspect.class
@@ -74,6 +73,7 @@ com/zhouzifei/tool/media/file/FtpUtil$FtpConfig.class
 com/zhouzifei/tool/config/autoconfiguratiom/SmsAutoConfiguration.class
 com/zhouzifei/tool/exception/CommentException.class
 com/zhouzifei/tool/media/file/StreamUtil.class
+com/zhouzifei/tool/media/file/FileClient/FastDfsOssApiClient.class
 com/zhouzifei/tool/media/video/WeishiUtils.class
 com/zhouzifei/tool/html/verification/Captcha.class
 com/zhouzifei/tool/media/file/service/ApiClient.class

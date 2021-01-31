@@ -18,6 +18,7 @@
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/video/WeishiUtils.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/html/encryption/AesUtil.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/AsyncConfig.java
+/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/FileClient/FastDfsOssApiClient.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/util/RestClientUtil.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/html/Encoder.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/exception/QiniuApiException.java
@@ -30,7 +31,6 @@
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/video/DouyinUtils.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/consts/DateConst.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/SchedulingConfig.java
-/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/service/FileUploader.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/html/seo/HtmlUtil.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/entity/CorsRoleEntity.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/autoconfiguratiom/FileAutoConfiguration.java

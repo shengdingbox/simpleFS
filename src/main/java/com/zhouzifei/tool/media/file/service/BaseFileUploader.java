@@ -3,7 +3,6 @@ package com.zhouzifei.tool.media.file.service;
 
 import com.zhouzifei.tool.config.properties.FileProperties;
 import com.zhouzifei.tool.consts.StorageTypeConst;
-import com.zhouzifei.tool.exception.GlobalFileException;
 import com.zhouzifei.tool.exception.ServiceException;
 import com.zhouzifei.tool.media.file.FileClient.*;
 
@@ -28,7 +27,7 @@ public class BaseFileUploader {
             String baseUrl = fileProperties.getDomainUrl();
             return new QiniuApiClient().init(accessKey, secretKey, bucketName, baseUrl, fileProperties.getPathPrefix());
         }else if(storageType.equals(StorageTypeConst.ALIYUN.getStorageType())){
-            String endpoint = fileProperties.getAliEndpoint();
+            String endpoint = fileProperties.getEndpoint();
             String accessKeyId = fileProperties.getAccessKey();
             String accessKeySecret = fileProperties.getSecretKey();
             String url = fileProperties.getDomainUrl();
@@ -43,14 +42,14 @@ public class BaseFileUploader {
         }else if(storageType.equals(StorageTypeConst.TENGXUNYUN.getStorageType())) {
             String accessKeyId = fileProperties.getAccessKey();
             String accessKeySecret = fileProperties.getSecretKey();
-            String endpoint = fileProperties.getAliEndpoint();
+            String endpoint = fileProperties.getEndpoint();
             String url = fileProperties.getDomainUrl();
             String bucketName = fileProperties.getBucketName();
             return new QCloudOssApiClient().init(accessKeyId, accessKeySecret,endpoint,bucketName,url, fileProperties.getPathPrefix());
         }else if(storageType.equals(StorageTypeConst.HUAWEIYUN.getStorageType())) {
             String accessKeyId = fileProperties.getAccessKey();
             String accessKeySecret = fileProperties.getSecretKey();
-            String endpoint = fileProperties.getAliEndpoint();
+            String endpoint = fileProperties.getEndpoint();
             String url = fileProperties.getDomainUrl();
             String bucketName = fileProperties.getBucketName();
             return new HuaweiCloudOssApiClient().init(accessKeyId, accessKeySecret,endpoint,bucketName,url, fileProperties.getPathPrefix());

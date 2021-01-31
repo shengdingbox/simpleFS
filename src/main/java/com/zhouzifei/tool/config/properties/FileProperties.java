@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @Description
  */
 @Component
-@ConfigurationProperties(prefix = "tool.oss")
+@ConfigurationProperties(prefix = "tool.file")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Order(-1)
@@ -50,7 +50,7 @@ public class FileProperties {
     /**
      * 阿里云地域节点（EndPoint）
      */
-    private String aliEndpoint;
+    private String endpoint;
     /**
      * 又拍云账号
      */
