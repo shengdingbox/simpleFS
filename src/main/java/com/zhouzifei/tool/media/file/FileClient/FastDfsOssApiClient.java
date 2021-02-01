@@ -43,15 +43,7 @@ public class FastDfsOssApiClient extends BaseApiClient {
     }
 
     @Override
-    protected void check() {
-        if (StringUtils.isNullOrEmpty(this.operatorName) || StringUtils.isNullOrEmpty(this.operatorPwd) || StringUtils.isNullOrEmpty(this.bucket)) {
-            throw new QiniuApiException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
-        }
-    }
-
-    @Override
-    public VirtualFile uploadImg(InputStream is, String imageUrl) {
-        this.check();
+    public VirtualFile uploadFile(InputStream is, String imageUrl) {
         UpaiManager upaiManager = new UpaiManager(bucket, operatorName, operatorPwd);
         // 切换 API 接口的域名接入点，默认为自动识别接入点
         upaiManager.setApiDomain(UpaiManager.ED_AUTO);
@@ -77,7 +69,6 @@ public class FastDfsOssApiClient extends BaseApiClient {
 
     @Override
     public boolean removeFile(String key) {
-        this.check();
         if (StringUtils.isNullOrEmpty(key)) {
             throw new OssApiException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
@@ -89,5 +80,10 @@ public class FastDfsOssApiClient extends BaseApiClient {
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件删除失败：" + e.getMessage());
         }
+    }
+
+    @Override
+    public InputStream downloadFileStream(String key) {
+        return null;
     }
 }

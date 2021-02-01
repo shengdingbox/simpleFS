@@ -5,9 +5,7 @@ import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
 import com.qcloud.cos.auth.COSCredentials;
-import com.qcloud.cos.model.ObjectMetadata;
-import com.qcloud.cos.model.PutObjectRequest;
-import com.qcloud.cos.model.PutObjectResult;
+import com.qcloud.cos.model.*;
 import com.qcloud.cos.region.Region;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.OssApiException;
@@ -30,41 +28,31 @@ import java.util.Map;
 public class QCloudOssApiClient extends BaseApiClient {
 
     private static final String DEFAULT_PREFIX = "Qcloud/";
-    private String accessKey;
-    private String secretKey;
+    private COSClient cosClient;
     private String bucket;
     private String path;
     private String pathPrefix;
-    private String endpoint;
 
     public QCloudOssApiClient() {
         super("腾讯云");
     }
 
     public QCloudOssApiClient init(String accessKey, String secretKey,String endpoint, String bucketName, String baseUrl, String uploadType) {
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
+        if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucket)) {
+            throw new QiniuApiException("[" + this.storageType + "]尚未配置腾讯云，文件上传功能暂时不可用！");
+        }
+        COSCredentials cred = new BasicCOSCredentials(accessKey, secretKey);
+        Region region = new Region(endpoint);
+        ClientConfig clientConfig = new ClientConfig(region);
+        cosClient = new COSClient(cred, clientConfig);
         this.bucket = bucketName;
         this.path = baseUrl;
-        this.endpoint = endpoint;
         this.pathPrefix = StringUtils.isNullOrEmpty(uploadType) ? DEFAULT_PREFIX : uploadType.endsWith("/") ? uploadType : uploadType + "/";
         return this;
     }
 
     @Override
-    protected void check() {
-        if (StringUtils.isNullOrEmpty(this.accessKey) || StringUtils.isNullOrEmpty(this.secretKey) || StringUtils.isNullOrEmpty(this.bucket)) {
-            throw new QiniuApiException("[" + this.storageType + "]尚未配置腾讯云，文件上传功能暂时不可用！");
-        }
-    }
-
-    @Override
-    public VirtualFile uploadImg(InputStream is, String imageUrl) {
-        this.check();
-        COSCredentials cred = new BasicCOSCredentials(accessKey, secretKey);
-        Region region = new Region(endpoint);
-        ClientConfig clientConfig = new ClientConfig(region);
-        COSClient cosClient = new COSClient(cred, clientConfig);
+    public VirtualFile uploadFile(InputStream is, String imageUrl) {
         Date startTime = new Date();
         String key = FileUtil.generateTempFileName(imageUrl);
         this.createNewFileName(key, this.pathPrefix);
@@ -83,16 +71,18 @@ public class QCloudOssApiClient extends BaseApiClient {
 
     @Override
     public boolean removeFile(String key) {
-        this.check();
         if (StringUtils.isNullOrEmpty(key)) {
             throw new OssApiException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
-        COSCredentials cred = new BasicCOSCredentials(accessKey, secretKey);
-        Region region = new Region(endpoint);
-        ClientConfig clientConfig = new ClientConfig(region);
-        COSClient cosClient = new COSClient(cred, clientConfig);
         // 删除文件
         cosClient.deleteObject(bucket, key);
         return true;
+    }
+
+    @Override
+    public InputStream downloadFileStream(String key) {
+        GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, key);
+        COSObject object = cosClient.getObject(getObjectRequest);
+        return object.getObjectContent();
     }
 }

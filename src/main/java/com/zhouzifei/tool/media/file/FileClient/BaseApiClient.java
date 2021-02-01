@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 
 /**
- * 
  * @author 周子斐 (17600004572@163.com)
  * @version 1.0
  * @remark 2019年7月16日
@@ -30,36 +29,30 @@ public abstract class BaseApiClient implements ApiClient {
     }
 
     @Override
-    public VirtualFile uploadImg(MultipartFile file) {
-        this.check();
+    public VirtualFile uploadFile(MultipartFile file) {
         if (file == null) {
             throw new OssApiException("[" + this.storageType + "]文件上传失败：文件不可为空");
         }
         try {
-            VirtualFile res = this.uploadImg(file.getInputStream(), file.getOriginalFilename());
+            VirtualFile res = this.uploadFile(file.getInputStream(), file.getOriginalFilename());
             VirtualFile imageInfo = ImageUtil.getInfo(file);
             return res.setSize(imageInfo.getSize())
-                    .setOriginalFileName(file.getOriginalFilename())
-                    .setWidth(imageInfo.getWidth())
-                    .setHeight(imageInfo.getHeight());
+                    .setOriginalFileName(file.getOriginalFilename());
         } catch (IOException e) {
             throw new GlobalFileException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
     }
 
     @Override
-    public VirtualFile uploadImg(File file) {
-        this.check();
+    public VirtualFile uploadFile(File file) {
         if (file == null) {
             throw new QiniuApiException("[" + this.storageType + "]文件上传失败：文件不可为空");
         }
-        try(InputStream is = new BufferedInputStream(new FileInputStream(file))){
-            VirtualFile res = this.uploadImg(is, "temp" + FileUtil.getSuffix(file));
+        try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+            VirtualFile res = this.uploadFile(is, "temp" + FileUtil.getSuffix(file));
             VirtualFile imageInfo = ImageUtil.getInfo(file);
             return res.setSize(imageInfo.getSize())
-                    .setOriginalFileName(file.getName())
-                    .setWidth(imageInfo.getWidth())
-                    .setHeight(imageInfo.getHeight());
+                    .setOriginalFileName(file.getName());
         } catch (IOException e) {
             throw new GlobalFileException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
@@ -67,12 +60,10 @@ public abstract class BaseApiClient implements ApiClient {
 
     void createNewFileName(String key, String pathPrefix) {
         this.suffix = FileUtil.getSuffix(key);
-//        if (!FileUtil.isPicture(this.suffix)) {
-//            throw new GlobalFileException("[" + this.storageType + "] 非法的图片文件[" + key + "]！目前只支持以下图片格式：[jpg, jpeg, png, gif, bmp]");
-//        }
         String fileName = Randoms.alpha(16);
         this.newFileName = pathPrefix + (fileName + this.suffix);
     }
+
     /**
      * 将网络图片转存到云存储中
      *
@@ -82,10 +73,21 @@ public abstract class BaseApiClient implements ApiClient {
     @Override
     public VirtualFile saveToCloudStorage(String imgUrl, String referer) {
         try (InputStream is = FileUtil.getInputStreamByUrl(imgUrl, referer)) {
-            return this.uploadImg(is, imgUrl);
+            return this.uploadFile(is, imgUrl);
         } catch (Exception e) {
             throw new GlobalFileException(e.getMessage());
         }
     }
-    protected abstract void check();
+
+    //protected abstract void check();
+
+    @Override
+    public void downloadFile(String key, String localFile) {
+        InputStream content = this.downloadFileStream(key);
+        String saveFile = localFile + key;
+        FileUtil.mkdirs(saveFile);
+        FileUtil.down(content,saveFile);
+    }
+
+    public abstract InputStream downloadFileStream(String key);
 }

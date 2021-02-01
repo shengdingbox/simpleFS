@@ -2,6 +2,8 @@ package com.zhouzifei.tool.media.file.FileClient;
 
 
 import com.obs.services.ObsClient;
+import com.obs.services.model.DeleteObjectResult;
+import com.obs.services.model.ObsObject;
 import com.obs.services.model.PutObjectResult;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.OssApiException;
@@ -9,6 +11,8 @@ import com.zhouzifei.tool.exception.QiniuApiException;
 import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
@@ -20,62 +24,67 @@ import java.util.Date;
 public class HuaweiCloudOssApiClient extends BaseApiClient {
 
     private static final String DEFAULT_PREFIX = "huaweiCloud/";
-    private String accessKey;
-    private String secretKey;
+    private ObsClient obsClient;
     private String bucket;
     private String path;
     private String pathPrefix;
-    private String endpoint;
 
     public HuaweiCloudOssApiClient() {
         super("华为云");
     }
 
     public HuaweiCloudOssApiClient init(String accessKey, String secretKey, String endpoint, String bucketName, String baseUrl, String uploadType) {
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
+        if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(endpoint)) {
+            throw new QiniuApiException("[" + this.storageType + "]尚未配置华为云，文件上传功能暂时不可用！");
+        }
+        // 创建ObsClient实例
+        obsClient = new ObsClient(accessKey, secretKey, endpoint);
         this.bucket = bucketName;
         this.path = baseUrl;
-        this.endpoint = endpoint;
         this.pathPrefix = StringUtils.isNullOrEmpty(uploadType) ? DEFAULT_PREFIX : uploadType.endsWith("/") ? uploadType : uploadType + "/";
         return this;
     }
 
     @Override
-    protected void check() {
-        if (StringUtils.isNullOrEmpty(this.accessKey) || StringUtils.isNullOrEmpty(this.secretKey) || StringUtils.isNullOrEmpty(this.bucket)) {
-            throw new QiniuApiException("[" + this.storageType + "]尚未配置华为云，文件上传功能暂时不可用！");
+    public VirtualFile uploadFile(InputStream is, String imageUrl) {
+        try {
+            Date startTime = new Date();
+            String key = FileUtil.generateTempFileName(imageUrl);
+            this.createNewFileName(key, this.pathPrefix);
+            PutObjectResult putObjectResult = obsClient.putObject(bucket, this.newFileName, is);
+            return new VirtualFile()
+                    .setOriginalFileName(key)
+                    .setSuffix(this.suffix)
+                    .setUploadStartTime(startTime)
+                    .setUploadEndTime(new Date())
+                    .setFilePath(this.newFileName)
+                    .setFileHash(putObjectResult.getObjectUrl())
+                    .setFullFilePath(this.path + this.newFileName);
+        } finally {
+            try {
+                obsClient.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-    }
 
-    @Override
-    public VirtualFile uploadImg(InputStream is, String imageUrl) {
-        this.check();
-        // 创建ObsClient实例
-        ObsClient obsClient = new ObsClient(accessKey, secretKey, endpoint);
-        Date startTime = new Date();
-        String key = FileUtil.generateTempFileName(imageUrl);
-        this.createNewFileName(key, this.pathPrefix);
-        PutObjectResult putObjectResult = obsClient.putObject(bucket, this.newFileName, is);
-        return new VirtualFile()
-                .setOriginalFileName(key)
-                .setSuffix(this.suffix)
-                .setUploadStartTime(startTime)
-                .setUploadEndTime(new Date())
-                .setFilePath(this.newFileName)
-                .setFileHash(putObjectResult.getObjectUrl())
-                .setFullFilePath(this.path + this.newFileName);
     }
 
     @Override
     public boolean removeFile(String key) {
-        this.check();
         if (StringUtils.isNullOrEmpty(key)) {
             throw new OssApiException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
-        ObsClient obsClient = new ObsClient(accessKey, secretKey, endpoint);
         // 删除文件
-        obsClient.deleteObject(bucket, key);
-        return true;
+        DeleteObjectResult deleteObjectResult = obsClient.deleteObject(bucket, key);
+        return deleteObjectResult.isDeleteMarker();
+    }
+
+    @Override
+    public InputStream downloadFileStream(String key) {
+        ObsObject obsObject = obsClient.getObject(bucket, key);
+        System.out.println("Object content:");
+        return obsObject.getObjectContent();
+
     }
 }

@@ -24,14 +24,6 @@ public class VirtualFile {
      */
     public String suffix;
     /**
-     * 图片文件的宽
-     */
-    public Integer width;
-    /**
-     * 图片文件的高
-     */
-    public Integer height;
-    /**
      * 文件hash
      */
     private String fileHash;
@@ -102,16 +94,6 @@ public class VirtualFile {
 
     public VirtualFile setSuffix(String suffix) {
         this.suffix = suffix;
-        return this;
-    }
-
-    public VirtualFile setWidth(int width) {
-        this.width = width;
-        return this;
-    }
-
-    public VirtualFile setHeight(int height) {
-        this.height = height;
         return this;
     }
 }

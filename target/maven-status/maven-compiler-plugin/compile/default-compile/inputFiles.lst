@@ -78,6 +78,7 @@
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/config/autoconfiguratiom/SmsAutoConfiguration.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/exception/ArticleException.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/consts/HttpConsts.java
+/Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/dto/HttpResponses.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/exception/FileException.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/media/file/FileClient/HuaweiCloudOssApiClient.java
 /Users/Dabao/develop/workspace/private/commonTool/src/main/java/com/zhouzifei/tool/util/WebLog.java

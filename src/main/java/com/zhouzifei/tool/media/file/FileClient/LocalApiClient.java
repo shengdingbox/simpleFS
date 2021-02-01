@@ -33,17 +33,17 @@ public class LocalApiClient extends BaseApiClient {
     }
 
     public LocalApiClient init(String url, String rootPath, String uploadType) {
+        if (StringUtils.isEmpty(url) || StringUtils.isEmpty(rootPath)) {
+            throw new LocalApiException("[" + this.storageType + "]尚未配置Nginx文件服务器，文件上传功能暂时不可用！");
+        }
         this.url = url;
         this.rootPath = rootPath;
-
         this.pathPrefix = StringUtils.isEmpty(uploadType) ? DEFAULT_PREFIX : uploadType.endsWith("/") ? uploadType : uploadType + "/";
         return this;
     }
 
     @Override
-    public VirtualFile uploadImg(InputStream is, String imageUrl) {
-        this.check();
-
+    public VirtualFile uploadFile(InputStream is, String imageUrl) {
         String key = FileUtil.generateTempFileName(imageUrl);
         this.createNewFileName(key, this.pathPrefix);
         Date startTime = new Date();
@@ -77,7 +77,6 @@ public class LocalApiClient extends BaseApiClient {
 
     @Override
     public boolean removeFile(String key) {
-        this.check();
         if (StringUtils.isEmpty(key)) {
             throw new LocalApiException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
@@ -91,11 +90,8 @@ public class LocalApiClient extends BaseApiClient {
             throw new LocalApiException("[" + this.storageType + "]删除文件失败：" + e.getMessage());
         }
     }
-
     @Override
-    public void check() {
-        if (StringUtils.isEmpty(url) || StringUtils.isEmpty(rootPath)) {
-            throw new LocalApiException("[" + this.storageType + "]尚未配置Nginx文件服务器，文件上传功能暂时不可用！");
-        }
+    public InputStream downloadFileStream(String key) {
+        return FileUtil.getInputStreamByUrl(url + key, "");
     }
 }

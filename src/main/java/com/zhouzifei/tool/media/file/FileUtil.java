@@ -1,6 +1,8 @@
 package com.zhouzifei.tool.media.file;
 
+import com.zhouzifei.tool.exception.ServiceException;
 import com.zhouzifei.tool.html.Randoms;
+import jdk.nashorn.internal.ir.IdentNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -267,5 +269,35 @@ public class FileUtil{
             return null;
         }
         return fileName;
+    }
+    //下载视频
+    public static void down(InputStream ins, String saveFile) {
+        try (InputStream inputStream = StreamUtil.clone(ins)){
+            int length = inputStream.available();
+            FileOutputStream fs = new FileOutputStream(saveFile);
+            byte[] buffer = new byte[1024];
+            int i = 0, j = 0;
+            int byteRead;
+            while ((byteRead = inputStream.read(buffer)) != -1) {
+                i++;
+                fs.write(buffer, 0, byteRead);
+                if (i % 500 == 0) {
+                    j++;
+                    File file2 = new File(saveFile);
+                    //控制输出小数点后的位数
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    float f = (file2.length() / (float) length) * 100;
+                    System.out.print("已下载：" + df.format(f) + "%\t\t");
+                    if (j % 5 == 0) {
+                        log.info("下载完成");
+                    }
+                }
+            }
+            log.info("\n已下载：100.00%");
+            ins.close();
+            fs.close();
+        } catch (Exception e) {
+            throw  new ServiceException("文件下载失败",e);
+        }
     }
 }

@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
@@ -58,7 +59,7 @@ public class ImageUtil {
             return getInfo(multipartFile.getInputStream())
                     .setSize(multipartFile.getSize())
                     .setOriginalFileName(multipartFile.getOriginalFilename())
-                    .setSuffix(FileUtil.getSuffix(multipartFile.getOriginalFilename()));
+                    .setSuffix(FileUtil.getSuffix(Objects.requireNonNull(multipartFile.getOriginalFilename())));
         } catch (Exception e) {
             e.printStackTrace();
             throw new GlobalFileException("获取图片信息发生异常！", e);
@@ -79,10 +80,7 @@ public class ImageUtil {
                 return new VirtualFile();
             }
             //获取默认图像的高度，宽度
-            return new VirtualFile()
-                    .setWidth(bi.getWidth(null))
-                    .setHeight(bi.getHeight(null))
-                    .setSize(inputStream.available());
+            return new VirtualFile().setSize(inputStream.available());
         } catch (Exception e) {
             throw new GlobalFileException("获取图片信息发生异常！", e);
         }

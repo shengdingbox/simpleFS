@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author 周子斐
@@ -23,10 +24,8 @@ import java.util.Map;
 public class UpaiyunOssApiClient extends BaseApiClient {
 
     private static final String DEFAULT_PREFIX = "upaiyun/";
-    private String operatorName;
-    private String operatorPwd;
-    private String bucket;
-    private String path;
+    private UpaiManager upaiManager;
+    private String baseUrl;
     private String pathPrefix;
 
     public UpaiyunOssApiClient() {
@@ -34,25 +33,16 @@ public class UpaiyunOssApiClient extends BaseApiClient {
     }
 
     public UpaiyunOssApiClient init(String operatorName, String operatorPwd, String bucketName, String baseUrl, String uploadType) {
-        this.operatorName = operatorName;
-        this.operatorPwd = operatorPwd;
-        this.bucket = bucketName;
-        this.path = baseUrl;
+        if (StringUtils.isNullOrEmpty(operatorName) || StringUtils.isNullOrEmpty(operatorPwd) || StringUtils.isNullOrEmpty(bucketName)) {
+            throw new QiniuApiException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
+        }
+        upaiManager = new UpaiManager(bucketName, operatorName, operatorPwd);
+        this.baseUrl = baseUrl;
         this.pathPrefix = StringUtils.isNullOrEmpty(uploadType) ? DEFAULT_PREFIX : uploadType.endsWith("/") ? uploadType : uploadType + "/";
         return this;
     }
-
     @Override
-    protected void check() {
-        if (StringUtils.isNullOrEmpty(this.operatorName) || StringUtils.isNullOrEmpty(this.operatorPwd) || StringUtils.isNullOrEmpty(this.bucket)) {
-            throw new QiniuApiException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
-        }
-    }
-
-    @Override
-    public VirtualFile uploadImg(InputStream is, String imageUrl) {
-        this.check();
-        UpaiManager upaiManager = new UpaiManager(bucket, operatorName, operatorPwd);
+    public VirtualFile uploadFile(InputStream is, String imageUrl) {
         // 切换 API 接口的域名接入点，默认为自动识别接入点
         upaiManager.setApiDomain(UpaiManager.ED_AUTO);
         // 设置连接超时时间，默认为30秒
@@ -69,7 +59,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
                     .setUploadStartTime(startTime)
                     .setUploadEndTime(new Date())
                     .setFilePath(this.newFileName)
-                    .setFullFilePath(this.path + this.newFileName);
+                    .setFullFilePath(this.baseUrl + this.newFileName);
         } catch (IOException ex) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + ex.getMessage());
         }
@@ -77,17 +67,27 @@ public class UpaiyunOssApiClient extends BaseApiClient {
 
     @Override
     public boolean removeFile(String key) {
-        this.check();
         if (StringUtils.isNullOrEmpty(key)) {
             throw new OssApiException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
-        UpaiManager upaiManager = new UpaiManager(bucket, operatorName, operatorPwd);
         // 删除文件
         try {
             upaiManager.deleteFile(key, null);
             return true;
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件删除失败：" + e.getMessage());
+        }
+    }
+
+    @Override
+    public InputStream downloadFileStream(String key) {
+        if (StringUtils.isNullOrEmpty(key)) {
+            throw new OssApiException("[" + this.storageType + "]删除文件失败：文件key为空");
+        }
+        try {
+            return Objects.requireNonNull(upaiManager.readFile(baseUrl + key).body()).byteStream();
+        } catch (IOException e) {
+            throw new ServiceException("[" + this.storageType + "]文件下载失败：" + e.getMessage());
         }
     }
 }

@@ -15,13 +15,15 @@ import java.io.InputStream;
  */
 public interface ApiClient {
 
-    VirtualFile uploadImg(MultipartFile file);
+    VirtualFile uploadFile(MultipartFile file);
 
-    VirtualFile uploadImg(File file);
+    VirtualFile uploadFile(File file);
 
-    VirtualFile uploadImg(InputStream is, String imageUrl);
+    VirtualFile uploadFile(InputStream is, String imageUrl);
 
     boolean removeFile(String key);
+
+    void downloadFile(String key,  String localFile);
 
     VirtualFile saveToCloudStorage(String imgUrl, String referer);
 }

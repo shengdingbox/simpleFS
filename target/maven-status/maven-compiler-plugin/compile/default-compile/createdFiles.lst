@@ -50,6 +50,7 @@ com/zhouzifei/tool/util/RedisUtils.class
 com/zhouzifei/tool/config/AsyncConfig$ContextAwareCallable.class
 com/zhouzifei/tool/util/UpYunUtils.class
 com/zhouzifei/tool/exception/ArticleException.class
+com/zhouzifei/tool/dto/HttpResponses.class
 com/zhouzifei/tool/media/file/FtpUtil.class
 com/zhouzifei/tool/dto/M3u8DTO$M3u8DTOBuilder.class
 com/zhouzifei/tool/exception/LocalApiException.class
@@ -68,7 +69,6 @@ com/zhouzifei/tool/media/video/KuaishouUtils.class
 com/zhouzifei/tool/entity/BucketEntity.class
 com/zhouzifei/tool/holder/SpringContextHolder.class
 com/zhouzifei/tool/exception/QiniuApiException.class
-com/zhouzifei/tool/media/video/VideoSaveUtils.class
 com/zhouzifei/tool/media/file/FtpUtil$FtpConfig.class
 com/zhouzifei/tool/config/autoconfiguratiom/SmsAutoConfiguration.class
 com/zhouzifei/tool/exception/CommentException.class

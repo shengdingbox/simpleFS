@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.aliyun.oss.model.*;
 import com.zhouzifei.tool.exception.OssApiException;
 import com.zhouzifei.tool.entity.BucketEntity;
 import com.zhouzifei.tool.entity.CorsRoleEntity;
@@ -16,16 +17,6 @@ import com.zhouzifei.tool.entity.RefererEntity;
 import org.springframework.util.CollectionUtils;
 
 import com.aliyun.oss.OSSClient;
-import com.aliyun.oss.model.BucketReferer;
-import com.aliyun.oss.model.CannedAccessControlList;
-import com.aliyun.oss.model.CreateBucketRequest;
-import com.aliyun.oss.model.ListObjectsRequest;
-import com.aliyun.oss.model.OSSObjectSummary;
-import com.aliyun.oss.model.ObjectListing;
-import com.aliyun.oss.model.ObjectPermission;
-import com.aliyun.oss.model.PutObjectResult;
-import com.aliyun.oss.model.SetBucketCORSRequest;
-import com.aliyun.oss.model.StorageClass;
 
 /**
  * 
@@ -153,27 +144,6 @@ public class OssApi {
                 throw new OssApiException("[阿里云OSS] 无法修改文件的访问权限！文件不存在：" + bucketName + "/" + fileName);
             }
             this.client.setObjectAcl(bucketName, fileName, acl);
-        } finally {
-            this.shutdown();
-        }
-    }
-
-    /**
-     * 删除文件
-     *
-     * @param bucketName 保存文件的目标bucket
-     * @param fileName   OSS中保存的文件名
-     */
-    public void deleteFile(String fileName, String bucketName) {
-        try {
-            boolean exists = this.client.doesBucketExist(bucketName);
-            if (!exists) {
-                throw new OssApiException("[阿里云OSS] 文件删除失败！Bucket不存在：" + bucketName);
-            }
-            if (!this.client.doesObjectExist(bucketName, fileName)) {
-                throw new OssApiException("[阿里云OSS] 文件删除失败！文件不存在：" + bucketName + "/" + fileName);
-            }
-            this.client.deleteObject(bucketName, fileName);
         } finally {
             this.shutdown();
         }
@@ -312,6 +282,10 @@ public class OssApi {
         }
     }
 
+    private void shutdown() {
+        this.client.shutdown();
+    }
+
     /**
      * 获取Referer白名单
      *
@@ -327,42 +301,5 @@ public class OssApi {
         } finally {
             this.shutdown();
         }
-    }
-
-    /**
-     * @param localFile 待上传的文件
-     * @param fileName  文件名:最终保存到云端的文件名
-     * @param bucket    需要上传到的目标bucket
-     */
-    public String uploadFile(File localFile, String fileName, String bucket) {
-        try {
-            InputStream inputStream = new FileInputStream(localFile);
-            return this.uploadFile(inputStream, fileName, bucket);
-        } catch (Exception e) {
-            throw new OssApiException("[阿里云OSS] 文件上传失败！" + localFile, e);
-        } finally {
-            this.shutdown();
-        }
-    }
-
-    /**
-     * @param inputStream 待上传的文件流
-     * @param fileName    文件名:最终保存到云端的文件名
-     * @param bucketName  需要上传到的目标bucket
-     */
-    public String uploadFile(InputStream inputStream, String fileName, String bucketName) {
-        try {
-            if (!this.client.doesBucketExist(bucketName)) {
-                throw new OssApiException("[阿里云OSS] 无法上传文件！Bucket不存在：" + bucketName);
-            }
-            PutObjectResult result = this.client.putObject(bucketName, fileName, inputStream);
-            return result.getETag();
-        } finally {
-            this.shutdown();
-        }
-    }
-
-    private void shutdown() {
-        this.client.shutdown();
     }
 }
