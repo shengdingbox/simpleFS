@@ -66,10 +66,10 @@ public class KuaishouUtils {
     public static void main(String[] args) throws Exception {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("User-Agent", "Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Mobile Safari/537.36");
-        HttpResponse httpResponse = HttpUtils
-                .doGet("https://v.kuaishou.com/6ScOjz", "", "GET", headers, new HashMap<>());
-        Header[] allHeaders = httpResponse.getAllHeaders();
-        System.out.println(Arrays.toString(allHeaders));
+        //HttpResponse httpResponse = HttpUtils
+                //.doGet("https://v.kuaishou.com/6ScOjz", "", "GET", headers, new HashMap<>());
+        //Header[] allHeaders = httpResponse.getAllHeaders();
+        //System.out.println(Arrays.toString(allHeaders));
         HttpRequest request = HttpUtil.createGet("https://v.kuaishou.com/6ScOjz");
         HttpRequest httpRequest = request.addHeaders(headers);
         cn.hutool.http.HttpResponse execute = httpRequest.execute();

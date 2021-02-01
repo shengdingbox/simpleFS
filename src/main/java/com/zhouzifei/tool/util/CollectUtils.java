@@ -10,7 +10,7 @@
 //import lombok.extern.slf4j.Slf4j;
 //import org.apache.commons.lang.StringUtils;
 //import org.apache.http.Header;
-//import org.apache.http.HttpResponse;
+//import org.apache.http.HttpResponses;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Component;
 //
@@ -154,7 +154,7 @@
 //        Map<String, String> hear = new HashMap<>();
 //        StringBuilder stringBuffer = new StringBuilder();
 //        try {
-//            HttpResponse post = HttpUtils.doPost(url
+//            HttpResponses post = HttpUtils.doPost(url
 //                    , "/admin/index/login.html"
 //                    , "post"
 //                    , hear

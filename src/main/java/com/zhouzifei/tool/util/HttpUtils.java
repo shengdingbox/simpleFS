@@ -1,12 +1,13 @@
 package com.zhouzifei.tool.util;
 
+import com.aliyun.oss.common.utils.HttpUtil;
+import com.zhouzifei.tool.dto.HttpResponses;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ClientConnectionManager;
@@ -21,14 +22,16 @@ import org.apache.http.message.BasicNameValuePair;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author 周子斐 (17600004572@163.com)
@@ -49,18 +52,36 @@ public class HttpUtils {
      * @return
      * @throws Exception
      */
-    public static HttpResponse doGet(String host, String path, String method,
-                                     Map<String, String> headers,
-                                     Map<String, String> querys)
-            throws Exception {
-        HttpClient httpClient = wrapClient(host);
-
-        HttpGet request = new HttpGet(buildUrl(host, path, querys));
-        for (Map.Entry<String, String> e : headers.entrySet()) {
-            request.addHeader(e.getKey(), e.getValue());
+    public static HttpResponses doGet(String host, String path,
+                                      Map<String, String> headers,
+                                      Map<String, String> querys) throws Exception {
+        String urlNameString = buildUrl(host,path,querys);
+        URL realUrl = new URL(urlNameString);
+        // 打开和URL之间的连接
+        URLConnection connection = realUrl.openConnection();
+        // 设置通用的请求属性
+        Set<String> set = headers.keySet();
+        connection.setRequestProperty("accept", "*/*");
+        connection.setRequestProperty("connection", "Keep-Alive");
+        connection.setRequestProperty("user-agent",
+                "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+        set.forEach(key-> connection.setRequestProperty(key,headers.get(key)));
+        // 建立实际的连接
+        connection.connect();
+        // 获取所有响应头字段
+        Map<String, List<String>> map = connection.getHeaderFields();
+        // 定义 BufferedReader输入流来读取URL的响应
+        BufferedReader in = new BufferedReader(new InputStreamReader(
+                connection.getInputStream()));
+        String line;
+        StringBuilder result = new StringBuilder();
+        while ((line = in.readLine()) != null) {
+            result.append(line);
         }
-
-        return httpClient.execute(request);
+        HttpResponses httpResponses = new HttpResponses();
+        httpResponses.setMap(map);
+        httpResponses.setBody(result.toString());
+        return httpResponses;
     }
 
     /**
@@ -113,9 +134,9 @@ public class HttpUtils {
      * @throws Exception
      */
     public static HttpResponse doPost(String host, String path,
-                                      Map<String, String> headers,
-                                      Map<String, String> querys,
-                                      String body)
+                                       Map<String, String> headers,
+                                       Map<String, String> querys,
+                                       String body)
             throws Exception {
         HttpClient httpClient = wrapClient(host);
 
@@ -144,9 +165,9 @@ public class HttpUtils {
      * @throws Exception
      */
     public static HttpResponse doPost(String host, String path,
-                                      Map<String, String> headers,
-                                      Map<String, String> querys,
-                                      byte[] body)
+                                       Map<String, String> headers,
+                                       Map<String, String> querys,
+                                       byte[] body)
             throws Exception {
         HttpClient httpClient = wrapClient(host);
 
@@ -175,9 +196,9 @@ public class HttpUtils {
      * @throws Exception
      */
     public static HttpResponse doPut(String host, String path,
-                                     Map<String, String> headers,
-                                     Map<String, String> querys,
-                                     String body)
+                                      Map<String, String> headers,
+                                      Map<String, String> querys,
+                                      String body)
             throws Exception {
         HttpClient httpClient = wrapClient(host);
 
@@ -205,9 +226,9 @@ public class HttpUtils {
      * @throws Exception
      */
     public static HttpResponse doPut(String host, String path,
-                                     Map<String, String> headers,
-                                     Map<String, String> querys,
-                                     byte[] body)
+                                      Map<String, String> headers,
+                                      Map<String, String> querys,
+                                      byte[] body)
             throws Exception {
         HttpClient httpClient = wrapClient(host);
 
@@ -234,8 +255,8 @@ public class HttpUtils {
      * @throws Exception
      */
     public static HttpResponse doDelete(String host, String path,
-                                        Map<String, String> headers,
-                                        Map<String, String> querys)
+                                         Map<String, String> headers,
+                                         Map<String, String> querys)
             throws Exception {
         HttpClient httpClient = wrapClient(host);
 
@@ -315,5 +336,12 @@ public class HttpUtils {
         } catch (KeyManagementException | NoSuchAlgorithmException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("imgurl","http://imgsrc.baidu.com/forum/pic/item/09f790529822720edafc8a9d76cb0a46f21faba3.jpg");
+        HttpResponses httpResponses = HttpUtils.doGet("https://api.uomg.com", "/api/image.360", new HashMap<>(), map);
+        System.out.println(httpResponses);
     }
 }
