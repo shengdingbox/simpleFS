@@ -18,30 +18,19 @@ import org.springframework.stereotype.Component;
 
  * @Description
  */
-@Component
 @Slf4j
 public class ParseUtils {
-
-    @Autowired
-    RedisUtils redisUtils;
-
     /**
      *
      * @param url 解析的地址
      * @param parseName 解析的名称
      * @param parseUrl 解析接口地址
-     * @param fileLocal 本地路径
-     * @param fileUrl 返回的域名
      */
-    public void parseVideo(String url, String parseName, String parseUrl,String fileLocal,String fileUrl) {
+    public VideoUrlDTO parseVideo(String url, String parseName, String parseUrl) {
         log.info("{}解析视频,解析地址为{}", parseName, url);
         String data = HttpData.getData(parseUrl + url);
         VideoUrlDTO videoUrlDTO = JSONObject.parseObject(data, VideoUrlDTO.class);
         if (videoUrlDTO == null) {
-            videoUrlDTO = new VideoUrlDTO();
-            videoUrlDTO.setCode("404");
-        }
-        if (redisUtils.hasKey(url)) {
             videoUrlDTO = new VideoUrlDTO();
             videoUrlDTO.setCode("404");
         }
@@ -65,11 +54,8 @@ public class ParseUtils {
                 //VideoSaveUtils.saveVideo(videoUrlDTO, fileLocal, fileUrl);
                 videoUrlDTO.setType(VideoTypeConst.M3U8.getType());
             }
-            if (redisUtils.hasKey(url)) {
-                return;
-            }
             if (StringUtils.isEmpty(videoUrlDTO.getUrl())) {
-                return;
+                return videoUrlDTO;
             }
             log.info("当前线程{},任务{},响应为{}", Thread.currentThread().getName(), videoUrlDTO.getParser(), videoUrlDTO);
             videoUrlDTO.setParser("蜜蜂解析");
@@ -79,10 +65,10 @@ public class ParseUtils {
             if (videoUrlDTO.getUrl().contains("http://")){
                 videoUrlDTO.setUrl(videoUrlDTO.getUrl().replace("http://","https://"));
             }
-            String s = JSONObject.toJSONString(videoUrlDTO);
-            redisUtils.set(videoUrlDTO.getOriginalUrl(), s, 3600);
+            return videoUrlDTO;
         } else {
             log.info("当前线程{},任务{},解析失败", Thread.currentThread().getName(), videoUrlDTO.getParser());
+            return new VideoUrlDTO();
         }
     }
 }
