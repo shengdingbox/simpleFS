@@ -12,7 +12,7 @@ import com.zhouzifei.tool.consts.ApiUrlConst;
  */
 public class UrlBuildUtil {
 
-    private static final String GET_LOCATION_BY_IP = "{0}?k={1}&coor=gcj02&ip={2}";
+    private static final String GET_LOCATION_BY_IP = "{0}?ak={1}&ip={2}&coor=bd09ll";
     private static final String BAIDU_PUSH_URL_PATTERN = "{0}{1}?site={2}&token={3}";
 
     /**
@@ -39,5 +39,10 @@ public class UrlBuildUtil {
      */
     public static String getBaiduPushUrl(String pushType, String site, String baiduPushToken) {
         return MessageFormat.format(BAIDU_PUSH_URL_PATTERN, ApiUrlConst.BAIDU_PUSH_URL, pushType, site, baiduPushToken);
+    }
+
+    public static void main(String[] args) {
+        final String zoXgYGZd6pk5G1hO8iTUGAKgFx5lOWUC = getLocationByIp("103.242.215.96", "zoXgYGZd6pk5G1hO8iTUGAKgFx5lOWUC");
+        System.out.println(zoXgYGZd6pk5G1hO8iTUGAKgFx5lOWUC);
     }
 }

@@ -1,6 +1,7 @@
 package com.zhouzifei.tool.media.file.service;
 
 import com.zhouzifei.tool.entity.VirtualFile;
+import com.zhouzifei.tool.media.file.listener.ProgressListener;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -19,11 +20,13 @@ public interface ApiClient {
 
     VirtualFile uploadFile(File file);
 
-    VirtualFile uploadFile(InputStream is, String imageUrl);
+    VirtualFile uploadFile(InputStream is, String fileName);
 
     boolean removeFile(String key);
 
     void downloadFile(String key,  String localFile);
 
-    VirtualFile saveToCloudStorage(String imgUrl, String referer);
+    VirtualFile saveToCloudStorage(String imgUrl, String referer,String key);
+
+    abstract VirtualFile multipartUpload(File file);
 }

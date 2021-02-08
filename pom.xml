@@ -10,7 +10,7 @@
     <groupId>com.zhouzifei</groupId>
     <artifactId>commonTool</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.3</version>
+    <version>1.0.3.BASE</version>
     <name>commonTool</name>
     <description>小型整合型的工具类</description>
     <properties>
@@ -160,6 +160,22 @@
             <groupId>com.huaweicloud</groupId>
             <artifactId>esdk-obs-java</artifactId>
             <version>3.20.6.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mozilla</groupId>
+            <artifactId>rhino</artifactId>
+            <version>1.7R4</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
         </dependency>
     </dependencies>
     <dependencyManagement>

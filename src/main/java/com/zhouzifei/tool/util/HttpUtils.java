@@ -8,6 +8,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ClientConnectionManager;
@@ -82,6 +83,30 @@ public class HttpUtils {
         httpResponses.setMap(map);
         httpResponses.setBody(result.toString());
         return httpResponses;
+    }
+    /**
+     * get
+     *
+     * @param host
+     * @param path
+     * @param method
+     * @param headers
+     * @param querys
+     * @return
+     * @throws Exception
+     */
+    public static HttpResponse doGet(String host, String path, String method,
+                                     Map<String, String> headers,
+                                     Map<String, String> querys)
+            throws Exception {
+        HttpClient httpClient = wrapClient(host);
+
+        HttpGet request = new HttpGet(buildUrl(host, path, querys));
+        for (Map.Entry<String, String> e : headers.entrySet()) {
+            request.addHeader(e.getKey(), e.getValue());
+        }
+
+        return httpClient.execute(request);
     }
 
     /**

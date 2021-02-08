@@ -17,7 +17,7 @@ mvn clean install
 ## 功能介绍
 ### 文件上传oss(支持阿里云,七牛云,又拍云,腾讯云,华为云,~~百度云~~,本地上传)
 - `application.yml`配置OSS信息
-```yml
+```yaml
 tool:
   file:
     storage-type-const: 存储类型(枚举可选择)
@@ -51,7 +51,15 @@ public class FileUpload {
     }
 }
 ```
+- 文件下载
+```java
+
+```
+
+
+
 ### m3u8下载类
+
 ```java
 public class M3u8DownloadUtil {
     public static void main(String[] args) {
@@ -69,8 +77,16 @@ public class M3u8DownloadUtil {
 }
 ```
 
-## 开源推荐
-- `spring-boot-demo` 深度学习并实战 spring boot 的项目: [https://github.com/xkcoding/spring-boot-demo](https://github.com/xkcoding/spring-boot-demo)
+## 特别鸣谢
+- `spring-boot-demo` 深度学习并实战 spring boot 的项目: [https://github.com/xkcoding/spring-boot-demo](https://github.com/xkcoding/spring-boot-demo) 
+- `腾讯云COS`免费空间50G,免费流量10G/月 [https://cloud.tencent.com/product/cos](https://cloud.tencent.com/product/cos)
+- `七牛云`免费空间10G,免费流量10G/月,免费GET100万次/月[https://www.qiniu.com/prices](https://www.qiniu.com/prices)
+- `又拍云`免费空间10G,免费流量15G/月(非开通就有,需要额外申请又拍云联盟,限时1年）[https://www.upyun.com/league](https://www.upyun.com/league)
+- `网易云`免费空间50G,免费流量20G/月（目前发现最慷慨的一家）[https://www.163yun.com/nos/free](https://www.163yun.com/nos/free)
+- `青云`免费空间10G,免费流量1G/月,另外注意没有免费请求额度[https://www.qingcloud.com/pricing-standard](https://www.qingcloud.com/pricing-standard)
+- `阿里云`免费空间40G,免费流量10G/月 （限定新用户、限时6个月）[https://www.aliyun.com/product/oss](https://www.aliyun.com/product/oss)
+
+
 
 ## 在线文档
 - <a href = "http://zifeizhou.gitee.io/commontool/">http://zifeizhou.gitee.io/commontool/</a>

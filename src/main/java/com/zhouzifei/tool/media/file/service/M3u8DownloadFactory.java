@@ -1,9 +1,13 @@
 package com.zhouzifei.tool.media.file.service;
 
 
+import com.zhouzifei.tool.config.properties.FileProperties;
 import com.zhouzifei.tool.consts.Constants;
 import com.zhouzifei.tool.dto.M3u8DTO;
+import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.M3u8Exception;
+import com.zhouzifei.tool.image.xmly;
+import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.media.file.MediaFormat;
 import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -21,14 +25,12 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
  * M3u8视频下载工厂
+ *
  * @author 周子斐 (17600004572@163.com)
  * @date 2020/3/8
  */
@@ -46,6 +48,7 @@ public class M3u8DownloadFactory {
 
     /**
      * 获取m3u8Download实例
+     *
      * @param m3u8DTO 要下载的实例
      * @return 返回m3u8下载实例
      */
@@ -57,8 +60,7 @@ public class M3u8DownloadFactory {
 
                 }
             }
-        }
-        else {
+        } else {
             m3u8Download.setDownloadUrl(m3u8DTO.getM3u8Url());
         }
         //设置生成目录
@@ -75,6 +77,7 @@ public class M3u8DownloadFactory {
         m3u8Download.setInterval(1000L);
         return m3u8Download;
     }
+
     /**
      * 销毁m3u8Download实例
      */
@@ -131,6 +134,9 @@ public class M3u8DownloadFactory {
         //所有ts片段下载链接
         private Set<String> tsSet = new LinkedHashSet<>();
 
+        //所有ts片段下载链接
+        private final List<String> tsSetAll = new CopyOnWriteArrayList<>();
+
         //所有ts片段数量
         private int totalCount;
 
@@ -149,6 +155,9 @@ public class M3u8DownloadFactory {
         //当前步骤 1：解析视频地址 2：下载视频 3：下载完成，正在合并视频 4：结束
         private int step = 1;
 
+        //云存储配置文件
+        FileProperties fileProperties;
+
         /**
          * 开始执行任务
          */
@@ -158,7 +167,7 @@ public class M3u8DownloadFactory {
                 return;
             }
             setThreadCount(30);
-            tempDir = dir+"temp";
+            tempDir = dir + "temp";
             finishedCount = 0;
             method = "";
             key = "";
@@ -189,6 +198,111 @@ public class M3u8DownloadFactory {
             }).start();
         }
 
+        public String runM3u8ToCloudTask(FileProperties fileProperties) {
+            //校验字段
+            if (!checkFields()) {
+                return null;
+            }
+            if (null == this.fileProperties) {
+                this.fileProperties = fileProperties;
+            }
+            setThreadCount(30);
+            //监视视频地址是否解析完成
+            new Thread(() -> {
+                while (step == 1) {
+                    try {
+                        Thread.sleep(1000);
+                        log.info("正在解析视频地址，请稍后...");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+            new Thread(() -> {
+                String tsUrl = getTsUrl();
+                if (StringUtils.isEmpty(tsUrl)) {
+                    log.info("不需要解密");
+                }
+                startM3u8ToCloud();
+            }).start();
+            return downloadUrl;
+        }
+
+        private void saveM3u8() {
+            FileUploader uploader = new FileUploader();
+            ApiClient apiClient = uploader.getApiClient(fileProperties);
+            final StringBuilder stringBuffer = new StringBuilder();
+            for (String s : tsSetAll) {
+                stringBuffer.append(s);
+                stringBuffer.append("\n");
+            }
+            InputStream is = new ByteArrayInputStream(stringBuffer.toString().getBytes());
+            final VirtualFile virtualFile = apiClient.uploadFile(is, "index.m3u8");
+            log.info("上传地址为{}",virtualFile);
+            downloadUrl = virtualFile.getFullFilePath();
+        }
+
+        private void startM3u8ToCloud() {
+            this.step = 2;
+            //线程池
+            final ExecutorService fixedThreadPool = Executors.newFixedThreadPool(threadCount);
+            int i = 0;
+            totalCount = tsSet.size();
+            for (int j = 0; j < tsSetAll.size(); j++) {
+                String s = tsSetAll.get(j);
+                if (s.contains("#EXTINF")) {
+                    int index = (j + 1);
+                    String tsUrl = tsSetAll.get(index);
+                    fixedThreadPool.execute(new Thread(() -> {
+//                        FileUploader uploader = new FileUploader();
+//                        ApiClient apiClient = uploader.getApiClient(fileProperties);
+//                        final VirtualFile virtualFile = apiClient.saveToCloudStorage(tsUrl, "",index+".ts");
+                        try {
+                            final String post = xmly.pic(tsUrl);
+                            tsSetAll.set(index, post);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            finishedCount++;
+                        }
+//                        final String[] split = virtualFile.getFilePath().split("/");
+//                        if(split.length > 1){
+//                            tsSetAll.set(index, split[1]);
+//                        }else {
+
+                        //}
+
+                    }));
+                }
+            }
+            fixedThreadPool.shutdown();
+            uploadListener(fixedThreadPool);
+        }
+
+        private void uploadListener(ExecutorService fixedThreadPool) {
+            new Thread(() -> {
+                log.info("检测到" + totalCount + "个视频片段，开始下载！");
+                log.info("0% (0/" + totalCount + ")");
+                //轮询是否下载成功
+                while (!fixedThreadPool.isTerminated()) {
+                    try {
+                        Thread.sleep(interval);
+                        float percent = new BigDecimal(finishedCount).divide(new BigDecimal(totalCount), 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+                        log.info("已下载" + finishedCount + "个\t一共" + totalCount + "个\t已完成" + percent + "%");
+                        log.info(percent + "% (" + finishedCount + "/" + totalCount + ")");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                log.info("下载完成，正在合并文件！共" + totalCount + "个！" + StringUtils.convertToDownloadSpeed(downloadBytes, 3));
+                //开始合并视频
+                saveM3u8();
+                this.step = 4;
+                log.info("视频上传完成，欢迎使用");
+                listener.end();
+            }).start();
+        }
         /**
          * 下载视频
          */
@@ -257,12 +371,11 @@ public class M3u8DownloadFactory {
         private void mergeTs() {
             this.step = 3;
             try {
-                File file = new File(dir+fileName+".mp4");
+                File file = new File(dir + fileName + ".mp4");
                 System.gc();
                 if (file.exists()) {
                     file.delete();
-                }
-                else {
+                } else {
                     file.createNewFile();
                 }
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
@@ -297,6 +410,7 @@ public class M3u8DownloadFactory {
 
         /**
          * 开启下载线程
+         *
          * @param urls ts片段链接
          * @param i    ts片段序号
          * @return 线程
@@ -306,7 +420,7 @@ public class M3u8DownloadFactory {
                 int count = 1;
                 HttpURLConnection httpURLConnection = null;
                 //xy为未解密的ts片段，如果存在，则删除
-                File file2 = new File(tempDir+"/"+i+".ts");
+                File file2 = new File(tempDir + "/" + i + ".ts");
                 if (file2.exists()) {
                     file2.delete();
                 }
@@ -353,14 +467,13 @@ public class M3u8DownloadFactory {
                             bytes = new byte[available];
                         }
                         inputStream1.read(bytes);
-                        File file = new File(tempDir+"/"+i+".xyz");
+                        File file = new File(tempDir + "/" + i + ".xyz");
                         outputStream1 = new FileOutputStream(file);
                         //开始解密ts片段，这里我们把ts后缀改为了xyz，改不改都一样
                         byte[] decrypt = decrypt(bytes, available, key, iv, method);
                         if (decrypt == null) {
                             outputStream1.write(bytes, 0, available);
-                        }
-                        else {
+                        } else {
                             outputStream1.write(decrypt);
                         }
                         finishedFiles.add(file);
@@ -401,6 +514,7 @@ public class M3u8DownloadFactory {
 
         /**
          * 获取所有的ts片段下载链接
+         *
          * @return 链接是否被加密，null为非加密
          */
         private String getTsUrl() {
@@ -438,8 +552,7 @@ public class M3u8DownloadFactory {
             String key1 = isKey ? getKey(keyUrl, content) : getKey(keyUrl, null);
             if (StringUtils.isNotEmpty(key1)) {
                 key = key1;
-            }
-            else {
+            } else {
                 key = null;
             }
             return key;
@@ -447,6 +560,7 @@ public class M3u8DownloadFactory {
 
         /**
          * 获取ts解密的密钥，并把ts片段加入set集合
+         *
          * @param url     密钥链接，如果无密钥的m3u8，则此字段可为空
          * @param content 内容，如果有密钥，则此字段可以为空
          * @return ts是否需要解密，null为不解密
@@ -455,8 +569,7 @@ public class M3u8DownloadFactory {
             StringBuilder urlContent;
             if (content == null || StringUtils.isEmpty(content.toString())) {
                 urlContent = getUrlContent(url, false);
-            }
-            else {
+            } else {
                 urlContent = content;
             }
             if (!urlContent.toString().contains("#EXTM3U")) {
@@ -488,8 +601,17 @@ public class M3u8DownloadFactory {
             for (int i = 0; i < split.length; i++) {
                 String s = split[i];
                 if (s.contains("#EXTINF")) {
-                    String s1 = split[++i];
+                    String s1 = split[i+1];
                     tsSet.add(StringUtils.isUrl(s1) ? s1 : relativeUrl + s1);
+                    tsSetAll.add(StringUtils.isUrl(s1) ? s1 : relativeUrl + s1);
+                } else {
+                    if (i == split.length - 1) {
+                        break;
+                    } else if (i == 0) {
+                        tsSetAll.add(split[i]);
+                    }
+                    String s1 = split[i+1];
+                    tsSetAll.add(s1);
                 }
             }
             if (!StringUtils.isEmpty(key)) {
@@ -501,6 +623,7 @@ public class M3u8DownloadFactory {
 
         /**
          * 模拟http请求获取内容
+         *
          * @param urls  http链接
          * @param isKey 这个url链接是否用于获取key
          * @return 内容
@@ -558,6 +681,7 @@ public class M3u8DownloadFactory {
 
         /**
          * 解密ts
+         *
          * @param sSrc   ts文件字节数组
          * @param length
          * @param sKey   密钥
@@ -580,8 +704,7 @@ public class M3u8DownloadFactory {
             byte[] ivByte;
             if (iv.startsWith("0x")) {
                 ivByte = StringUtils.hexStringToByteArray(iv.substring(2));
-            }
-            else {
+            } else {
                 ivByte = iv.getBytes();
             }
             if (ivByte.length != 16) {
@@ -616,6 +739,7 @@ public class M3u8DownloadFactory {
             }
             this.threadCount = threadCount;
         }
+
         /**
          * 校验字段
          *
@@ -668,6 +792,7 @@ public class M3u8DownloadFactory {
             }
             return true;
         }
+
         public int getRetryCount() {
             return retryCount;
         }
@@ -712,8 +837,30 @@ public class M3u8DownloadFactory {
             this.listener = downloadListener;
         }
 
+        public Set<String> getTsSet() {
+            return tsSet;
+        }
+
+        public void setTsSet(Set<String> tsSet) {
+            this.tsSet = tsSet;
+        }
+
         private M3u8Download(String downloadUrl) {
             this.downloadUrl = downloadUrl;
         }
+    }
+
+    public static void main(String[] args) {
+        M3u8DTO m3u8Download = M3u8DTO.builder()
+                .m3u8Url("https://hls.cntv.myalicdn.com/asp/hls/2000/0303000a/3/default/2de6f0ee11ed46939a8268d3799acff3/2000.m3u8?maxbr=2048")
+                .fileName("miaozhun")
+                .filePath("/Users/Dabao/mp4")
+                .retryCount("3")
+                .threadCount("3")
+                .timeout("5").build();
+        M3u8DownloadFactory.M3u8Download instance = M3u8DownloadFactory.getInstance(m3u8Download);
+        final String tsUrl = instance.runM3u8ToCloudTask(new FileProperties());//开始下载
+//        final Set<String> tsSet = instance.getTsSet();
+//        System.out.println(tsSet);
     }
 }

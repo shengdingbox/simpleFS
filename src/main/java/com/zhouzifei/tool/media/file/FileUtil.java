@@ -81,7 +81,7 @@ public class FileUtil{
     }
 
     public static String getSuffixByUrl(String imgUrl) {
-        String defaultSuffix = ".png";
+        String defaultSuffix = "";
         if (StringUtils.isEmpty(imgUrl)) {
             return defaultSuffix;
         }
@@ -93,8 +93,8 @@ public class FileUtil{
         return StringUtils.isEmpty(fileSuffix) ? defaultSuffix : fileSuffix;
     }
 
-    public static String generateTempFileName(String imgUrl) {
-        return "temp" + getSuffixByUrl(imgUrl);
+    public static String generateTempFileName(String fileName) {
+        return "temp" + getSuffixByUrl(fileName);
     }
 
     public static boolean isPicture(String suffix) {
@@ -207,7 +207,7 @@ public class FileUtil{
             if (response.getStatusLine().getStatusCode() == 200) {
                 return in;
             } else {
-                log.error("Error. %s", parseInputStream(in));
+                log.error("Error. {}", parseInputStream(in));
                 return null;
             }
         } catch (IOException e) {
