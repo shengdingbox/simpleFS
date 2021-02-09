@@ -2,21 +2,26 @@
 commonTool，如你所见，它是一个小型整合型的工具类，带有整合(阿里云,七牛云,又拍云,腾讯云,华为云,~~百度云~~,本地上传)OSS上传,短信发送(阿里云,腾讯云,七牛云),文件加工类,，它可以让我们脱离繁琐的开发流程，让开发变得**So easy!**
 
 # 快速开始
--  引入依赖
+-  安装方式(1)-引入依赖
 ```xml
 <dependency>
   <groupId>com.zhouzifei</groupId>
   <artifactId>commonTool</artifactId>
-  <version>1.0.3</version>
+  <version>最新版本(1.0.3)</version>
 </dependency>
 ```
-- 使用maven从源码安装
+- 安装方式(2)-使用源码安装到本地仓库
 ```shell
+git clone https://gitee.com/zifeiZhou/commonTool.git(Gitee)
+git clone https://github.com/shengdingbox/commonTool.git(Github)
 mvn clean install
 ```
 ## 功能介绍
 ### 文件上传oss(支持阿里云,七牛云,又拍云,腾讯云,华为云,~~百度云~~,本地上传)
-- `application.yml`配置OSS信息
+
+配置服务器信息
+
+- `application.yml`方式
 ```yaml
 tool:
   file:
@@ -31,33 +36,45 @@ tool:
     secret-key: 授权SK
     endpoint: 地域
 ```
-- 编写上传类
+- `application.properties`方式
+```properties
+tool.file.storage-type-const=存储类型(枚举可选择)
+tool.file.bucket-name=空间名称
+tool.file.local-file-path=本地路径
+tool.file.path-prefix=图片文件夹
+tool.file.domain-url=图片外网地址
+tool.file.operator-name=又拍云账号
+tool.file.operator-pwd=又拍云密码
+tool.file.access-key=授权AK
+tool.file.secret-key=授权SK
+tool.file.endpoint=地域
+```
+获取ApiClient对象
 ```java
-public class FileUpload {
-
     @Autowired
     FileProperties fileProperties;
 
-    public static void main(String[] args) {
-        BaseFileUploader uploader = new BaseFileUploader();
-        File file = new File("本地地址");
-        //可以不使用配置文件,自己另外指定属性
-        fileProperties.setPathPrefix("前缀");
-        ApiClient apiClient = uploader.getApiClient(fileProperties);
-        VirtualFile virtualFile = apiClient.uploadImg(file);
-        System.out.println("上传完的文件信息为"+virtualFile);
-        boolean removeFile = apiClient.removeFile("文件名称(带前缀)");
-        System.out.println("文件是否删除"+removeFile);
-    }
-}
+    BaseFileUploader uploader = new BaseFileUploader();
+    ApiClient apiClient = uploader.getApiClient(fileProperties);
+```
+- 文件上传
+```java
+VirtualFile uploadFile(MultipartFile file);
+VirtualFile uploadFile(File file);
+VirtualFile uploadFile(InputStream is, String fileName);
 ```
 - 文件下载
 ```java
-
+void downloadFile(String file,  String localFile);
 ```
-
-
-
+- 切片上传
+```java
+VirtualFile multipartUpload(File file);
+```
+- 文件删除
+```java
+boolean removeFile(String key);
+```
 ### m3u8下载类
 
 ```java

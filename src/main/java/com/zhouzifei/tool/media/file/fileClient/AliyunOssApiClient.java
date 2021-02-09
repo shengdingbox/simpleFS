@@ -5,6 +5,7 @@ import com.aliyun.oss.model.*;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.OssApiException;
 import com.zhouzifei.tool.exception.QiniuApiException;
+import com.zhouzifei.tool.html.Randoms;
 import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.media.file.StreamUtil;
 import com.zhouzifei.tool.util.StringUtils;
@@ -51,17 +52,21 @@ public class AliyunOssApiClient extends BaseApiClient {
     @Override
     public VirtualFile uploadFile(InputStream is, String imageUrl) {
         this.check();
-        String key = FileUtil.generateTempFileName(imageUrl);
-        this.createNewFileName(key);
         Date startTime = new Date();
         try (InputStream uploadIs = StreamUtil.clone(is);
              InputStream fileHashIs = StreamUtil.clone(is)) {
             if (!this.client.doesBucketExist(bucketName)) {
                 throw new OssApiException("[阿里云OSS] 无法上传文件！Bucket不存在：" + bucketName);
             }
+            boolean exists = this.client.doesObjectExist(bucketName,imageUrl);
+            if(exists){
+                this.suffix = FileUtil.getSuffix(imageUrl);
+                imageUrl = Randoms.alpha(16) + this.suffix;
+            }
+            this.createNewFileName(imageUrl);
             this.client.putObject(bucketName, this.newFileName, uploadIs);
             return new VirtualFile()
-                    .setOriginalFileName(FileUtil.getName(key))
+                    .setOriginalFileName(FileUtil.getName(imageUrl))
                     .setSuffix(this.suffix)
                     .setUploadStartTime(startTime)
                     .setUploadEndTime(new Date())
@@ -71,13 +76,6 @@ public class AliyunOssApiClient extends BaseApiClient {
         } catch (IOException e) {
             throw new OssApiException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
             this.client.shutdown();
         }
     }
@@ -114,7 +112,16 @@ public class AliyunOssApiClient extends BaseApiClient {
     public VirtualFile multipartUpload(File file) {
         this.check();
         final Date startDate = new Date();
-        this.createNewFileName(file.getName());
+        if (!this.client.doesBucketExist(bucketName)) {
+            throw new OssApiException("[阿里云OSS] 无法上传文件！Bucket不存在：" + bucketName);
+        }
+        String fileName = file.getName();
+        boolean exists = this.client.doesObjectExist(bucketName,fileName);
+        if(exists){
+            this.suffix = FileUtil.getSuffix(fileName);
+            fileName = Randoms.alpha(16) + this.suffix;
+        }
+        this.createNewFileName(fileName);
         // 创建InitiateMultipartUploadRequest对象。
         InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest(bucketName, this.newFileName);
         // 初始化分片。

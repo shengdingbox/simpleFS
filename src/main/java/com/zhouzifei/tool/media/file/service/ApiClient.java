@@ -28,5 +28,5 @@ public interface ApiClient {
 
     VirtualFile saveToCloudStorage(String imgUrl, String referer,String key);
 
-    abstract VirtualFile multipartUpload(File file);
+    VirtualFile multipartUpload(File file);
 }
