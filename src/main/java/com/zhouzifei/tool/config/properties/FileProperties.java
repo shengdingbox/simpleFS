@@ -59,4 +59,8 @@ public class FileProperties {
      * 又拍云密码
      */
     private String operatorPwd;
+    /**
+     * 服务器地址
+     */
+    private String serverUrl;
 }

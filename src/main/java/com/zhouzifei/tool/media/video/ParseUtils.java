@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * @author 周子斐 (17600004572@163.com)
  * @remark 2020/10/23
@@ -26,9 +28,9 @@ public class ParseUtils {
      * @param parseName 解析的名称
      * @param parseUrl 解析接口地址
      */
-    public VideoUrlDTO parseVideo(String url, String parseName, String parseUrl) {
+    public VideoUrlDTO parseVideo(String url, String parseName, String parseUrl, Map<String,String> hears) {
         log.info("{}解析视频,解析地址为{}", parseName, url);
-        String data = HttpData.getData(parseUrl + url);
+        String data = HttpData.getData(parseUrl + url,hears);
         VideoUrlDTO videoUrlDTO = JSONObject.parseObject(data, VideoUrlDTO.class);
         if (videoUrlDTO == null) {
             videoUrlDTO = new VideoUrlDTO();
@@ -55,7 +57,7 @@ public class ParseUtils {
                 videoUrlDTO.setType(VideoTypeConst.M3U8.getType());
             }
             if (StringUtils.isEmpty(videoUrlDTO.getUrl())) {
-                return videoUrlDTO;
+                return null;
             }
             log.info("当前线程{},任务{},响应为{}", Thread.currentThread().getName(), videoUrlDTO.getParser(), videoUrlDTO);
             videoUrlDTO.setParser("蜜蜂解析");
@@ -68,7 +70,7 @@ public class ParseUtils {
             return videoUrlDTO;
         } else {
             log.info("当前线程{},任务{},解析失败", Thread.currentThread().getName(), videoUrlDTO.getParser());
-            return new VideoUrlDTO();
+            return null;
         }
     }
 }

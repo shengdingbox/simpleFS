@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 
 public class HttpData {
 
@@ -13,7 +14,7 @@ public class HttpData {
      * @param urlPath 要访问的地址
      * @return
      */
-    public static String getData(String urlPath) {
+    public static String getData(String urlPath, Map<String,String> hears) {
         StringBuilder sb = new StringBuilder();
         try {
             // 统一资源
@@ -27,6 +28,7 @@ public class HttpData {
             // 设置字符编码
             connection.setRequestProperty("Charset", "UTF-8");
             connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+            hears.forEach(connection::setRequestProperty);
 //            connection.setInstanceFollowRedirects(false);
             // 打开到此 URL 引用的资源的通信链接（如果尚未建立这样的连接）。
             connection.connect();

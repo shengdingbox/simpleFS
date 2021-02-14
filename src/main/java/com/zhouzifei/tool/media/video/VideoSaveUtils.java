@@ -42,9 +42,11 @@ public class VideoSaveUtils {
         if (StringUtils.isBlank(parseUrl)) {
             return videoUrlDTO;
         }
-        int i = parseUrl.lastIndexOf("/");
-        String substring = parseUrl.substring(0, i);
-        videoUrlDTO.setPrefixUrl(substring + "/");
+        if(parseUrl.contains("/")){
+            int i = parseUrl.lastIndexOf("/");
+            String substring = parseUrl.substring(0, i);
+            videoUrlDTO.setPrefixUrl(substring + "/");
+        }
         String playUrl = saveLocal(parseUrl, domain, videoUrlDTO, fileLocal,fileUrl);
         videoUrlDTO.setUrl(playUrl);
         return videoUrlDTO;

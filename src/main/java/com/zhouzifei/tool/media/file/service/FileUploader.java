@@ -39,9 +39,9 @@ public class FileUploader {
             String endpoint = fileProperties.getEndpoint();
             String accessKeyId = fileProperties.getAccessKey();
             String accessKeySecret = fileProperties.getSecretKey();
-            String url = fileProperties.getDomainUrl();
+            String domainUrl = fileProperties.getDomainUrl();
             String bucketName = fileProperties.getBucketName();
-            return new AliyunOssApiClient().init(endpoint, accessKeyId, accessKeySecret, url, bucketName);
+            return new AliyunOssApiClient().init(endpoint, accessKeyId, accessKeySecret, domainUrl, bucketName);
         }else if(storageType.equals(StorageTypeConst.YOUPAIYUN.getStorageType())) {
             String operatorName = fileProperties.getOperatorName();
             String operatorPwd = fileProperties.getOperatorPwd();

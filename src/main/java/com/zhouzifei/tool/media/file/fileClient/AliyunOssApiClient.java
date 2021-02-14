@@ -30,7 +30,7 @@ import java.util.List;
 public class AliyunOssApiClient extends BaseApiClient {
 
     private OSSClient client;
-    private String url;
+    private String domainUrl;
     private String bucketName;
     private String endpoint;
     private String accessKey;
@@ -40,8 +40,8 @@ public class AliyunOssApiClient extends BaseApiClient {
         super("阿里云OSS");
     }
 
-    public AliyunOssApiClient init(String endpoint, String accessKey, String secretKey, String url, String bucketName) {
-        this.url = url;
+    public AliyunOssApiClient init(String endpoint, String accessKey, String secretKey, String domainUrl, String bucketName) {
+        this.domainUrl = domainUrl;
         this.bucketName = bucketName;
         this.endpoint=endpoint;
         this.accessKey=accessKey;
@@ -72,7 +72,7 @@ public class AliyunOssApiClient extends BaseApiClient {
                     .setUploadEndTime(new Date())
                     .setFilePath(this.newFileName)
                     .setFileHash(DigestUtils.md5DigestAsHex(fileHashIs))
-                    .setFullFilePath(this.url + this.newFileName);
+                    .setFullFilePath(this.domainUrl + this.newFileName);
         } catch (IOException e) {
             throw new OssApiException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         } finally {
@@ -179,7 +179,7 @@ public class AliyunOssApiClient extends BaseApiClient {
                 .setUploadEndTime(new Date())
                 .setFilePath(this.newFileName)
                 .setFileHash("")
-                .setFullFilePath(this.url + this.newFileName);
+                .setFullFilePath(this.domainUrl + this.newFileName);
         progressListener.end(virtualFile);
         return virtualFile;
     }
