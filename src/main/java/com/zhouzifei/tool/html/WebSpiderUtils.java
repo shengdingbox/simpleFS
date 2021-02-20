@@ -1,6 +1,5 @@
 package com.zhouzifei.tool.html;
 
-import com.zhouzifei.tool.consts.CachePrefixEnum;
 import com.zhouzifei.tool.holder.SpringContextHolder;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -20,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class WebSpiderUtils {
 
-    private static final String KEY = CachePrefixEnum.SPIDER.getPrefix() + "list";
+    private static final String KEY = "spider_cache_list";
 
     public static String parseUa(String ua) {
         if (StringUtils.isEmpty(ua)) {

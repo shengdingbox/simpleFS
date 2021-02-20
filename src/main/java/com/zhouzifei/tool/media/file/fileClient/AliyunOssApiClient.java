@@ -40,12 +40,13 @@ public class AliyunOssApiClient extends BaseApiClient {
         super("阿里云OSS");
     }
 
-    public AliyunOssApiClient init(String endpoint, String accessKey, String secretKey, String domainUrl, String bucketName) {
+    public AliyunOssApiClient init(String endpoint, String accessKey, String secretKey, String domainUrl, String bucketName,String  uploadType) {
         this.domainUrl = domainUrl;
         this.bucketName = bucketName;
         this.endpoint=endpoint;
         this.accessKey=accessKey;
         this.secretKey=secretKey;
+        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         return this;
     }
 

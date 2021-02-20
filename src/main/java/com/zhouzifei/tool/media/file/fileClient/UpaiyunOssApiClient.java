@@ -24,10 +24,9 @@ import java.util.Objects;
  */
 public class UpaiyunOssApiClient extends BaseApiClient {
 
-    private static final String DEFAULT_PREFIX = "upaiyun/";
+
     private UpaiManager upaiManager;
     private String baseUrl;
-    private String pathPrefix;
 
     public UpaiyunOssApiClient() {
         super("又拍云");
@@ -39,7 +38,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
         }
         upaiManager = new UpaiManager(bucketName, operatorName, operatorPwd);
         this.baseUrl = baseUrl;
-        this.pathPrefix = StringUtils.isNullOrEmpty(uploadType) ? DEFAULT_PREFIX : uploadType.endsWith("/") ? uploadType : uploadType + "/";
+        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         return this;
     }
     @Override

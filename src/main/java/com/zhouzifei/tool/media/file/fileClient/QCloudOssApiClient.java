@@ -10,6 +10,7 @@ import com.qcloud.cos.region.Region;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.OssApiException;
 import com.zhouzifei.tool.exception.QiniuApiException;
+import com.zhouzifei.tool.html.Randoms;
 import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
 
@@ -23,11 +24,9 @@ import java.util.Date;
  */
 public class QCloudOssApiClient extends BaseApiClient {
 
-    private static final String DEFAULT_PREFIX = "Qcloud/";
     private COSClient cosClient;
     private String bucket;
     private String path;
-    private String pathPrefix;
 
     public QCloudOssApiClient() {
         super("腾讯云");
@@ -43,20 +42,24 @@ public class QCloudOssApiClient extends BaseApiClient {
         cosClient = new COSClient(cred, clientConfig);
         this.bucket = bucketName;
         this.path = baseUrl;
-        this.pathPrefix = StringUtils.isNullOrEmpty(uploadType) ? DEFAULT_PREFIX : uploadType.endsWith("/") ? uploadType : uploadType + "/";
+        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         return this;
     }
 
     @Override
-    public VirtualFile uploadFile(InputStream is, String imageUrl) {
+    public VirtualFile uploadFile(InputStream is, String fileName) {
         Date startTime = new Date();
-        String key = FileUtil.generateTempFileName(imageUrl);
-        this.createNewFileName(key);
+        final boolean exists = cosClient.doesObjectExist(bucket, fileName);
+        if(exists){
+            this.suffix = FileUtil.getSuffix(fileName);
+            fileName = Randoms.alpha(16) + this.suffix;
+        }
+        this.createNewFileName(fileName);
         ObjectMetadata objectMetadata = new ObjectMetadata();
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, this.newFileName, is,objectMetadata);
         PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
         return new VirtualFile()
-                .setOriginalFileName(key)
+                .setOriginalFileName(fileName)
                 .setSuffix(this.suffix)
                 .setUploadStartTime(startTime)
                 .setUploadEndTime(new Date())

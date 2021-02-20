@@ -8,6 +8,7 @@ import com.obs.services.model.PutObjectResult;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.OssApiException;
 import com.zhouzifei.tool.exception.QiniuApiException;
+import com.zhouzifei.tool.html.Randoms;
 import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
 
@@ -23,11 +24,9 @@ import java.util.Date;
  */
 public class HuaweiCloudOssApiClient extends BaseApiClient {
 
-    private static final String DEFAULT_PREFIX = "huaweiCloud/";
     private ObsClient obsClient;
     private String bucket;
     private String path;
-    private String pathPrefix;
 
     public HuaweiCloudOssApiClient() {
         super("华为云");
@@ -41,7 +40,7 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
         obsClient = new ObsClient(accessKey, secretKey, endpoint);
         this.bucket = bucketName;
         this.path = baseUrl;
-        this.pathPrefix = StringUtils.isNullOrEmpty(uploadType) ? DEFAULT_PREFIX : uploadType.endsWith("/") ? uploadType : uploadType + "/";
+        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         return this;
     }
 
@@ -49,11 +48,15 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
     public VirtualFile uploadFile(InputStream is, String fileName) {
         try {
             Date startTime = new Date();
-            String key = FileUtil.generateTempFileName(fileName);
-            this.createNewFileName(key);
+            final boolean exist = obsClient.doesObjectExist(bucket, fileName);
+            if(exist){
+                this.suffix = FileUtil.getSuffix(fileName);
+                fileName = Randoms.alpha(16) + this.suffix;
+            }
+            this.createNewFileName(fileName);
             PutObjectResult putObjectResult = obsClient.putObject(bucket, this.newFileName, is);
             return new VirtualFile()
-                    .setOriginalFileName(key)
+                    .setOriginalFileName(fileName)
                     .setSuffix(this.suffix)
                     .setUploadStartTime(startTime)
                     .setUploadEndTime(new Date())
@@ -71,12 +74,16 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
     }
 
     @Override
-    public boolean removeFile(String key) {
-        if (StringUtils.isNullOrEmpty(key)) {
+    public boolean removeFile(String fileName) {
+        if (StringUtils.isNullOrEmpty(fileName)) {
             throw new OssApiException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
+        final boolean exist = obsClient.doesObjectExist(bucket, fileName);
+        if(!exist){
+            throw new OssApiException("[阿里云OSS] 文件删除失败！文件不存在：" + bucket + "/" + fileName);
+        }
         // 删除文件
-        DeleteObjectResult deleteObjectResult = obsClient.deleteObject(bucket, key);
+        DeleteObjectResult deleteObjectResult = obsClient.deleteObject(bucket, fileName);
         return deleteObjectResult.isDeleteMarker();
     }
 

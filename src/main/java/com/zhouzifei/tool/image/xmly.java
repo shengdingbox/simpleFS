@@ -22,7 +22,6 @@ public class xmly {
         if(null == inputStream){
             throw new RuntimeException();
         }
-//        final FileInputStream fileInputStream = new FileInputStream(file);
         String result = post("https://upload.ximalaya.com/dtres/headerThumb/upload"
                 , "_xmLog=h5&2872be80-f5d5-4747-9b75-cb9e34503cf0&2.2.17; Hm_lvt_4a7d8ec50cfd6af753c4f8aee3425070=1612664140; trackType=web; fds_otp=8172383124598533914; 1&remember_me=y; 1&_token=296993092&6B62AF70140N62AD80A28DA7DB1479A11D32B64352BEB4ECBC37887968F72543742F4606E28F13M5F3014F4AE8BE20_; 1_l_flag=296993092&6B62AF70140N62AD80A28DA7DB1479A11D32B64352BEB4ECBC37887968F72543742F4606E28F13M5F3014F4AE8BE20__2021-02-0710:16:26; x_xmly_traffic=utm_source%253A%2526utm_medium%253A%2526utm_campaign%253A%2526utm_content%253A%2526utm_term%253A%2526utm_from%253A; Hm_lpvt_4a7d8ec50cfd6af753c4f8aee3425070=1612664187"
                 , inputStream);
@@ -55,7 +54,7 @@ public class xmly {
             conn.setDoInput(true);
             String BOUNDARY = "----WebKitFormBoundary07I8UIuBx6LN2KyY";
             conn.setUseCaches(false);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod("GET");
             conn.setRequestProperty("connection", "Keep-Alive");
             //            conn.setRequestProperty("user-agent", "Mozilla/4.0 (conpatible; MSIE 6.0; Windows NT 5.1; SV1)");
             conn.setRequestProperty("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36");
@@ -123,5 +122,14 @@ public class xmly {
             }
         }
         return null;
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
+        final File file = new File("/Users/Dabao/Downloads/123.jpg");
+        final FileInputStream inputStream = new FileInputStream(file);
+        String result = post("https://upload.ximalaya.com/dtres/headerThumb/upload"
+                , "_xmLog=h5&2872be80-f5d5-4747-9b75-cb9e34503cf0&2.2.17; Hm_lvt_4a7d8ec50cfd6af753c4f8aee3425070=1612664140; trackType=web; fds_otp=8172383124598533914; 1&remember_me=y; 1&_token=296993092&6B62AF70140N62AD80A28DA7DB1479A11D32B64352BEB4ECBC37887968F72543742F4606E28F13M5F3014F4AE8BE20_; 1_l_flag=296993092&6B62AF70140N62AD80A28DA7DB1479A11D32B64352BEB4ECBC37887968F72543742F4606E28F13M5F3014F4AE8BE20__2021-02-0710:16:26; x_xmly_traffic=utm_source%253A%2526utm_medium%253A%2526utm_campaign%253A%2526utm_content%253A%2526utm_term%253A%2526utm_from%253A; Hm_lpvt_4a7d8ec50cfd6af753c4f8aee3425070=1612664187"
+                , inputStream);
+        System.out.println(result);
     }
 }

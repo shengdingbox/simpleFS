@@ -10,6 +10,7 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
+import com.zhouzifei.tool.html.Randoms;
 import com.zhouzifei.tool.util.StringUtils;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.QiniuApiException;
@@ -23,6 +24,7 @@ import java.util.Date;
 
 /**
  * Qiniu云操作文件的api：v1
+ *
  * @author 周子斐 (17600004572@163.com)
  * @version 1.0
  * @remark 2019年7月16日
@@ -30,12 +32,10 @@ import java.util.Date;
  */
 public class QiniuApiClient extends BaseApiClient {
 
-    private static final String DEFAULT_PREFIX = "qiniu/";
     private BucketManager bucketManager;
     private Auth auth;
     private String bucket;
     private String baseUrl;
-    private String pathPrefix;
 
     public QiniuApiClient() {
         super("七牛云");
@@ -48,7 +48,7 @@ public class QiniuApiClient extends BaseApiClient {
         auth = Auth.create(accessKey, secretKey);
         this.bucket = bucketName;
         this.baseUrl = baseUrl;
-        this.pathPrefix = StringUtils.isNullOrEmpty(uploadType) ? DEFAULT_PREFIX : uploadType.endsWith("/") ? uploadType : uploadType + "/";
+        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         return this;
     }
 
@@ -56,13 +56,11 @@ public class QiniuApiClient extends BaseApiClient {
      * 上传图片
      *
      * @param is       图片流
-     * @param imageUrl 图片路径
+     * @param fileName 图片路径
      * @return 上传后的路径
      */
     @Override
-    public VirtualFile uploadFile(InputStream is, String imageUrl) {
-        String key = FileUtil.generateTempFileName(imageUrl);
-        this.createNewFileName(key);
+    public VirtualFile uploadFile(InputStream is, String fileName) {
         Date startTime = new Date();
         //Zone.zone0:华东
         //Zone.zone1:华北
@@ -70,15 +68,17 @@ public class QiniuApiClient extends BaseApiClient {
         //Zone.zoneNa0:北美
         Configuration cfg = new Configuration(Region.autoRegion());
         UploadManager uploadManager = new UploadManager(cfg);
+        this.suffix = FileUtil.getSuffix(fileName);
+        fileName = Randoms.alpha(16) + this.suffix;
+        this.createNewFileName(fileName);
         try {
             String upToken = auth.uploadToken(this.bucket);
             Response response = uploadManager.put(is, this.newFileName, upToken, null, null);
 
             //解析上传成功的结果
             DefaultPutRet putRet = JSON.parseObject(response.bodyString(), DefaultPutRet.class);
-
             return new VirtualFile()
-                    .setOriginalFileName(key)
+                    .setOriginalFileName(fileName)
                     .setSuffix(this.suffix)
                     .setUploadStartTime(startTime)
                     .setUploadEndTime(new Date())
@@ -127,7 +127,7 @@ public class QiniuApiClient extends BaseApiClient {
     public InputStream downloadFileStream(String key) {
         try {
             String encodedFileName = URLEncoder.encode(key, "utf-8").replace("+", "%20");
-            String publicUrl = String.format("%s/%s",getPath() , encodedFileName);
+            String publicUrl = String.format("%s/%s", getPath(), encodedFileName);
             long expireInSeconds = 3600;
             String finalUrl = auth.privateDownloadUrl(publicUrl, expireInSeconds);
             return FileUtil.getInputStreamByUrl(finalUrl, "");

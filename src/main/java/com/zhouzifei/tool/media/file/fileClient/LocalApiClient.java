@@ -4,9 +4,9 @@ import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.LocalApiException;
 import com.zhouzifei.tool.media.file.StreamUtil;
 import com.zhouzifei.tool.media.file.FileUtil;
+import com.zhouzifei.tool.util.StringUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,11 +23,8 @@ import java.util.Date;
  */
 public class LocalApiClient extends BaseApiClient {
     private static final String DEFAULT_PREFIX = "local/";
-
     private String url;
     private String rootPath;
-    private String pathPrefix;
-
     public LocalApiClient() {
         super("Nginx文件服务器");
     }
@@ -38,7 +35,7 @@ public class LocalApiClient extends BaseApiClient {
         }
         this.url = url;
         this.rootPath = rootPath;
-        this.pathPrefix = StringUtils.isEmpty(uploadType) ? DEFAULT_PREFIX : uploadType.endsWith("/") ? uploadType : uploadType + "/";
+        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         return this;
     }
 

@@ -42,7 +42,7 @@ public class FileProperties {
     /**
      * AccessKey
      */
-    private String accessKey;
+    private String accessId;
     /**
      * Secret Key
      */

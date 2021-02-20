@@ -7,9 +7,9 @@ import com.zhouzifei.tool.dto.M3u8DTO;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.M3u8Exception;
 import com.zhouzifei.tool.image.xmly;
-import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.media.file.MediaFormat;
 import com.zhouzifei.tool.util.StringUtils;
+import com.zhouzifei.tool.util.ThreadManager;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -176,10 +176,8 @@ public class M3u8DownloadFactory {
             tsSet.clear();
             finishedFiles.clear();
             downloadBytes = new BigDecimal(0);
-
-            //监视视频地址是否解析完成
-            new Thread(() -> {
-                while (step == 1) {
+            ThreadManager.getThreadPollProxy().execute(() -> {
+                while (step == 1&&null!=m3u8Download) {
                     try {
                         Thread.sleep(1000);
                         log.info("正在解析视频地址，请稍后...");
@@ -187,15 +185,14 @@ public class M3u8DownloadFactory {
                         e.printStackTrace();
                     }
                 }
-            }).start();
-
-            new Thread(() -> {
+            });
+            ThreadManager.getThreadPollProxy().execute(() -> {
                 String tsUrl = getTsUrl();
                 if (StringUtils.isEmpty(tsUrl)) {
                     log.info("不需要解密");
                 }
                 startDownload();
-            }).start();
+            });
         }
 
         public String runM3u8ToCloudTask(FileProperties fileProperties) {
@@ -208,7 +205,7 @@ public class M3u8DownloadFactory {
             }
             setThreadCount(30);
             //监视视频地址是否解析完成
-            new Thread(() -> {
+            ThreadManager.getThreadPollProxy().execute(() -> {
                 while (step == 1) {
                     try {
                         Thread.sleep(1000);
@@ -217,15 +214,14 @@ public class M3u8DownloadFactory {
                         e.printStackTrace();
                     }
                 }
-            }).start();
-
-            new Thread(() -> {
+            });
+            ThreadManager.getThreadPollProxy().execute(() -> {
                 String tsUrl = getTsUrl();
                 if (StringUtils.isEmpty(tsUrl)) {
                     log.info("不需要解密");
                 }
                 startM3u8ToCloud();
-            }).start();
+            });
             return downloadUrl;
         }
 
@@ -237,72 +233,73 @@ public class M3u8DownloadFactory {
                 stringBuffer.append(s);
                 stringBuffer.append("\n");
             }
+            //log.info(stringBuffer.toString());
             InputStream is = new ByteArrayInputStream(stringBuffer.toString().getBytes());
-            final VirtualFile virtualFile = apiClient.uploadFile(is, "index.m3u8");
-            log.info("上传地址为{}",virtualFile);
-            downloadUrl = virtualFile.getFullFilePath();
+            try {
+                final VirtualFile virtualFile = apiClient.uploadFile(is, "index.m3u8");
+                log.info("上传地址为{}", virtualFile);
+                downloadUrl = virtualFile.getFullFilePath();
+            } catch (Exception e) {
+                log.info("index.m3u8{}", stringBuffer.toString());
+            }
+
         }
 
         private void startM3u8ToCloud() {
             this.step = 2;
             //线程池
-            final ExecutorService fixedThreadPool = Executors.newFixedThreadPool(threadCount);
+            final ThreadManager.ThreadPollProxy fixedThreadPool = ThreadManager.getThreadPollProxy(threadCount,10,1000);
             int i = 0;
             totalCount = tsSet.size();
+            //计数器
+            final CountDownLatch latch = new CountDownLatch(totalCount);
             for (int j = 0; j < tsSetAll.size(); j++) {
                 String s = tsSetAll.get(j);
                 if (s.contains("#EXTINF")) {
                     int index = (j + 1);
                     String tsUrl = tsSetAll.get(index);
-                    fixedThreadPool.execute(new Thread(() -> {
-//                        FileUploader uploader = new FileUploader();
-//                        ApiClient apiClient = uploader.getApiClient(fileProperties);
-//                        final VirtualFile virtualFile = apiClient.saveToCloudStorage(tsUrl, "",index+".ts");
+                    fixedThreadPool.execute(() -> {
                         try {
                             final String post = xmly.pic(tsUrl);
+                            if (11==totalCount){
+                                throw new RuntimeException();
+                            }
                             tsSetAll.set(index, post);
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {
                             finishedCount++;
+                            latch.countDown();
                         }
-//                        final String[] split = virtualFile.getFilePath().split("/");
-//                        if(split.length > 1){
-//                            tsSetAll.set(index, split[1]);
-//                        }else {
-
-                        //}
-
-                    }));
+                    });
                 }
             }
-            fixedThreadPool.shutdown();
-            uploadListener(fixedThreadPool);
+            uploadListener(latch);
         }
 
-        private void uploadListener(ExecutorService fixedThreadPool) {
+        private void uploadListener(CountDownLatch latch) {
             new Thread(() -> {
-                log.info("检测到" + totalCount + "个视频片段，开始下载！");
-                log.info("0% (0/" + totalCount + ")");
+                log.info("检测到{}个视频片段，开始下载！", totalCount);
+                log.info("0% (0/{})", totalCount);
                 //轮询是否下载成功
-                while (!fixedThreadPool.isTerminated()) {
-                    try {
+                try {
+                    while (latch.getCount() > 1) {
                         Thread.sleep(interval);
                         float percent = new BigDecimal(finishedCount).divide(new BigDecimal(totalCount), 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
                         log.info("已下载" + finishedCount + "个\t一共" + totalCount + "个\t已完成" + percent + "%");
                         log.info(percent + "% (" + finishedCount + "/" + totalCount + ")");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
                 log.info("下载完成，正在合并文件！共" + totalCount + "个！" + StringUtils.convertToDownloadSpeed(downloadBytes, 3));
                 //开始合并视频
                 saveM3u8();
                 this.step = 4;
                 log.info("视频上传完成，欢迎使用");
-                listener.end();
             }).start();
         }
+
         /**
          * 下载视频
          */
@@ -349,7 +346,6 @@ public class M3u8DownloadFactory {
                 deleteFiles();
                 this.step = 4;
                 log.info("视频合并完成，欢迎使用");
-                listener.end();
             }).start();
 
             new Thread(() -> {
@@ -601,7 +597,7 @@ public class M3u8DownloadFactory {
             for (int i = 0; i < split.length; i++) {
                 String s = split[i];
                 if (s.contains("#EXTINF")) {
-                    String s1 = split[i+1];
+                    String s1 = split[i + 1];
                     tsSet.add(StringUtils.isUrl(s1) ? s1 : relativeUrl + s1);
                     tsSetAll.add(StringUtils.isUrl(s1) ? s1 : relativeUrl + s1);
                 } else {
@@ -610,7 +606,7 @@ public class M3u8DownloadFactory {
                     } else if (i == 0) {
                         tsSetAll.add(split[i]);
                     }
-                    String s1 = split[i+1];
+                    String s1 = split[i + 1];
                     tsSetAll.add(s1);
                 }
             }
