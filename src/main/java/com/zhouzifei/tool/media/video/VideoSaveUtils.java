@@ -117,4 +117,14 @@ public class VideoSaveUtils {
 
         return fileUrl + filePath + fileName;
     }
+
+    public static void main(String[] args) {
+        final VideoUrlDTO videoUrlDTO = new VideoUrlDTO();
+        videoUrlDTO.setPrefixType("aiqiyi.com");
+        saveLocal("https://vipcache-ffsirapi-llqsource.byteamone.cn/qq/18d30f299c1661f698b60cdea88ed3e3c92bc4c58a8e2682c24ea1a3ecde71c2/llq.m3u8"
+        ,""
+        ,videoUrlDTO
+        ,"/Users/Dabao/temp1"
+        ,"");
+    }
 }
