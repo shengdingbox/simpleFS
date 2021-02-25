@@ -10,7 +10,7 @@
     <groupId>com.zhouzifei</groupId>
     <artifactId>commonTool</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.3.BASE</version>
+    <version>1.0.3.RELEASES</version>
     <name>commonTool</name>
     <description>小型整合型的工具类</description>
     <properties>
