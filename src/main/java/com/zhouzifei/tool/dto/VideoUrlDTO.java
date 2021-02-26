@@ -24,4 +24,5 @@ public class VideoUrlDTO {
     private String prefixUrl;
     private String prefixType;
     private String msg;
+    private String time;
 }

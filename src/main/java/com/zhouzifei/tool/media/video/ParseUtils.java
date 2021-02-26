@@ -31,6 +31,13 @@ public class ParseUtils {
     public VideoUrlDTO parseVideo(String url, String parseName, String parseUrl, Map<String,String> hears) {
         log.info("{}解析视频,解析地址为{}", parseName, url);
         String data = HttpData.getData(parseUrl + url,hears);
+        if (data == null) {
+            VideoUrlDTO videoUrlDTO = new VideoUrlDTO();
+            videoUrlDTO.setCode("404");
+            return videoUrlDTO;
+        }
+        data = data.replace("\n", "");
+        data = data.replace("\r", "");
         VideoUrlDTO videoUrlDTO = JSONObject.parseObject(data, VideoUrlDTO.class);
         if (videoUrlDTO == null) {
             videoUrlDTO = new VideoUrlDTO();

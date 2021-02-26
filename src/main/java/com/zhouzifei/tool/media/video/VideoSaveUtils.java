@@ -4,9 +4,11 @@ package com.zhouzifei.tool.media.video;
 import com.zhouzifei.tool.consts.VideoTypeConst;
 import com.zhouzifei.tool.dto.HttpResponses;
 import com.zhouzifei.tool.dto.VideoUrlDTO;
+import com.zhouzifei.tool.exception.ServiceException;
 import com.zhouzifei.tool.util.HttpUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
+import org.springframework.data.redis.core.convert.PathIndexResolver;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -80,7 +82,14 @@ public class VideoSaveUtils {
         try {
             HttpResponse get = HttpUtils.doGet(url, "","GET",  hear, new HashMap<>());
             // 设置字符编码
-            InputStream content = get.getEntity().getContent();
+            final long contentLength = get.getEntity().getContentLength();
+            if(contentLength > 52428800){
+                return url;
+            }
+            if(contentLength<100){
+                throw new ServiceException("字节数不够");
+
+            }            InputStream content = get.getEntity().getContent();
             // 打开到此 URL 引用的资源的通信链接（如果尚未建立这样的连接）。
             //构造一个BufferedReader类来读取文件
             File file2 = new File(fileLocal + filePath);
@@ -121,7 +130,7 @@ public class VideoSaveUtils {
     public static void main(String[] args) {
         final VideoUrlDTO videoUrlDTO = new VideoUrlDTO();
         videoUrlDTO.setPrefixType("aiqiyi.com");
-        saveLocal("https://vipcache-ffsirapi-llqsource.byteamone.cn/qq/18d30f299c1661f698b60cdea88ed3e3c92bc4c58a8e2682c24ea1a3ecde71c2/llq.m3u8"
+        saveLocal("http://cache.parwix.com:880/video/m1905.php?vid=485302&apikey="
         ,""
         ,videoUrlDTO
         ,"/Users/Dabao/temp1"
