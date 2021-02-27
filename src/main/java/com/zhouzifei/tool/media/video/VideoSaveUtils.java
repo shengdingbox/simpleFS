@@ -7,10 +7,13 @@ import com.zhouzifei.tool.dto.VideoUrlDTO;
 import com.zhouzifei.tool.exception.ServiceException;
 import com.zhouzifei.tool.util.HttpUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.springframework.data.redis.core.convert.PathIndexResolver;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -87,9 +90,13 @@ public class VideoSaveUtils {
                 return url;
             }
             if(contentLength<100){
-                throw new ServiceException("字节数不够");
-
-            }            InputStream content = get.getEntity().getContent();
+                //是否为302
+                final int statusCode = getStatusCode(url);
+                if(200 == statusCode){
+                    throw new ServiceException("字节数不够");
+                }
+            }
+            InputStream content = get.getEntity().getContent();
             // 打开到此 URL 引用的资源的通信链接（如果尚未建立这样的连接）。
             //构造一个BufferedReader类来读取文件
             File file2 = new File(fileLocal + filePath);
@@ -121,19 +128,35 @@ public class VideoSaveUtils {
             out.flush();
             out.close();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            throw new ServiceException(ex.getMessage());
         }
-
         return fileUrl + filePath + fileName;
     }
 
+    public static int getStatusCode(String url) {
+        try {
+            HttpURLConnection httpUrlConn = (HttpURLConnection) new URL(
+                    url).openConnection();
+            // 设置连接主机超时（单位：毫秒）
+            httpUrlConn.setConnectTimeout(5000);
+            // 设置从主机读取数据超时（单位：毫秒）
+            httpUrlConn.setReadTimeout(5000);
+            httpUrlConn.setRequestProperty("referer","https://jiexi.dabaotv.cn/");
+            System.out.println(new Date());
+            return httpUrlConn.getResponseCode();
+        } catch (IOException e) {
+            return 404;
+        }
+    }
     public static void main(String[] args) {
-        final VideoUrlDTO videoUrlDTO = new VideoUrlDTO();
-        videoUrlDTO.setPrefixType("aiqiyi.com");
-        saveLocal("http://cache.parwix.com:880/video/m1905.php?vid=485302&apikey="
-        ,""
-        ,videoUrlDTO
-        ,"/Users/Dabao/temp1"
-        ,"");
+//        final VideoUrlDTO videoUrlDTO = new VideoUrlDTO();
+//        videoUrlDTO.setPrefixType("aiqiyi.com");
+//        saveLocal("https://cache1.parwix.com:4433/m/cb36XQilrkuA30GlehwAzhLtQSvx5CQfMNiJZl3YUbXu908eTs_uL7O5Kua0rqHhf4KhJMEXXcnLGBHWecvp38JRITiwdlAbnRZs82BCytvyU-couayd42oJTVBNIqyVlrlqyGUTTlNPFw2O5LcBQOWWaSdSg6YRMOBntMd78w6BBIZL1hceurpY-x6bBi846yIKhI6vL5pSq_wUn_EIEac3lhwOy5U_wUAM.m3u8"
+//        ,""
+//        ,videoUrlDTO
+//        ,"/Users/Dabao/temp1"
+//        ,"");
+        final int statusCode = getStatusCode("https://cache1.parwix.com:4433/m/0620ecK6sGZkfExFf0QRX_9O89cuVI2fey82KR6EjGj3cI67Lb-MmDanym4T0LYNVHdBAyI_el64Q3nfsVuceWcddHc2Db9LMTj5ro29aPjBoAryYOeA8gmu81UFNpLS38RNNtHWGMWc1pjiUtycmMcxEm0vW6M-AvhWGPwyIl7yuuX7vZrGOtA_DaL9LbspIFDLX1wrJsawwRQK5mwDOLim1IbPgmA8vg.m3u8");
+        System.out.println(statusCode);
     }
 }

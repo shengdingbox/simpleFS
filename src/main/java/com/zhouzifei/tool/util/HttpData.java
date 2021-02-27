@@ -14,7 +14,7 @@ public class HttpData {
      * @param urlPath 要访问的地址
      * @return
      */
-    public static String getData(String urlPath, Map<String,String> hears) {
+    public static String getData(String urlPath, Map<String,String> hears,Integer readTime) {
         StringBuilder sb = new StringBuilder();
         try {
             // 统一资源
@@ -25,6 +25,9 @@ public class HttpData {
             HttpURLConnection connection = (HttpURLConnection) urlConnection;
             // 设定请求的方法，默认是GET
             connection.setRequestMethod("GET");
+            if(null != readTime){
+                connection.setReadTimeout(readTime);
+            }
             // 设置字符编码
             connection.setRequestProperty("Charset", "UTF-8");
             connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");

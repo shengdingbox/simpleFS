@@ -34,6 +34,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
+import static java.net.HttpURLConnection.setFollowRedirects;
+
 /**
  * @author 周子斐 (17600004572@163.com)
  * @remark 2020/4/19
@@ -100,8 +102,8 @@ public class HttpUtils {
                                      Map<String, String> querys)
             throws Exception {
         HttpClient httpClient = wrapClient(host);
-
         HttpGet request = new HttpGet(buildUrl(host, path, querys));
+        request.getParams().setParameter("http.protocol.allow-circular-redirects", false);
         for (Map.Entry<String, String> e : headers.entrySet()) {
             request.addHeader(e.getKey(), e.getValue());
         }

@@ -28,9 +28,9 @@ public class ParseUtils {
      * @param parseName 解析的名称
      * @param parseUrl 解析接口地址
      */
-    public VideoUrlDTO parseVideo(String url, String parseName, String parseUrl, Map<String,String> hears) {
+    public VideoUrlDTO parseVideo(String url, String parseName, String parseUrl, Map<String,String> hears,int readTime) {
         log.info("{}解析视频,解析地址为{}", parseName, url);
-        String data = HttpData.getData(parseUrl + url,hears);
+        String data = HttpData.getData(parseUrl + url,hears,readTime);
         if (data == null) {
             VideoUrlDTO videoUrlDTO = new VideoUrlDTO();
             videoUrlDTO.setCode("404");
