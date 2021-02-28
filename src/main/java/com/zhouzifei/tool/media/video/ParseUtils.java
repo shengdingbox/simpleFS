@@ -38,6 +38,8 @@ public class ParseUtils {
         }
         data = data.replace("\n", "");
         data = data.replace("\r", "");
+        //// TODO: 2021/2/28
+        System.out.println(data);
         VideoUrlDTO videoUrlDTO = JSONObject.parseObject(data, VideoUrlDTO.class);
         if (videoUrlDTO == null) {
             videoUrlDTO = new VideoUrlDTO();

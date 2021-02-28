@@ -1,7 +1,10 @@
 package com.zhouzifei.tool.util;
 
+import com.zhouzifei.tool.media.file.StreamUtil;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -35,18 +38,21 @@ public class HttpData {
 //            connection.setInstanceFollowRedirects(false);
             // 打开到此 URL 引用的资源的通信链接（如果尚未建立这样的连接）。
             connection.connect();
-            BufferedInputStream bin = new BufferedInputStream(connection.getInputStream());
-            byte[] buf = new byte[1024];
-            while (bin.read(buf) != -1) {
-                String temp = new String(buf);
-                sb.append(temp);
-            }
-            bin.close();
+            //BufferedInputStream bin = new BufferedInputStream(connection.getInputStream());
+            final InputStream inputStream = connection.getInputStream();
+            final String string = StreamUtil.toString(inputStream, "UTF-8");
             connection.disconnect();
+            return string;
+//            byte[] buf = new byte[4096];
+//            while (bin.read(buf) != -1) {
+//                String temp = new String(buf);
+//                sb.append(temp);
+//            }
+//            bin.close();
+
         } catch (IOException e) {
             return null;
         }
-        return sb.toString();
     }
 
 }

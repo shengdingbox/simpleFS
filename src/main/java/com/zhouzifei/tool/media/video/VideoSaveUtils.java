@@ -69,14 +69,15 @@ public class VideoSaveUtils {
     public static String saveLocal(String url, String domain, VideoUrlDTO videoUrlDTO, String fileLocal, String fileUrl) {
         String prefixType = videoUrlDTO.getPrefixType();
         String prefixUrl = videoUrlDTO.getPrefixUrl();
+        if(domain == null){
+            domain = prefixUrl;
+        }
         //默认不指定key的情况下，以文件内容的hash值作为文件名
         String replace = UUID.randomUUID().toString().replace("-", "");
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMddhh");
-        String format = dateFormat.format(new Date());
         if (prefixType.contains(".com")) {
             prefixType = prefixType.replace(".com", "");
         }
-        String filePath = "/" + prefixType + "/" + format + "/";
+        String filePath = "/" + prefixType + "/";
         String fileName = replace + ".m3u8";
         Map<String, String> hear = new HashMap<>();
         hear.put("User-Agent", "Mozilla/4.0 (compatible;MSIE 7.0; Windows NT 5.1; Maxthon;)");
