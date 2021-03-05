@@ -104,6 +104,8 @@ public class HttpUtils {
         HttpClient httpClient = wrapClient(host);
         HttpGet request = new HttpGet(buildUrl(host, path, querys));
         request.getParams().setParameter("http.protocol.allow-circular-redirects", false);
+        httpClient.getParams().setParameter("http.connection.timeout", 3000);
+        httpClient.getParams().setParameter("http.socket.timeout", 3000);
         for (Map.Entry<String, String> e : headers.entrySet()) {
             request.addHeader(e.getKey(), e.getValue());
         }

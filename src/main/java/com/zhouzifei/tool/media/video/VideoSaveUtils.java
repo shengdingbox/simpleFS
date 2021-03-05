@@ -53,7 +53,9 @@ public class VideoSaveUtils {
             videoUrlDTO.setPrefixUrl(substring + "/");
         }
         String playUrl = saveLocal(parseUrl, domain, videoUrlDTO, fileLocal,fileUrl);
-        videoUrlDTO.setUrl(playUrl);
+        if ( null != playUrl) {
+            videoUrlDTO.setUrl(playUrl);
+        }
         return videoUrlDTO;
     }
 
@@ -67,23 +69,23 @@ public class VideoSaveUtils {
      * @return
      */
     public static String saveLocal(String url, String domain, VideoUrlDTO videoUrlDTO, String fileLocal, String fileUrl) {
-        String prefixType = videoUrlDTO.getPrefixType();
-        String prefixUrl = videoUrlDTO.getPrefixUrl();
-        if(domain == null){
-            domain = prefixUrl;
-        }
-        //默认不指定key的情况下，以文件内容的hash值作为文件名
-        String replace = UUID.randomUUID().toString().replace("-", "");
-        if (prefixType.contains(".com")) {
-            prefixType = prefixType.replace(".com", "");
-        }
-        String filePath = "/" + prefixType + "/";
-        String fileName = replace + ".m3u8";
-        Map<String, String> hear = new HashMap<>();
-        hear.put("User-Agent", "Mozilla/4.0 (compatible;MSIE 7.0; Windows NT 5.1; Maxthon;)");
-        hear.put("Accept-Encoding", "UTF-8");
-        hear.put("referer", domain);
         try {
+            String prefixType = videoUrlDTO.getPrefixType();
+            String prefixUrl = videoUrlDTO.getPrefixUrl();
+            if(domain == null){
+                domain = prefixUrl;
+            }
+            //默认不指定key的情况下，以文件内容的hash值作为文件名
+            String replace = UUID.randomUUID().toString().replace("-", "");
+            if (prefixType.contains(".com")) {
+                prefixType = prefixType.replace(".com", "");
+            }
+            String filePath = "/" + prefixType + "/";
+            String fileName = replace + ".m3u8";
+            Map<String, String> hear = new HashMap<>();
+            hear.put("User-Agent", "Mozilla/4.0 (compatible;MSIE 7.0; Windows NT 5.1; Maxthon;)");
+            hear.put("Accept-Encoding", "UTF-8");
+            hear.put("referer", domain);
             HttpResponse get = HttpUtils.doGet(url, "","GET",  hear, new HashMap<>());
             // 设置字符编码
             final long contentLength = get.getEntity().getContentLength();
@@ -128,10 +130,11 @@ public class VideoSaveUtils {
             }
             out.flush();
             out.close();
+            return fileUrl + filePath + fileName;
         } catch (Exception ex) {
-            throw new ServiceException(ex.getMessage());
+            ex.printStackTrace();
         }
-        return fileUrl + filePath + fileName;
+        return null;
     }
 
     public static int getStatusCode(String url) {
