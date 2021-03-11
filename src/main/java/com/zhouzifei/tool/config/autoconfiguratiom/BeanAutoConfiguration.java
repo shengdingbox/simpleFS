@@ -1,6 +1,6 @@
 package com.zhouzifei.tool.config.autoconfiguratiom;
 
-import com.zhouzifei.tool.media.video.ParseUtils;
+import com.zhouzifei.tool.util.JedisUtils;
 import com.zhouzifei.tool.util.RedisUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
@@ -15,11 +15,11 @@ import org.springframework.context.annotation.Configuration;
 public class BeanAutoConfiguration {
 
     @Bean
-    public ParseUtils ParseUtil() {
-        return new ParseUtils();
-    }
-    @Bean
     public RedisUtils RedisUtils() {
         return new RedisUtils();
+    }
+    @Bean
+    public JedisUtils JedisUtils() {
+        return new JedisUtils();
     }
 }

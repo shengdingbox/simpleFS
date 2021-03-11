@@ -27,8 +27,15 @@
         <expiringmap.version>0.5.8</expiringmap.version>
         <guava.version>23.0</guava.version>
         <aspectj.version>1.9.6</aspectj.version>
+        <jedis.version>2.8.2</jedis.version>
     </properties>
     <dependencies>
+        <!-- jedis -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
+        </dependency>
         <!--json格式化类 -->
         <dependency>
             <groupId>com.alibaba</groupId>

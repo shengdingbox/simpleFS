@@ -35,6 +35,30 @@
       "sourceType": "com.zhouzifei.tool.config.properties.RedisProperties"
     },
     {
+      "name": "spring.redis.max-active",
+      "type": "java.lang.Integer",
+      "sourceType": "com.zhouzifei.tool.config.properties.RedisProperties",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.redis.max-idle",
+      "type": "java.lang.Integer",
+      "sourceType": "com.zhouzifei.tool.config.properties.RedisProperties",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.redis.max-wait-millis",
+      "type": "java.lang.Long",
+      "sourceType": "com.zhouzifei.tool.config.properties.RedisProperties",
+      "defaultValue": 0
+    },
+    {
+      "name": "spring.redis.min-idle",
+      "type": "java.lang.Integer",
+      "sourceType": "com.zhouzifei.tool.config.properties.RedisProperties",
+      "defaultValue": 0
+    },
+    {
       "name": "spring.redis.password",
       "type": "java.lang.String",
       "sourceType": "com.zhouzifei.tool.config.properties.RedisProperties"
@@ -46,8 +70,9 @@
     },
     {
       "name": "spring.redis.timeout",
-      "type": "java.lang.String",
-      "sourceType": "com.zhouzifei.tool.config.properties.RedisProperties"
+      "type": "java.lang.Integer",
+      "sourceType": "com.zhouzifei.tool.config.properties.RedisProperties",
+      "defaultValue": 0
     },
     {
       "name": "tool.file.access-id",
