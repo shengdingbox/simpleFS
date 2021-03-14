@@ -1,7 +1,6 @@
 package com.zhouzifei.tool.util;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -218,27 +217,33 @@ public class JedisUtils {
 
     public String get(String key) {
         String bKey = buildKey(key);
-        if (getJedis() == null || !getJedis().exists(key.getBytes())) {
+        final Jedis jedis = getJedis();
+        if (jedis == null || !jedis.exists(key.getBytes())) {
             return null;
         }
-        return getJedis().get(key);
+        final String get = jedis.get(bKey);
+        jedisPool.returnResource(jedis);
+        return get;
     }
 
     public void set(String key, String value, int time) {
         String bKey = buildKey(key);
         final Jedis jedis = getJedis();
         jedis.setex(bKey,time,value);
+        returnResource(jedis);
     }
     public void set(String key, String value) {
         String bKey = buildKey(key);
         final Jedis jedis = getJedis();
         jedis.set(bKey,value);
+        returnResource(jedis);
     }
 
     public void del(String key) {
         String bKey = buildKey(key);
         final Jedis jedis = getJedis();
         jedis.del(bKey);
+        returnResource(jedis);
     }
 
     public boolean exists(String key) {
