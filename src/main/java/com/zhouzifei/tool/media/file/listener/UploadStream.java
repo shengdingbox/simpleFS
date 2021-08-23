@@ -32,6 +32,7 @@ public class UploadStream implements UploadCallback {
    * @param out output stream for writing file content
    * @return 0 success, return none zero(errno) if fail
    */
+  @Override
   public int send(OutputStream out) throws IOException {
     long remainBytes = fileSize;
     byte[] buff = new byte[256 * 1024];

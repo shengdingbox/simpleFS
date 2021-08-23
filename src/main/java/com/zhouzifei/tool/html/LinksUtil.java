@@ -1,6 +1,5 @@
 package com.zhouzifei.tool.html;
 
-import com.zhouzifei.tool.consts.HttpConsts;
 import com.zhouzifei.tool.html.seo.HtmlUtil;
 import com.zhouzifei.tool.util.RestClientUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +33,8 @@ public class LinksUtil {
      */
     private static final int DEFAULT_FACICON_MAX_SIZE = 1024 * 5;
     private static final int DEFAULT_FACICON_MIN_SIZE = 1;
+    private static final String HTTP_PROROCOL  = "http://";
+    private static final String HTTPS_PROROCOL  = "https://";
 
     /**
      * 获取网站favicon图标的正则表达式
@@ -52,8 +53,8 @@ public class LinksUtil {
      */
     @Deprecated
     public static String getFavicon(String url) {
-        if (!url.startsWith(HttpConsts.HTTP_PROROCOL) && !url.startsWith(HttpConsts.HTTPS_PROROCOL)) {
-            url = HttpConsts.HTTP_PROROCOL + url;
+        if (!url.startsWith(HTTP_PROROCOL) && !url.startsWith(HTTPS_PROROCOL)) {
+            url = HTTP_PROROCOL + url;
         }
         String html = RestClientUtil.get(url);
         for (Pattern iconPattern : ICON_PATTERNS) {
@@ -114,8 +115,8 @@ public class LinksUtil {
      * @return true 已链接本站，false 未链接
      */
     public static boolean hasLinkByHtml(String url, String domainName) {
-        if (!url.startsWith(HttpConsts.HTTP_PROROCOL) && !url.startsWith(HttpConsts.HTTPS_PROROCOL)) {
-            url = HttpConsts.HTTP_PROROCOL + url;
+        if (!url.startsWith(HTTP_PROROCOL) && !url.startsWith(HTTPS_PROROCOL)) {
+            url = HTTP_PROROCOL + url;
         }
         String html = RestClientUtil.get(url);
         return !StringUtils.isEmpty(html) && html.contains(domainName);
@@ -130,9 +131,9 @@ public class LinksUtil {
      * @return true 已链接本站，false 未链接
      */
     public static boolean hasLinkByChinaz(String url, String domainName) {
-        if (url.startsWith(HttpConsts.HTTP_PROROCOL) || url.startsWith(HttpConsts.HTTPS_PROROCOL)) {
-            url = url.replace(HttpConsts.HTTP_PROROCOL, "");
-            url = url.replace(HttpConsts.HTTPS_PROROCOL, "");
+        if (url.startsWith(HTTP_PROROCOL) || url.startsWith(HTTPS_PROROCOL)) {
+            url = url.replace(HTTP_PROROCOL, "");
+            url = url.replace(HTTPS_PROROCOL, "");
         }
         try {
             Document htmlDocument = Jsoup.parse(RestClientUtil.get("http://link.chinaz.com/" + url));
@@ -159,8 +160,8 @@ public class LinksUtil {
                 }
                 String text = liElement.getElementsByClass("tl").get(0).getElementsByTag("span").get(1).getElementsByTag("a").get(0).text();
                 if (text.startsWith(domainName) || text.startsWith("www." + domainName)
-                        || text.startsWith(HttpConsts.HTTP_PROROCOL + domainName) || text.startsWith(HttpConsts.HTTP_PROROCOL + "www." + domainName)
-                        || text.startsWith(HttpConsts.HTTPS_PROROCOL + domainName) || text.startsWith(HttpConsts.HTTPS_PROROCOL + "www." + domainName)) {
+                        || text.startsWith(HTTP_PROROCOL + domainName) || text.startsWith(HTTP_PROROCOL + "www." + domainName)
+                        || text.startsWith(HTTPS_PROROCOL + domainName) || text.startsWith(HTTPS_PROROCOL + "www." + domainName)) {
                     return true;
                 }
             }
