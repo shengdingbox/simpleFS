@@ -2,7 +2,6 @@ package com.zhouzifei.tool.media.file.service;
 
 
 import com.zhouzifei.tool.config.properties.FileProperties;
-import com.zhouzifei.tool.consts.Constants;
 import com.zhouzifei.tool.dto.M3u8DTO;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.M3u8Exception;
@@ -38,6 +37,11 @@ import java.util.concurrent.*;
 public class M3u8DownloadFactory {
 
     private static M3u8Download m3u8Download;
+
+    //默认文件每次读取字节数
+    public static final int BYTE_COUNT = 40960;
+    //因子
+    public static final float FACTOR = 1.15F;
 
     /**
      * 解决java不支持AES/CBC/PKCS7Padding模式解密
@@ -428,7 +432,7 @@ public class M3u8DownloadFactory {
                 try {
                     bytes = BLOCKING_QUEUE.take();
                 } catch (InterruptedException e) {
-                    bytes = new byte[Constants.BYTE_COUNT];
+                    bytes = new byte[BYTE_COUNT];
                 }
                 //重试次数判断
                 while (count <= retryCount) {
@@ -726,9 +730,9 @@ public class M3u8DownloadFactory {
 
         public void setThreadCount(int threadCount) {
             if (BLOCKING_QUEUE.size() < threadCount) {
-                for (int i = BLOCKING_QUEUE.size(); i < threadCount * Constants.FACTOR; i++) {
+                for (int i = BLOCKING_QUEUE.size(); i < threadCount * FACTOR; i++) {
                     try {
-                        BLOCKING_QUEUE.put(new byte[Constants.BYTE_COUNT]);
+                        BLOCKING_QUEUE.put(new byte[BYTE_COUNT]);
                     } catch (InterruptedException ignored) {
                     }
                 }

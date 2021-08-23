@@ -1,7 +1,5 @@
 package com.zhouzifei.tool.html.encryption;
 
-import com.zhouzifei.tool.consts.CommonConst;
-
 /**
  * 
  * @author 周子斐 (17600004572@163.com)
@@ -10,6 +8,16 @@ import com.zhouzifei.tool.consts.CommonConst;
  * @since 1.0
  */
 public class PasswordUtil {
+
+    public static final String ZYD_SECURITY_KEY = "929123f8f17944e8b0a531045453e1f1";
+    /**
+     * 程序默认的错误状态码
+     */
+    public static final int DEFAULT_ERROR_CODE = 500;
+    /**
+     * 程序默认的成功状态码
+     */
+    public static final int DEFAULT_SUCCESS_CODE = 200;
 
     /**
      * AES 加密
@@ -21,7 +29,7 @@ public class PasswordUtil {
      * @throws Exception
      */
     public static String encrypt(String password, String salt) throws Exception {
-        return AesUtil.encrypt(Md5Util.MD5(salt + CommonConst.ZYD_SECURITY_KEY), password);
+        return AesUtil.encrypt(Md5Util.MD5(salt + ZYD_SECURITY_KEY), password);
     }
 
     /**
@@ -34,6 +42,6 @@ public class PasswordUtil {
      * @throws Exception
      */
     public static String decrypt(String encryptPassword, String salt) throws Exception {
-        return AesUtil.decrypt(Md5Util.MD5(salt + CommonConst.ZYD_SECURITY_KEY), encryptPassword);
+        return AesUtil.decrypt(Md5Util.MD5(salt + ZYD_SECURITY_KEY), encryptPassword);
     }
 }

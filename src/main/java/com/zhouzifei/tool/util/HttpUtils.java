@@ -1,6 +1,5 @@
 package com.zhouzifei.tool.util;
 
-import com.aliyun.oss.common.utils.HttpUtil;
 import com.zhouzifei.tool.dto.HttpResponses;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
@@ -33,8 +32,6 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.*;
-
-import static java.net.HttpURLConnection.setFollowRedirects;
 
 /**
  * @author 周子斐 (17600004572@163.com)
