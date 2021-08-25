@@ -1,5 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.zhouzifei.tool.config.autoconfiguratiom.BeanAutoConfiguration,\
-  com.zhouzifei.tool.config.autoconfiguratiom.FileAutoConfiguration,\
-  com.zhouzifei.tool.config.autoconfiguratiom.SmsAutoConfiguration,\
-  com.zhouzifei.tool.config.autoconfiguratiom.RedisAutoConfiguration

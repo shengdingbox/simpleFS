@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>layout 后台大布局 - Layui</title>
+    <link th:href="@{/css/layui.css}" rel="stylesheet" />
+    <script th:src="@{/layui.js}" type="text/javascript"></script>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin" >
+<span th:replace="head::head"></span>
+<div th:replace="left::left"></div>
+    <div class="layui-body">
+        <blockquote class="layui-elem-quote layui-text">
+            提示：以下示例的部分上传接口由第三方网站 <em>http://httpbin.org</em> 提供，它可以模拟各类 HTTP 请求。
+            <br>其他示例未配置上传接口，所以每次上传都会报「请求上传接口出现异常」的提示，这属于正常现象。
+        </blockquote>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>文件上传演示</legend>
+        </fieldset>
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">单行选择框</label>
+                <div class="layui-input-block">
+                    <select name="interest" lay-filter="aihao">
+                        <option value=""></option>
+                        <option value="0">本地上传</option>
+                        <option value="0">FastDfs</option>
+                        <option value="1" >七牛云免费空间10G,免费流量10G/月,免费GET100万次/月https://www.qiniu.com/prices</option>
+                        <option value="2">又拍云免费空间10G,免费流量15G/月(非开通就有,需要额外申请又拍云联盟,限时1年）https://www.upyun.com/league</option>
+                        <option value="3">网易云免费空间50G,免费流量20G/月（目前发现最慷慨的一家）https://www.163yun.com/nos/free</option>
+                        <option value="4">青云免费空间10G,免费流量1G/月,另外注意没有免费请求额度https://www.qingcloud.com/pricing-standard</option>
+                        <option value="5" selected="">阿里云免费空间40G,免费流量10G/月 （限定新用户、限时6个月）https://www.aliyun.com/product/oss</option>
+                        <option value="6">腾讯云COS免费空间50G,免费流量10G/月 https://cloud.tencent.com/product/cos/option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                <label class="layui-form-label">空间名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="bucket-name" class="layui-input">
+                </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">图片前缀</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="path-prefix" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">图片访问地址</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="domain-url" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">授权AK/账号</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="access-key" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">授权SK/密码</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="secret-key" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">地域</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="endpoint" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn layui-btn-normal" id="test8">选择文件</button>
+                <button type="button" class="layui-btn" id="test9">开始上传</button>
+            </div>
+<div th:replace="footer::foot"></div>
+</div>
+</body>
+<script th:src="@{/layui.js}" type="text/javascript"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述 JS 路径需要改成你本地的 -->
+<script>
+    layui.use(['upload', 'element', 'layer'], function(){
+        var $ = layui.jquery
+            ,upload = layui.upload
+            ,element = layui.element
+            ,ueee = "123"
+            ,layer = layui.layer;
+        //选完文件后不自动上传
+        upload.render({
+            elem: '#test8'
+            ,url: '/upload' //此处配置你自己的上传接口即可
+            ,auto: false
+            ,ueee = '123'
+            //,multiple: true
+            ,bindAction: '#test9'
+            ,done: function(res){
+                layer.msg('上传成功');
+                console.log(res)
+            }
+        });
+    });
+</script>
+
+</html>
