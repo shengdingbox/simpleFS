@@ -1,7 +1,5 @@
 package com.zhouzifei.tool.util;
 
-import org.springframework.integration.leader.event.LeaderEventPublisher;
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
