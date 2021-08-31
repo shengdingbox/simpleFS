@@ -52,7 +52,7 @@ public abstract class BaseApiClient implements ApiClient {
         }
         try {
             VirtualFile res = this.uploadFile(file.getInputStream(), file.getOriginalFilename());
-            VirtualFile imageInfo = ImageUtil.getInfo(file);
+            VirtualFile imageInfo = FileUtil.getInfo(file);
             return res.setSize(imageInfo.getSize())
                     .setOriginalFileName(file.getOriginalFilename());
         } catch (IOException e) {
@@ -67,7 +67,7 @@ public abstract class BaseApiClient implements ApiClient {
         }
         try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
             VirtualFile res = this.uploadFile(is, file.getName());
-            VirtualFile imageInfo = ImageUtil.getInfo(file);
+            VirtualFile imageInfo = FileUtil.getInfo(file);
             return res.setSize(imageInfo.getSize())
                     .setOriginalFileName(file.getName());
         } catch (IOException e) {

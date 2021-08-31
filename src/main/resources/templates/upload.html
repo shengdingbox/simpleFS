@@ -15,13 +15,17 @@
             提示：以下示例的部分上传接口由第三方网站 <em>http://httpbin.org</em> 提供，它可以模拟各类 HTTP 请求。
             <br>其他示例未配置上传接口，所以每次上传都会报「请求上传接口出现异常」的提示，这属于正常现象。
         </blockquote>
-        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-            <legend>文件上传演示</legend>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend>拖拽上传</legend>
         </fieldset>
-            <div class="layui-btn-container">
-                <button type="button" class="layui-btn layui-btn-normal" id="test8">选择文件</button>
-                <button type="button" class="layui-btn" id="test9">开始上传</button>
+        <div class="layui-upload-drag" id="test10">
+            <i class="layui-icon"></i>
+            <p>点击上传，或将文件拖拽到此处</p>
+            <div class="layui-hide" id="uploadDemoView">
+                <hr>
+                <img src="" alt="上传成功后渲染" style="max-width: 196px">
             </div>
+        </div>
     </div>
 <div th:replace="footer::foot"></div>
 </div>
@@ -33,18 +37,14 @@
         var $ = layui.jquery
             ,upload = layui.upload
             ,element = layui.element
-            ,ueee = "123"
             ,layer = layui.layer;
-        //选完文件后不自动上传
+        //拖拽上传
         upload.render({
-            elem: '#test8'
-            ,url: '/upload' //此处配置你自己的上传接口即可
-            ,auto: false
-            ,ueee = '123'
-            //,multiple: true
-            ,bindAction: '#test9'
+            elem: '#test10'
+            ,url: '/upload' //此处用的是第三方的 http 请求演示，实际使用时改成您自己的上传接口即可。
             ,done: function(res){
                 layer.msg('上传成功');
+                layui.$('#uploadDemoView').removeClass('layui-hide').find('img').attr('src', res.fullFilePath);
                 console.log(res)
             }
         });

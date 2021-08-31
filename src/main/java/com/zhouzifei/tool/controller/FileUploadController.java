@@ -1,7 +1,12 @@
 package com.zhouzifei.tool.controller;
 
 import com.google.common.io.ByteStreams;
+import com.zhouzifei.tool.config.properties.FileProperties;
+import com.zhouzifei.tool.consts.StorageTypeConst;
+import com.zhouzifei.tool.entity.VirtualFile;
+import com.zhouzifei.tool.media.file.service.ApiClient;
 import com.zhouzifei.tool.media.file.service.FastdfsClientUtil;
+import com.zhouzifei.tool.media.file.service.FileUploader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.system.ApplicationHome;
@@ -14,15 +19,13 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 public class FileUploadController {
@@ -33,6 +36,10 @@ public class FileUploadController {
     String fdstUrl;
     @Autowired
     FastdfsClientUtil fastdfsClientUtil;
+    @Autowired
+    HttpServletRequest request;
+
+    public static FileProperties fileStaticProperties;
 
     private static String oldUrl;
     private static String oldName;
@@ -47,8 +54,30 @@ public class FileUploadController {
     }
     @GetMapping({"/config"})
     public ModelAndView config(ModelAndView modelAndView) {
+        final HttpSession session = request.getSession();
+        //FileProperties config = (FileProperties)session.getAttribute("config");
+        if(null == fileStaticProperties){
+            fileStaticProperties = new FileProperties();
+            fileStaticProperties.setStorageTypeConst(StorageTypeConst.ALIYUN);
+            fileStaticProperties.setAccessId("");
+            fileStaticProperties.setSecretKey("");
+            fileStaticProperties.setAccessId("");
+            fileStaticProperties.setAccessId("");
+            fileStaticProperties.setAccessId("");
+            fileStaticProperties.setAccessId("");
+        }
+        final Map<Object, Object> list = StorageTypeConst.getMap();
+        modelAndView.addObject("config",fileStaticProperties);
+        modelAndView.addObject("list",list);
         modelAndView.setViewName("config");
         return modelAndView;
+    }
+    @PostMapping({"/config"})
+    public String config(FileProperties fileProperties) {
+        final HttpSession session = request.getSession();
+        session.setAttribute("config",fileProperties);
+        fileStaticProperties = fileProperties;
+        return "ok";
     }
 
     @GetMapping({"/index"})
@@ -61,37 +90,16 @@ public class FileUploadController {
         modelAndView.setViewName("config");
         return modelAndView;
     }
-    @PostMapping({"/upload1"})
-    public String upload(MultipartFile file, HttpServletRequest request) {
-        String format = this.simpleDateFormat.format(new Date());
-        ApplicationHome applicationHome = new ApplicationHome(this.getClass());
-        File source = applicationHome.getSource();
-        String realPath = source.getParentFile().toString() + "/upload";
-        System.out.println(realPath);
-        File folder = new File(realPath);
-        if (!folder.exists()) {
-            folder.mkdirs();
+    @PostMapping({"/upload"})
+    public VirtualFile upload(MultipartFile file, HttpServletRequest request) {
+        FileUploader uploader = new FileUploader();
+        if(null == fileStaticProperties.getStorageTypeConst()){
+            final StorageTypeConst enumType = StorageTypeConst.getEnumType(fileStaticProperties.getStorageType());
+            fileStaticProperties.setStorageTypeConst(enumType);
         }
-
-        String oldName = file.getOriginalFilename();
-        System.out.println(oldName);
-        String newName = oldName;
-        if (oldName.contains(".")) {
-            newName = oldName.substring(oldName.lastIndexOf("."));
-        }
-
-        try {
-            file.transferTo(new File(folder, oldName));
-            StringBuilder builder = new StringBuilder();
-            builder.append(request.getScheme()).append("://");
-            builder.append(request.getServerName()).append(":");
-            builder.append(request.getServerPort()).append(realPath);
-            builder.append(newName).toString();
-            return "成功！";
-        } catch (IOException var11) {
-            var11.printStackTrace();
-            return "error";
-        }
+        ApiClient apiClient = uploader.getApiClient(fileStaticProperties);
+        final VirtualFile virtualFile = apiClient.uploadFile(file);
+        return virtualFile;
     }
 
     @PostMapping({"/upload2"})

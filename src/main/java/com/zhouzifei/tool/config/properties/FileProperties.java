@@ -52,15 +52,9 @@ public class FileProperties {
      */
     private String endpoint;
     /**
-     * 又拍云账号
-     */
-    private String operatorName;
-    /**
-     * 又拍云密码
-     */
-    private String operatorPwd;
-    /**
      * 服务器地址
      */
     private String serverUrl;
+
+    private String storageType;
 }

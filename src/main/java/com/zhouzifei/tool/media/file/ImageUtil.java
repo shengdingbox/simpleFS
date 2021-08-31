@@ -2,18 +2,8 @@ package com.zhouzifei.tool.media.file;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
-
-import javax.imageio.ImageIO;
-
-import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.exception.GlobalFileException;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 操作图片工具类
@@ -24,69 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class ImageUtil {
 
-    /**
-     * 获取图片信息
-     *
-     * @param file
-     * @throws IOException
-     */
-    public static VirtualFile getInfo(File file) {
-        if (null == file) {
-            return new VirtualFile();
-        }
-        try {
-            return getInfo(new FileInputStream(file))
-                    .setSize(file.length())
-                    .setOriginalFileName(file.getName())
-                    .setSuffix(FileUtil.getSuffix(file.getName()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new GlobalFileException("获取图片信息发生异常！", e);
-        }
-    }
 
-    /**
-     * 获取图片信息
-     *
-     * @param multipartFile
-     * @throws IOException
-     */
-    public static VirtualFile getInfo(MultipartFile multipartFile) {
-        if (null == multipartFile) {
-            return new VirtualFile();
-        }
-        try {
-            return getInfo(multipartFile.getInputStream())
-                    .setSize(multipartFile.getSize())
-                    .setOriginalFileName(multipartFile.getOriginalFilename())
-                    .setSuffix(FileUtil.getSuffix(Objects.requireNonNull(multipartFile.getOriginalFilename())));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new GlobalFileException("获取图片信息发生异常！", e);
-        }
-    }
-
-    /**
-     * 获取图片信息
-     *
-     * @param inputStream
-     * @throws IOException
-     */
-    public static VirtualFile getInfo(InputStream inputStream) {
-        try (BufferedInputStream in = new BufferedInputStream(inputStream)) {
-            //字节流转图片对象
-            Image bi = ImageIO.read(in);
-            if (null == bi) {
-                return new VirtualFile();
-            }
-            //获取默认图像的高度，宽度
-            return new VirtualFile().setSize(inputStream.available());
-        } catch (Exception e) {
-            throw new GlobalFileException("获取图片信息发生异常！", e);
-        }
-    }
     public static BufferedImage addWatermark(InputStream input,String watermark) throws IOException {
-        BufferedImage bufImg = ImageIO.read(input);
+        BufferedImage bufImg = cn.hutool.core.util.ImageUtil.read(input);
         int height = bufImg.getHeight();
         int width = bufImg.getWidth();
         Graphics2D graphics = bufImg.createGraphics();
@@ -99,5 +29,13 @@ public class ImageUtil {
         graphics.drawString(watermark, x, y);
         graphics.dispose();
         return bufImg;
+    }
+
+    public static void main(String[] args) throws IOException {
+        final InputStream referer = FileUtil.getInputStreamByUrl("http://oss.toupiao518.com/qiniu/vycqrhm2g3ryix7x.gif", "referer");
+        final InputStream clone = StreamUtil.clone(referer);
+        assert clone != null;
+        System.out.println(referer.available());
+        System.out.println(FileUtil.getInfo(referer));
     }
 }
