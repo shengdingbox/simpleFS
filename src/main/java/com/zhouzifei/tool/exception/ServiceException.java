@@ -11,46 +11,35 @@ import java.io.StringWriter;
  */
 public class ServiceException extends RuntimeException {
     /**
-     * Constructs a new runtime exception with {@code null} as its
-     * detail message.  The cause is not initialized, and may subsequently be
-     * initialized by a call to {@link #initCause}.
+     * 使用 {@code null} 作为其详细消息构造一个新的运行时异常。原因未初始化，随后可能会通过调用 {@link initCause} 进行初始化。
      */
     public ServiceException() {
         super();
     }
 
     /**
-     * Constructs a new runtime exception with the specified detail message.
-     * The cause is not initialized, and may subsequently be initialized by a
-     * call to {@link #initCause}.
+     * 使用指定的详细消息构造一个新的运行时异常。原因未初始化，随后可能会通过调用 {@link initCause} 进行初始化。
      *
      * @param message
-     *         the detail message. The detail message is saved for
-     *         later retrieval by the {@link #getMessage()} method.
+     *         详细信息。详细消息被保存以供稍后通过 {@link getMessage()} 方法检索。
      */
     public ServiceException(String message) {
         super(message);
     }
 
     /**
-     * Constructs a new runtime exception with the specified detail message and
-     * cause.  <p>Note that the detail message associated with
-     * {@code cause} is <i>not</i> automatically incorporated in
-     * this runtime exception's detail message.
+     * 使用指定的详细消息和原因构造一个新的运行时异常。 <p>请注意，与 {@code cause} 关联的详细消息<i>不会<i>自动合并到此运行时异常的详细消息中。
      *
      * @param message
-     *         the detail message (which is saved for later retrieval
-     *         by the {@link #getMessage()} method).
+     *         详细消息（保存以供稍后通过 {@link getMessage()} 方法检索）。
      * @param cause
-     *         the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method).  (A <tt>null</tt> value is
-     *         permitted, and indicates that the cause is nonexistent or
-     *         unknown.)
+     *         原因（通过 {@link getCause()} 方法保存以供以后检索）。 （允许使用 <tt>null<tt> 值，表示原因不存在或未知。）
      * @since 1.4
      */
     public ServiceException(String message, Throwable cause) {
         super(message, cause);
     }
+
     public static String getTrace(Throwable t) {
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);

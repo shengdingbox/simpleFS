@@ -852,7 +852,7 @@ public class M3u8DownloadFactory {
 
     public static void main(String[] args) {
         M3u8DTO m3u8Download = M3u8DTO.builder()
-                .m3u8Url("https://hls.cntv.myalicdn.com/asp/hls/2000/0303000a/3/default/2de6f0ee11ed46939a8268d3799acff3/2000.m3u8?maxbr=2048")
+                .m3u8Url("https://hnzy3.queshechaye.com:65/20210523/TcNy0aBO/2000kb/hls/index.m3u8")
                 .fileName("miaozhun")
                 .filePath("/Users/Dabao/mp4")
                 .retryCount("3")

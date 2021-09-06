@@ -93,6 +93,11 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
     }
 
     @Override
+    public VirtualFile multipartUpload(InputStream inputStream, String fileName) {
+        return null;
+    }
+
+    @Override
     protected void check() {
 
     }

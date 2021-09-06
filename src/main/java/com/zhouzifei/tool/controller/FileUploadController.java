@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -100,6 +101,18 @@ public class FileUploadController {
         ApiClient apiClient = uploader.getApiClient(fileStaticProperties);
         final VirtualFile virtualFile = apiClient.uploadFile(file);
         return virtualFile;
+    }
+    @PostMapping({"/multipartUpload"})
+    public VirtualFile multipartUpload(MultipartFile file, HttpServletRequest request) throws IOException {
+        FileUploader uploader = new FileUploader();
+        if(null == fileStaticProperties.getStorageTypeConst()){
+            final StorageTypeConst enumType = StorageTypeConst.getEnumType(fileStaticProperties.getStorageType());
+            fileStaticProperties.setStorageTypeConst(enumType);
+        }
+        ApiClient apiClient = uploader.getApiClient(fileStaticProperties);
+        final InputStream inputStream = file.getInputStream();
+        final String fileName = file.getOriginalFilename();
+        return apiClient.multipartUpload(inputStream,fileName);
     }
 
     @PostMapping({"/upload2"})

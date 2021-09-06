@@ -93,7 +93,7 @@ public class IpUtil {
         ipAddress.setHttpClientIp(request.getHeader("http-Client-IP"));
         ipAddress.setWlProxyClientIp(request.getHeader("WL-Proxy-Client-IP"));
         ipAddress.setRemoteAddr(request.getRemoteAddr());
-        ipAddress.setProxy((!com.zhouzifei.tool.util.StringUtils.isEmpty(proxyAddress)) && (proxyPort != -1));
+        ipAddress.setProxy((!StringUtils.isEmpty(proxyAddress)) && (proxyPort != -1));
         return ipAddress;
     }
 

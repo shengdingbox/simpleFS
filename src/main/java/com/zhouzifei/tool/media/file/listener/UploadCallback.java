@@ -1,11 +1,3 @@
-/**
- * Copyright (C) 2008 Happy Fish / YuQing
- * <p>
- * FastDFS Java Client may be copied only under the terms of the GNU Lesser
- * General Public License (LGPL).
- * Please visit the FastDFS Home Page https://github.com/happyfish100/fastdfs for more detail.
- */
-
 package com.zhouzifei.tool.media.file.listener;
 
 import java.io.IOException;
@@ -19,10 +11,9 @@ import java.io.OutputStream;
  */
 public interface UploadCallback {
   /**
-   * send file content callback function, be called only once when the file uploaded
-   *
-   * @param out output stream for writing file content
-   * @return 0 success, return none zero(errno) if fail
+   * 发送文件内容回调函数，文件上传时只调用一次
+   * @param out 输出流写入文件内容
+   * @return 0成功，失败则返回none 0(errno)
    */
   public int send(OutputStream out) throws IOException;
 }

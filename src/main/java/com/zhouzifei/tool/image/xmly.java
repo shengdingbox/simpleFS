@@ -16,10 +16,7 @@ import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * @author 周子斐
@@ -105,13 +102,13 @@ public class xmly {
         return null;
     }
 
-    public static void main(String[] args){
-        final File file = new File("/Users/Dabao/Downloads/123.jpg");
-//        final FileInputStream inputStream = new FileInputStream(file);
-//        String result = post("https://upload.ximalaya.com/dtres/headerThumb/upload"
-//                , "_xmLog=h5&2872be80-f5d5-4747-9b75-cb9e34503cf0&2.2.17; Hm_lvt_4a7d8ec50cfd6af753c4f8aee3425070=1612664140; trackType=web; fds_otp=8172383124598533914; 1&remember_me=y; 1&_token=296993092&6B62AF70140N62AD80A28DA7DB1479A11D32B64352BEB4ECBC37887968F72543742F4606E28F13M5F3014F4AE8BE20_; 1_l_flag=296993092&6B62AF70140N62AD80A28DA7DB1479A11D32B64352BEB4ECBC37887968F72543742F4606E28F13M5F3014F4AE8BE20__2021-02-0710:16:26; x_xmly_traffic=utm_source%253A%2526utm_medium%253A%2526utm_campaign%253A%2526utm_content%253A%2526utm_term%253A%2526utm_from%253A; Hm_lpvt_4a7d8ec50cfd6af753c4f8aee3425070=1612664187"
-//                , inputStream);
-        final String result = pic("https://tva2.sinaimg.cn/large/0072Vf1pgy1fodqipz6i7j31kw0vk7wh.jpg");
+    public static void main(String[] args) throws FileNotFoundException {
+        final File file = new File("/Users/Dabao/Downloads/vycqrhm2g3ryix7x.gif");
+        final FileInputStream inputStream = new FileInputStream(file);
+        String result = post("https://upload.ximalaya.com/dtres/headerThumb/upload"
+                , "_xmLog=h5&fc2f3c51-01ad-48a3-9416-cbc72b2d3668&2.2.17; Hm_lvt_4a7d8ec50cfd6af753c4f8aee3425070=1628754307,1630388847; xm-page-viewid=ximalaya-mobile; trackType=web; x_xmly_traffic=utm_source%253A%2526utm_medium%253A%2526utm_campaign%253A%2526utm_content%253A%2526utm_term%253A%2526utm_from%253A; login_type=password_mobile; Hm_lpvt_4a7d8ec50cfd6af753c4f8aee3425070=1630390064; fds_otp=6213616017848230457; 1&remember_me=y; 1&_token=296993092&EB329550240N117ADD87EEA10BB1EA9B0BBCD384E2AFEB1B8DA00DBB0EFE5F786AC6D0D60A9F48MAB79EFA5AB39A98_; 1_l_flag=296993092&EB329550240N117ADD87EEA10BB1EA9B0BBCD384E2AFEB1B8DA00DBB0EFE5F786AC6D0D60A9F48MAB79EFA5AB39A98__2021-08-3114:08:03"
+                , inputStream);
+        //final String result = pic("https://tva2.sinaimg.cn/large/0072Vf1pgy1fodqipz6i7j31kw0vk7wh.jpg");
         System.out.println(result);
     }
 }

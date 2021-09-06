@@ -12,10 +12,8 @@ import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.DigestUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.sound.sampled.Line;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -111,12 +109,23 @@ public class AliyunOssApiClient extends BaseApiClient {
 
     @Override
     public VirtualFile multipartUpload(File file) {
+        final String fileName = file.getName();
+        try {
+             FileInputStream fileInputStream = new FileInputStream(file);
+            return multipartUpload(fileInputStream, fileName);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public VirtualFile multipartUpload(InputStream inputStream,String fileName) {
         this.check();
         final Date startDate = new Date();
         if (!this.client.doesBucketExist(bucketName)) {
             throw new OssApiException("[阿里云OSS] 无法上传文件！Bucket不存在：" + bucketName);
         }
-        String fileName = file.getName();
         boolean exists = this.client.doesObjectExist(bucketName,fileName);
         if(exists){
             this.suffix = FileUtil.getSuffix(fileName);
@@ -133,7 +142,12 @@ public class AliyunOssApiClient extends BaseApiClient {
         List<PartETag> partETags = new ArrayList<PartETag>();
         // 计算文件有多少个分片。
         final long partSize = 5 * 1024 * 1024L;
-        long fileLength = file.length();
+        long fileLength = 0;
+        try {
+            fileLength = inputStream.available();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         int partCount = (int) (fileLength / partSize);
         if (fileLength % partSize != 0) {
             partCount++;
@@ -143,7 +157,7 @@ public class AliyunOssApiClient extends BaseApiClient {
         for (int i = 0; i < partCount; i++) {
             long startPos = i * partSize;
             long curPartSize = (i + 1 == partCount) ? (fileLength - startPos) : partSize;
-            try (InputStream instream = new FileInputStream(file)) {
+            try (InputStream instream = StreamUtil.clone(inputStream)) {
                 // 跳过已经上传的分片。
                 instream.skip(startPos);
                 UploadPartRequest uploadPartRequest = new UploadPartRequest();
@@ -161,6 +175,7 @@ public class AliyunOssApiClient extends BaseApiClient {
                 partETags.add(uploadPartResult.getPartETag());
                 progressListener.process(i,partCount);
             } catch (Exception e) {
+                log.info(e.getMessage());
                 throw new OssApiException("[" + this.storageType + "]文件分片上传失败：" + e.getMessage());
             }
         }

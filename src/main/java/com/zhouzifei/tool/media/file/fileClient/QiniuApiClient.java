@@ -114,6 +114,11 @@ public class QiniuApiClient extends BaseApiClient {
         return null;
     }
 
+    @Override
+    public VirtualFile multipartUpload(InputStream inputStream, String fileName) {
+        return null;
+    }
+
     public String getPath() {
         return this.baseUrl;
     }
