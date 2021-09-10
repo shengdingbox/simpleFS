@@ -1,9 +1,9 @@
 package com.zhouzifei.tool.media.file.fileClient;
 
 
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.OssApiException;
-import com.zhouzifei.tool.exception.ServiceException;
 import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.media.file.service.FastdfsClientUtil;
 import com.zhouzifei.tool.util.StringUtils;

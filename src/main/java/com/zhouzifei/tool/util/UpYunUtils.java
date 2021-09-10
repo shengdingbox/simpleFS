@@ -1,7 +1,7 @@
 package com.zhouzifei.tool.util;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zhouzifei.tool.exception.ServiceException;
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.html.encryption.Base64Coder;
 
 import javax.crypto.Mac;

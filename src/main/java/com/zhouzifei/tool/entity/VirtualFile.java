@@ -1,5 +1,6 @@
 package com.zhouzifei.tool.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Data;
@@ -14,7 +15,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class VirtualFile {
+public class VirtualFile implements Serializable {
     /**
      * 文件大小
      */

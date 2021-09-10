@@ -7,6 +7,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 /**
  * @author 周子斐 (17600004572@163.com)
  * @remark 2021/1/26
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Order(-1)
-public class FileProperties {
+public class FileProperties implements Serializable {
     /**
      * 云存储类型
      */
@@ -48,7 +50,7 @@ public class FileProperties {
      */
     private String secretKey;
     /**
-     * 阿里云地域节点（EndPoint）
+     * 地域节点（EndPoint）
      */
     private String endpoint;
     /**
@@ -56,5 +58,4 @@ public class FileProperties {
      */
     private String serverUrl;
 
-    private String storageType;
 }

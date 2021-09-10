@@ -1,6 +1,6 @@
 package com.zhouzifei.tool.media.file.service;
 
-import com.zhouzifei.tool.exception.ServiceException;
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.util.UpYunUtils;
 import okhttp3.*;
 import okhttp3.internal.Util;

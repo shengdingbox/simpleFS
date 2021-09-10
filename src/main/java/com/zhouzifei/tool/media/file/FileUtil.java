@@ -1,8 +1,8 @@
 package com.zhouzifei.tool.media.file;
 
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.exception.GlobalFileException;
-import com.zhouzifei.tool.exception.ServiceException;
 import com.zhouzifei.tool.html.Randoms;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -300,7 +300,7 @@ public class FileUtil{
             ins.close();
             fs.close();
         } catch (Exception e) {
-            throw  new ServiceException("文件下载失败",e);
+            throw  new ServiceException("9999999","文件下载失败",e);
         }
     }
     /**

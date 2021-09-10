@@ -1,8 +1,8 @@
 package com.zhouzifei.tool.media.file.service;
 
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.properties.FileProperties;
 import com.zhouzifei.tool.consts.StorageTypeConst;
-import com.zhouzifei.tool.exception.ServiceException;
 import com.zhouzifei.tool.media.file.fileClient.*;
 import com.zhouzifei.tool.media.file.listener.ProgressListener;
 

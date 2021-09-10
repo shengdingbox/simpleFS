@@ -1,6 +1,6 @@
 package com.zhouzifei.tool.media.file;
 
-import com.zhouzifei.tool.exception.M3u8Exception;
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.util.StringUtils;
 
 import java.util.HashSet;
@@ -38,7 +38,7 @@ public class MediaFormat {
 
     public static String getMediaFormat(String url) {
         if (!StringUtils.isUrl(url)) {
-            throw new M3u8Exception(url + "不是一个完整URL链接！");
+            throw new ServiceException(url + "不是一个完整URL链接！");
         }
         url = url.substring(url.lastIndexOf("/") - 1);
         for (String s : set) {
@@ -46,6 +46,6 @@ public class MediaFormat {
                 return s;
             }
         }
-        throw new M3u8Exception("非视频链接！");
+        throw new ServiceException("非视频链接！");
     }
 }

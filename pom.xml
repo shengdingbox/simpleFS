@@ -19,7 +19,6 @@
         <aliyun.sdk.version>4.5.0</aliyun.sdk.version>
         <qiniu.version>7.2.19</qiniu.version>
         <jsoup.version>1.14.2</jsoup.version>
-        <shiro.freemarker.tags.version>0.1</shiro.freemarker.tags.version>
         <crazycake.version>2.4.2.1-RELEASE</crazycake.version>
         <lombok.version>1.18.12</lombok.version>
         <common.version>2.5</common.version>
@@ -121,12 +120,6 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>3.3.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-http</artifactId>
             <version>4.1.21</version>
@@ -157,12 +150,6 @@
             <artifactId>rhino</artifactId>
             <version>${rhino.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-tomcat -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <version>2.3.1.RELEASE</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
@@ -186,6 +173,17 @@
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-jpeg</artifactId>
             <version>3.3</version>
+        </dependency>
+        <!--swagger begin-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.6.1</version>
         </dependency>
     </dependencies>
     <dependencyManagement>

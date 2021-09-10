@@ -1,12 +1,6 @@
 package com.zhouzifei.tool.util;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.zhouzifei.tool.common.ServiceException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
@@ -15,7 +9,12 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 
-import com.zhouzifei.tool.exception.ServiceException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -59,11 +58,11 @@ public class BeanConvertUtil {
             BeanUtils.copyProperties(source, t);
             return t;
         } catch (InstantiationException e) {
-            throw new ServiceException(target + " - 可能为一个抽象类、接口、数组类、基本类型或者该类缺少无参构造方法！", e);
+            throw new ServiceException("999999",target + " - 可能为一个抽象类、接口、数组类、基本类型或者该类缺少无参构造方法！", e);
         } catch (IllegalAccessException e) {
-            throw new ServiceException(target + " - 该类或其构造方法是不可访问的，或该类缺少无参构造方法！", e);
+            throw new ServiceException("999999",target + " - 该类或其构造方法是不可访问的，或该类缺少无参构造方法！", e);
         } catch (FatalBeanException e) {
-            throw new ServiceException(target + " - 序列化失败！", e);
+            throw new ServiceException("999999",target + " - 序列化失败！", e);
         }
     }
 

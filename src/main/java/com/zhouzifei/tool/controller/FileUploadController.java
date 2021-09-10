@@ -1,6 +1,9 @@
 package com.zhouzifei.tool.controller;
 
 import com.google.common.io.ByteStreams;
+import com.zhouzifei.tool.cache.CacheEngine;
+import com.zhouzifei.tool.cache.FileCacheEngine;
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.properties.FileProperties;
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.entity.VirtualFile;
@@ -19,14 +22,16 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class FileUploadController {
@@ -40,78 +45,33 @@ public class FileUploadController {
     @Autowired
     HttpServletRequest request;
 
-    public static FileProperties fileStaticProperties;
-
     private static String oldUrl;
     private static String oldName;
 
-    public FileUploadController() {
-    }
-
-    @GetMapping({"/upload"})
-    public ModelAndView upload(ModelAndView modelAndView) {
-        modelAndView.setViewName("upload");
-        return modelAndView;
-    }
-    @GetMapping({"/config"})
-    public ModelAndView config(ModelAndView modelAndView) {
-        final HttpSession session = request.getSession();
-        //FileProperties config = (FileProperties)session.getAttribute("config");
-        if(null == fileStaticProperties){
-            fileStaticProperties = new FileProperties();
-            fileStaticProperties.setStorageTypeConst(StorageTypeConst.ALIYUN);
-            fileStaticProperties.setAccessId("");
-            fileStaticProperties.setSecretKey("");
-            fileStaticProperties.setAccessId("");
-            fileStaticProperties.setAccessId("");
-            fileStaticProperties.setAccessId("");
-            fileStaticProperties.setAccessId("");
-        }
-        final Map<Object, Object> list = StorageTypeConst.getMap();
-        modelAndView.addObject("config",fileStaticProperties);
-        modelAndView.addObject("list",list);
-        modelAndView.setViewName("config");
-        return modelAndView;
-    }
-    @PostMapping({"/config"})
-    public String config(FileProperties fileProperties) {
-        final HttpSession session = request.getSession();
-        session.setAttribute("config",fileProperties);
-        fileStaticProperties = fileProperties;
-        return "ok";
-    }
-
-    @GetMapping({"/index"})
-    public ModelAndView index(ModelAndView modelAndView) {
-        modelAndView.setViewName("index");
-        return modelAndView;
-    }
-    @GetMapping({"/aliyun"})
-    public ModelAndView aliyun(ModelAndView modelAndView) {
-        modelAndView.setViewName("config");
-        return modelAndView;
-    }
     @PostMapping({"/upload"})
-    public VirtualFile upload(MultipartFile file, HttpServletRequest request) {
+    public VirtualFile upload(MultipartFile file, HttpServletRequest request, StorageTypeConst storageTypeConst) {
         FileUploader uploader = new FileUploader();
-        if(null == fileStaticProperties.getStorageTypeConst()){
-            final StorageTypeConst enumType = StorageTypeConst.getEnumType(fileStaticProperties.getStorageType());
-            fileStaticProperties.setStorageTypeConst(enumType);
+        final String storageType = storageTypeConst.getStorageType();
+        CacheEngine cacheEngine = new FileCacheEngine();
+        final Object fileProperties = cacheEngine.get(storageType, "fileProperties");
+        if(null == fileProperties){
+            throw new ServiceException("该空间未配置,请POST请求/config添加配置");
         }
-        ApiClient apiClient = uploader.getApiClient(fileStaticProperties);
-        final VirtualFile virtualFile = apiClient.uploadFile(file);
-        return virtualFile;
+        ApiClient apiClient = uploader.getApiClient((FileProperties)fileProperties);
+        return apiClient.uploadFile(file);
     }
     @PostMapping({"/multipartUpload"})
-    public VirtualFile multipartUpload(MultipartFile file, HttpServletRequest request) throws IOException {
+    public VirtualFile multipartUpload(MultipartFile file, HttpServletRequest request,StorageTypeConst storageTypeConst) throws IOException {
         FileUploader uploader = new FileUploader();
-        if(null == fileStaticProperties.getStorageTypeConst()){
-            final StorageTypeConst enumType = StorageTypeConst.getEnumType(fileStaticProperties.getStorageType());
-            fileStaticProperties.setStorageTypeConst(enumType);
+        final String storageType = storageTypeConst.getStorageType();
+        CacheEngine cacheEngine = new FileCacheEngine();
+        final Object fileProperties = cacheEngine.get(storageType, "fileProperties");
+        if(null == fileProperties){
+            throw new ServiceException("该空间未配置,请POST请求/config添加配置");
         }
-        ApiClient apiClient = uploader.getApiClient(fileStaticProperties);
         final InputStream inputStream = file.getInputStream();
         final String fileName = file.getOriginalFilename();
+        ApiClient apiClient = uploader.getApiClient((FileProperties)fileProperties);
         return apiClient.multipartUpload(inputStream,fileName);
     }
 

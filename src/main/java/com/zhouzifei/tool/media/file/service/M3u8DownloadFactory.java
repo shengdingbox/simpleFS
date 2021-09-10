@@ -1,10 +1,10 @@
 package com.zhouzifei.tool.media.file.service;
 
 
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.properties.FileProperties;
 import com.zhouzifei.tool.dto.M3u8DTO;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.exception.M3u8Exception;
 import com.zhouzifei.tool.image.xmly;
 import com.zhouzifei.tool.media.file.MediaFormat;
 import com.zhouzifei.tool.util.StringUtils;
@@ -506,7 +506,7 @@ public class M3u8DownloadFactory {
                     }
                 }
                 if (count > retryCount) {
-                    throw new M3u8Exception("连接超时！");
+                    throw new ServiceException("连接超时！");
                 }
                 finishedCount++;
             });
@@ -521,7 +521,7 @@ public class M3u8DownloadFactory {
             StringBuilder content = getUrlContent(downloadUrl, false);
             //判断是否是m3u8链接
             if (!content.toString().contains("#EXTM3U")) {
-                throw new M3u8Exception(downloadUrl + "不是m3u8链接！");
+                throw new ServiceException(downloadUrl + "不是m3u8链接！");
             }
 
             String[] split = content.toString().split("\\n");
@@ -545,7 +545,7 @@ public class M3u8DownloadFactory {
                 }
             }
             if (StringUtils.isEmpty(keyUrl)) {
-                throw new M3u8Exception("未发现key链接！");
+                throw new ServiceException("未发现key链接！");
             }
 
             //获取密钥
@@ -573,7 +573,7 @@ public class M3u8DownloadFactory {
                 urlContent = content;
             }
             if (!urlContent.toString().contains("#EXTM3U")) {
-                throw new M3u8Exception(downloadUrl + "不是m3u8链接！");
+                throw new ServiceException(downloadUrl + "不是m3u8链接！");
             }
 
             String[] split = urlContent.toString().split("\\n");
@@ -674,7 +674,7 @@ public class M3u8DownloadFactory {
                 }
             }
             if (count > retryCount) {
-                throw new M3u8Exception("连接超时！");
+                throw new ServiceException("连接超时！");
             }
             return content;
         }
@@ -689,7 +689,7 @@ public class M3u8DownloadFactory {
          */
         private byte[] decrypt(byte[] sSrc, int length, String sKey, String iv, String method) throws Exception {
             if (StringUtils.isNotEmpty(method) && !method.contains("AES")) {
-                throw new M3u8Exception("未知的算法！");
+                throw new ServiceException("未知的算法！");
             }
             // 判断Key是否正确
             if (StringUtils.isEmpty(sKey)) {
@@ -697,7 +697,7 @@ public class M3u8DownloadFactory {
             }
             // 判断Key是否为16位
             if (sKey.length() != 16 && !isByte) {
-                throw new M3u8Exception("Key长度不是16位！");
+                throw new ServiceException("Key长度不是16位！");
             }
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
             SecretKeySpec keySpec = new SecretKeySpec(isByte ? keyBytes : sKey.getBytes(StandardCharsets.UTF_8), "AES");
