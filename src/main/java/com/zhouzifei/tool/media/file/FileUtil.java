@@ -1,5 +1,6 @@
 package com.zhouzifei.tool.media.file;
 
+import com.qcloud.cos.utils.IOUtils;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.html.Randoms;
@@ -9,6 +10,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -20,13 +22,14 @@ import java.util.Objects;
 
 /**
  * 文件操作工具类
+ *
  * @author 周子斐 (17600004572@163.com)
  * @version 1.0
  * @remark 2019年7月16日
  * @since 1.0
  */
 @Slf4j
-public class FileUtil{
+public class FileUtil {
     private static final String[] PICTURE_SUFFIXS = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"};
 
     /**
@@ -88,7 +91,7 @@ public class FileUtil{
             return defaultSuffix;
         }
         String fileName = imgUrl;
-        if(imgUrl.contains("/")) {
+        if (imgUrl.contains("/")) {
             fileName = imgUrl.substring(imgUrl.lastIndexOf("/"));
         }
         String fileSuffix = getSuffix(fileName);
@@ -127,6 +130,7 @@ public class FileUtil{
             parentDir.mkdirs();
         }
     }
+
     //下载视频
     public static void down(String src, String path, String name) {
         try {
@@ -171,6 +175,7 @@ public class FileUtil{
             e.toString();
         }
     }
+
     public static String getName(String filePath) {
         if (null == filePath) {
             return filePath;
@@ -183,7 +188,7 @@ public class FileUtil{
                     --len;
                 }
                 int begin = 0;
-                for(int i = len - 1; i > -1; --i) {
+                for (int i = len - 1; i > -1; --i) {
                     char c = filePath.charAt(i);
                     if (isFileSeparator(c)) {
                         begin = i + 1;
@@ -194,6 +199,7 @@ public class FileUtil{
             }
         }
     }
+
     public static InputStream getInputStreamByUrl(String url, String referer) {
         HttpGet httpGet = new HttpGet(checkUrl(url));
         httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
@@ -217,6 +223,7 @@ public class FileUtil{
         }
         return in;
     }
+
     private static String parseInputStream(InputStream in) throws IOException {
         String result = "";
         StringBuffer content = null;
@@ -231,6 +238,7 @@ public class FileUtil{
         }
         return result;
     }
+
     /**
      * 校验Url，并返回完整的url
      *
@@ -245,11 +253,49 @@ public class FileUtil{
         }
         return null;
     }
+
     public static boolean isFileSeparator(char c) {
         return '/' == c || '\\' == c;
     }
 
-    public  String download(String imgUrl, String referer, String localPath) {
+    public static void writeByteArrayToFile(File file, byte[] data) throws IOException {
+        OutputStream out = null;
+        try {
+            out = openOutputStream(file);
+            out.write(data);
+            out.close(); // don't swallow close Exception if copy completes normally
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException var4) {
+                    log.debug("Ignore failure in closing the Closeable", var4);
+                }
+            }
+        }
+
+    }
+
+    private static OutputStream openOutputStream(File file) throws IOException {
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                throw new IOException("File '" + file + "' exists but is a directory");
+            }
+            if (file.canWrite() == false) {
+                throw new IOException("File '" + file + "' cannot be written to");
+            }
+        } else {
+            File parent = file.getParentFile();
+            if (parent != null) {
+                if (!parent.mkdirs() && !parent.isDirectory()) {
+                    throw new IOException("Directory '" + parent + "' could not be created");
+                }
+            }
+        }
+        return new FileOutputStream(file);
+    }
+
+    public String download(String imgUrl, String referer, String localPath) {
 
         String fileName = localPath + File.separator + Randoms.alpha(16) + FileUtil.getSuffixByUrl(imgUrl);
         try (InputStream is = FileUtil.getInputStreamByUrl(imgUrl, referer);
@@ -272,9 +318,10 @@ public class FileUtil{
         }
         return fileName;
     }
+
     //下载视频
     public static void down(InputStream ins, String saveFile) {
-        try (InputStream inputStream = StreamUtil.clone(ins)){
+        try (InputStream inputStream = StreamUtil.clone(ins)) {
             int length = inputStream.available();
             FileOutputStream fs = new FileOutputStream(saveFile);
             byte[] buffer = new byte[1024];
@@ -299,9 +346,10 @@ public class FileUtil{
             ins.close();
             fs.close();
         } catch (Exception e) {
-            throw  new ServiceException("9999999","文件下载失败",e);
+            throw new ServiceException("9999999", "文件下载失败", e);
         }
     }
+
     /**
      * 获取图片信息
      *
@@ -313,7 +361,7 @@ public class FileUtil{
             return new VirtualFile();
         }
         try {
-            return  getInfo(new FileInputStream(file))
+            return getInfo(new FileInputStream(file))
                     .setSize(file.length())
                     .setOriginalFileName(file.getName())
                     .setSuffix(FileUtil.getSuffix(file.getName()));

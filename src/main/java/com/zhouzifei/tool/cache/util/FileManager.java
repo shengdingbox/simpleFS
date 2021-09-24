@@ -1,9 +1,12 @@
 package com.zhouzifei.tool.cache.util;
 
+import com.qcloud.cos.utils.IOUtils;
+import com.zhouzifei.tool.media.file.FileUtil;
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import org.apache.commons.io.FileUtils;
 
 
 /**
@@ -30,7 +33,7 @@ public class FileManager {
 	public void close() throws IOException
 	{	
 		if(directory.isDirectory()) {
-			FileUtils.deleteDirectory(directory);
+			FileUtil.deleteFiles(Cache,1);
 		}
 	}
 	
@@ -43,7 +46,7 @@ public class FileManager {
 	 */
 	public void add(String cacheName, Serializable key, byte[] data) throws IOException {
 		File file=new File(directory, cacheName+File.separator+key.toString());
-		FileUtils.writeByteArrayToFile(file, data);
+		FileUtil.writeByteArrayToFile(file, data);
 	}
 	public void add(Serializable key, byte[] data) throws IOException {
 		add(CacheName, key, data);
@@ -58,8 +61,10 @@ public class FileManager {
 	 */
 	public byte[]  get(String cacheName, Serializable key) throws IOException {
 		File file=new File(directory, cacheName+File.separator+key.toString());
-		if(!file.isFile())return null;
-		return FileUtils.readFileToByteArray(file);
+		if(!file.isFile()) {
+			return null;
+		}
+		return IOUtils.toByteArray(new FileInputStream(file));
 	}
 	public byte[]  get( Serializable key) throws IOException {	
 		return get(CacheName, key);
@@ -72,7 +77,9 @@ public class FileManager {
 	 */
 	public void remove(String cacheName, Serializable key) {
 		File file=new File(directory, File.separator+key.toString());
-		if(file.isFile())file.delete();
+		if(file.isFile()) {
+			file.delete();
+		}
 	}
 	public void remove( Serializable key) {
 		remove(CacheName, key);
@@ -86,7 +93,9 @@ public class FileManager {
 	public void clear(String cacheName) throws IOException
 	{
 		File file=new File(directory, cacheName);
-		if(file.isDirectory())FileUtils.deleteDirectory(directory);
+		if(file.isDirectory()) {
+			FileUtil.deleteFiles(Cache,1);
+		}
 	}
 	public void clear() throws IOException
 	{

@@ -1,6 +1,5 @@
 package com.zhouzifei.tool.controller;
 
-import com.google.common.io.ByteStreams;
 import com.zhouzifei.tool.cache.CacheEngine;
 import com.zhouzifei.tool.cache.FileCacheEngine;
 import com.zhouzifei.tool.common.ServiceException;
@@ -8,25 +7,23 @@ import com.zhouzifei.tool.config.properties.FileProperties;
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.holder.RequestHolder;
-import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.media.file.service.ApiClient;
-import com.zhouzifei.tool.media.file.service.FastdfsClientUtil;
 import com.zhouzifei.tool.media.file.service.FileUploader;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.system.ApplicationHome;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.URLEncoder;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,19 +34,9 @@ import java.util.UUID;
 public class FileUploadController {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("/yyyy/MM/hh/");
 
-    static  boolean isUpload;
-    @Value("${fdst.url}")
-    String fdstUrl;
-    @Autowired
-    FastdfsClientUtil fastdfsClientUtil;
-    @Autowired
-    HttpServletRequest request;
-
-    private static String oldUrl;
-    private static String oldName;
 
     @PostMapping({"/upload"})
-    public VirtualFile upload(MultipartFile file, HttpServletRequest request, StorageTypeConst storageTypeConst) {
+    public VirtualFile upload(MultipartFile file, StorageTypeConst storageTypeConst) throws IOException {
         FileUploader uploader = new FileUploader();
         final String storageType = storageTypeConst.getStorageType();
         CacheEngine cacheEngine = new FileCacheEngine();
@@ -58,7 +45,7 @@ public class FileUploadController {
             throw new ServiceException("该空间未配置,请POST请求/config添加配置");
         }
         ApiClient apiClient = uploader.getApiClient((FileProperties)fileProperties);
-        return apiClient.uploadFile(file);
+        return apiClient.uploadFile(file.getInputStream(),file.getOriginalFilename());
     }
     @PostMapping({"/ceshi"})
     public VirtualFile ceshi(MultipartFile file, HttpServletRequest request, StorageTypeConst storageTypeConst) {
@@ -86,33 +73,6 @@ public class FileUploadController {
         ApiClient apiClient = uploader.getApiClient((FileProperties)fileProperties);
         return apiClient.multipartUpload(inputStream,fileName);
     }
-
-    @PostMapping({"/upload2"})
-    public ModelAndView upload2(MultipartFile file, ModelAndView modelAndView) {
-//        if(!isUpload){
-//            return null;
-//        }
-        String format = this.simpleDateFormat.format(new Date());
-        ApplicationHome applicationHome = new ApplicationHome(this.getClass());
-        File source = applicationHome.getSource();
-        String realPath = source.getParentFile().toString() + "/upload/";
-        System.out.println(realPath);
-        File folder = new File(realPath);
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-
-        String name = file.getOriginalFilename();
-        System.out.println(name);
-        String s = this.fastdfsClientUtil.fileUpload(file);
-        modelAndView.setViewName("url");
-        modelAndView.addObject("download",fdstUrl+oldUrl+"?attname="+oldName);
-        modelAndView.addObject("url",fdstUrl+s);
-        oldUrl = s;
-        oldName = name;
-        return modelAndView;
-    }
-
     @PostMapping({"/uploads"})
     public String[] uploads(MultipartFile[] files, HttpServletRequest request) {
         List list = new ArrayList();
@@ -150,41 +110,6 @@ public class FileUploadController {
 
 //        this.fastdfsClientUtil.deleteFile(url);
         return "ok";
-    }
-    @GetMapping({"/oldUrl"})
-    public ModelAndView delete(String url,ModelAndView modelAndView,HttpServletResponse response) {
-        modelAndView.setViewName("url");
-        modelAndView.addObject("download",fdstUrl+oldUrl+"?attname="+oldName);
-        modelAndView.addObject("name",fdstUrl+oldUrl);
-        return modelAndView;
-        //download(fdstUrl+oldUrl,response);
-    }
-
-    @PostMapping({"/download"})
-    public void download(String url,  HttpServletResponse response) {
-        ServletOutputStream out = null;
-        try {
-            byte[] bytes = this.fastdfsClientUtil.downFile(url);
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-            response.reset();
-            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(oldName, "UTF-8"));
-            response.setContentType("application/force-download");
-            //String ext = Files.getFileExtension(fileName);
-            //response.setContentType(getContentType(ext));
-            response.setCharacterEncoding("UTF-8");
-            out = response.getOutputStream();
-            ByteStreams.copy(byteArrayInputStream, out);
-            out.flush();
-            //fastdfsClientUtil.deleteFile(url);
-        } catch (IOException e) {
-           throw new RuntimeException(e.getMessage());
-        } finally {
-            try {
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
     public static void main(String[] args) throws IOException {
         final FileInputStream fileInputStream = new FileInputStream("/Users/Dabao/git.mp4");

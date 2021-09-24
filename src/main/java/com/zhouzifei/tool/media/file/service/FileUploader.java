@@ -20,9 +20,6 @@ public class FileUploader {
 
     ProgressListener progressListener;
 
-    @Autowired
-    FastDfsOssApiClient fastDfsOssApiClient;
-
     public ApiClient getApiClient(FileProperties fileProperties) {
         String storageType = fileProperties.getStorageTypeConst().getStorageType();
         if(storageType.equals(StorageTypeConst.LOCAL.getStorageType())) {
@@ -66,7 +63,7 @@ public class FileUploader {
         }else if(storageType.equals(StorageTypeConst.FASTDFS.getStorageType())) {
             String serviceUrl = fileProperties.getEndpoint();
             String url = fileProperties.getDomainUrl();
-            return fastDfsOssApiClient.init(serviceUrl,url);
+            return new FastDfsOssApiClient().init(serviceUrl,url);
         }else{
             throw new ServiceException("[文件服务]请选择文件存储类型！");
         }

@@ -3,7 +3,6 @@ package com.zhouzifei.tool.cache;
 import com.zhouzifei.tool.cache.common.SerializationUtils;
 import com.zhouzifei.tool.cache.util.FileManager;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.media.file.service.FastdfsClientUtil;
 
 import java.io.IOException;
 import java.io.Serializable;
