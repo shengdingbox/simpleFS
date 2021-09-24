@@ -71,6 +71,13 @@ public interface ApiClient {
      * @return 完成的文件信息
      */
     VirtualFile multipartUpload(InputStream inputStream,String fileName);
+    /**
+     * InputStream
+     * @param inputStream 文件
+     * @param fileName 文件名称
+     * @return 断点续传
+     */
+    abstract VirtualFile resumeUpload(InputStream inputStream,String fileName);
 
 
 }

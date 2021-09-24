@@ -7,9 +7,8 @@ import com.qcloud.cos.auth.BasicCOSCredentials;
 import com.qcloud.cos.auth.COSCredentials;
 import com.qcloud.cos.model.*;
 import com.qcloud.cos.region.Region;
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.exception.OssApiException;
-import com.zhouzifei.tool.exception.QiniuApiException;
 import com.zhouzifei.tool.html.Randoms;
 import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
@@ -34,7 +33,7 @@ public class QCloudOssApiClient extends BaseApiClient {
 
     public QCloudOssApiClient init(String accessKey, String secretKey,String endpoint, String bucketName, String baseUrl, String uploadType) {
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
-            throw new QiniuApiException("[" + this.storageType + "]尚未配置腾讯云，文件上传功能暂时不可用！");
+            throw new ServiceException("[" + this.storageType + "]尚未配置腾讯云，文件上传功能暂时不可用！");
         }
         COSCredentials cred = new BasicCOSCredentials(accessKey, secretKey);
         Region region = new Region(endpoint);
@@ -71,7 +70,7 @@ public class QCloudOssApiClient extends BaseApiClient {
     @Override
     public boolean removeFile(String key) {
         if (StringUtils.isNullOrEmpty(key)) {
-            throw new OssApiException("[" + this.storageType + "]删除文件失败：文件key为空");
+            throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
         // 删除文件
         cosClient.deleteObject(bucket, key);

@@ -8,10 +8,10 @@
         <version>7</version>
     </parent>
     <groupId>com.zhouzifei</groupId>
-    <artifactId>commonTool</artifactId>
+    <artifactId>mediaTool</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.3.RELEASES</version>
-    <name>commonTool</name>
+    <version>1.0.1.RELEASES</version>
+    <name>mediaTool</name>
     <description>小型整合型的工具类</description>
     <properties>
         <fastjson.version>1.2.44</fastjson.version>
@@ -276,6 +276,45 @@
                 </configuration>
             </plugin>
             <!-- 发布Jar到Maven仓库 End -->
+            <!-- 指定启动类，将依赖打成外部jar包 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <!-- 生成的jar中，不要包含pom.xml和pom.properties这两个文件 -->
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                        <manifest>
+                            <!-- 是否要把第三方jar加入到类构建路径 -->
+                            <addClasspath>true</addClasspath>
+                            <!-- 外部依赖jar包的最终位置 -->
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <!-- 项目启动类 -->
+                            <mainClass>com.zhouzifei.tool.FileuploadApplication</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!--拷贝依赖到jar外面的lib目录-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-lib</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/lib</outputDirectory>
+                            <excludeTransitive>false</excludeTransitive>
+                            <stripVersion>false</stripVersion>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <licenses>

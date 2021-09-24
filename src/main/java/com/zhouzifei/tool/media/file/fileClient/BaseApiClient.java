@@ -1,11 +1,8 @@
 package com.zhouzifei.tool.media.file.fileClient;
 
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.exception.GlobalFileException;
-import com.zhouzifei.tool.exception.OssApiException;
-import com.zhouzifei.tool.exception.QiniuApiException;
 import com.zhouzifei.tool.media.file.FileUtil;
-import com.zhouzifei.tool.media.file.ImageUtil;
 import com.zhouzifei.tool.media.file.listener.ProgressListener;
 import com.zhouzifei.tool.media.file.service.ApiClient;
 import com.zhouzifei.tool.util.StringUtils;
@@ -48,7 +45,7 @@ public abstract class BaseApiClient implements ApiClient {
     @Override
     public VirtualFile uploadFile(MultipartFile file) {
         if (file == null) {
-            throw new OssApiException("[" + this.storageType + "]文件上传失败：文件不可为空");
+            throw new ServiceException("[" + this.storageType + "]文件上传失败：文件不可为空");
         }
         try {
             VirtualFile res = this.uploadFile(file.getInputStream(), file.getOriginalFilename());
@@ -56,14 +53,14 @@ public abstract class BaseApiClient implements ApiClient {
             return res.setSize(imageInfo.getSize())
                     .setOriginalFileName(file.getOriginalFilename());
         } catch (IOException e) {
-            throw new GlobalFileException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
+            throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
     }
 
     @Override
     public VirtualFile uploadFile(File file) {
         if (file == null) {
-            throw new QiniuApiException("[" + this.storageType + "]文件上传失败：文件不可为空");
+            throw new ServiceException("[" + this.storageType + "]文件上传失败：文件不可为空");
         }
         try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
             VirtualFile res = this.uploadFile(is, file.getName());
@@ -71,7 +68,7 @@ public abstract class BaseApiClient implements ApiClient {
             return res.setSize(imageInfo.getSize())
                     .setOriginalFileName(file.getName());
         } catch (IOException e) {
-            throw new GlobalFileException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
+            throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
     }
     /**
@@ -88,7 +85,7 @@ public abstract class BaseApiClient implements ApiClient {
             }
             return this.uploadFile(is, fileName);
         } catch (Exception e) {
-            throw new GlobalFileException(e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
     }
 
@@ -106,4 +103,10 @@ public abstract class BaseApiClient implements ApiClient {
         this.newFileName = folder +fileName;
     }
     public abstract InputStream downloadFileStream(String key);
+
+
+    @Override
+    public VirtualFile resumeUpload(InputStream inputStream, String fileName) {
+        return null;
+    }
 }

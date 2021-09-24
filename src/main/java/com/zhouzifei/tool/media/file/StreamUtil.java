@@ -1,14 +1,14 @@
 package com.zhouzifei.tool.media.file;
 
 
+import com.zhouzifei.tool.common.ServiceException;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import com.zhouzifei.tool.exception.GlobalFileException;
 
 /**
  * @author 周子斐 (17600004572@163.com)
@@ -63,7 +63,7 @@ public class StreamUtil {
      */
     public static InputStream clone(InputStream is) {
         if(null == is){
-            throw new GlobalFileException("无法获取文件流，文件不可用！");
+            throw new ServiceException("无法获取文件流，文件不可用！");
         }
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -75,7 +75,7 @@ public class StreamUtil {
             baos.flush();
             return new ByteArrayInputStream(baos.toByteArray());
         } catch (IOException e) {
-            throw new GlobalFileException("无法复制当前文件流！", e);
+            throw new ServiceException("无法复制当前文件流！{}", e.getMessage());
         }
     }
 }

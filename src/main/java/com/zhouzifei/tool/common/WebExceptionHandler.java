@@ -56,9 +56,7 @@ public class WebExceptionHandler {
         return Response.code("999998").withMessage(firstErrorMsg);
     }
 
-    @ResponseStatus(
-            code = HttpStatus.OK
-    )
+    @ResponseStatus(code = HttpStatus.OK)
     @ExceptionHandler({IllegalArgumentException.class})
     @ResponseBody
     public Response<?> illegalArgmentException(IllegalArgumentException e) {

@@ -10,10 +10,10 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.html.Randoms;
 import com.zhouzifei.tool.util.StringUtils;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.exception.QiniuApiException;
 import com.zhouzifei.tool.media.file.FileUtil;
 
 import java.io.File;
@@ -43,7 +43,7 @@ public class QiniuApiClient extends BaseApiClient {
 
     public QiniuApiClient init(String accessKey, String secretKey, String bucketName, String baseUrl, String uploadType) {
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
-            throw new QiniuApiException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
+            throw new ServiceException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
         }
         auth = Auth.create(accessKey, secretKey);
         this.bucket = bucketName;
@@ -86,7 +86,7 @@ public class QiniuApiClient extends BaseApiClient {
                     .setFileHash(putRet.hash)
                     .setFullFilePath(this.baseUrl + putRet.key);
         } catch (QiniuException ex) {
-            throw new QiniuApiException("[" + this.storageType + "]文件上传失败：" + ex.error());
+            throw new ServiceException("[" + this.storageType + "]文件上传失败：" + ex.error());
         }
     }
 
@@ -98,14 +98,14 @@ public class QiniuApiClient extends BaseApiClient {
     @Override
     public boolean removeFile(String key) {
         if (StringUtils.isNullOrEmpty(key)) {
-            throw new QiniuApiException("[" + this.storageType + "]删除文件失败：文件key为空");
+            throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
         try {
             Response re = bucketManager.delete(this.bucket, key);
             return re.isOK();
         } catch (QiniuException e) {
             Response r = e.response;
-            throw new QiniuApiException("[" + this.storageType + "]删除文件发生异常：" + r.toString());
+            throw new ServiceException("[" + this.storageType + "]删除文件发生异常：" + r.toString());
         }
     }
 
@@ -137,7 +137,7 @@ public class QiniuApiClient extends BaseApiClient {
             String finalUrl = auth.privateDownloadUrl(publicUrl, expireInSeconds);
             return FileUtil.getInputStreamByUrl(finalUrl, "");
         } catch (UnsupportedEncodingException e) {
-            throw new QiniuApiException("[" + this.storageType + "]下载文件发生异常：" + e.toString());
+            throw new ServiceException("[" + this.storageType + "]下载文件发生异常：" + e.toString());
         }
     }
 }

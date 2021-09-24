@@ -4,8 +4,6 @@ package com.zhouzifei.tool.media.file.fileClient;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.util.StringUtils;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.exception.OssApiException;
-import com.zhouzifei.tool.exception.QiniuApiException;
 import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.media.file.service.UpaiManager;
 
@@ -34,7 +32,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
 
     public UpaiyunOssApiClient init(String operatorName, String operatorPwd, String bucketName, String baseUrl, String uploadType) {
         if (StringUtils.isNullOrEmpty(operatorName) || StringUtils.isNullOrEmpty(operatorPwd) || StringUtils.isNullOrEmpty(bucketName)) {
-            throw new QiniuApiException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
+            throw new ServiceException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
         }
         upaiManager = new UpaiManager(bucketName, operatorName, operatorPwd);
         this.baseUrl = baseUrl;
@@ -68,7 +66,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
     @Override
     public boolean removeFile(String key) {
         if (StringUtils.isNullOrEmpty(key)) {
-            throw new OssApiException("[" + this.storageType + "]删除文件失败：文件key为空");
+            throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
         // 删除文件
         try {
@@ -97,7 +95,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
     @Override
     public InputStream downloadFileStream(String key) {
         if (StringUtils.isNullOrEmpty(key)) {
-            throw new OssApiException("[" + this.storageType + "]删除文件失败：文件key为空");
+            throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
         try {
             return Objects.requireNonNull(upaiManager.readFile(baseUrl + key).body()).byteStream();

@@ -34,10 +34,6 @@ public class FileProperties implements Serializable {
      */
     private String domainUrl;
     /**
-     * 文件存储路径
-     */
-    private String localFilePath;
-    /**
      * Bucket 名称
      */
     private String bucketName;
@@ -53,9 +49,5 @@ public class FileProperties implements Serializable {
      * 地域节点（EndPoint）
      */
     private String endpoint;
-    /**
-     * 服务器地址
-     */
-    private String serverUrl;
 
 }

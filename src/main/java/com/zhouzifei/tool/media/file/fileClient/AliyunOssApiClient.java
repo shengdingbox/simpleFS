@@ -1,10 +1,9 @@
 package com.zhouzifei.tool.media.file.fileClient;
 
 import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.ServiceException;
 import com.aliyun.oss.model.*;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.exception.OssApiException;
-import com.zhouzifei.tool.exception.QiniuApiException;
 import com.zhouzifei.tool.html.Randoms;
 import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.media.file.StreamUtil;
@@ -12,8 +11,8 @@ import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.DigestUtils;
 
-import javax.sound.sampled.Line;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,15 +53,7 @@ public class AliyunOssApiClient extends BaseApiClient {
         Date startTime = new Date();
         try (InputStream uploadIs = StreamUtil.clone(is);
              InputStream fileHashIs = StreamUtil.clone(is)) {
-            if (!this.client.doesBucketExist(bucketName)) {
-                throw new OssApiException("[阿里云OSS] 无法上传文件！Bucket不存在：" + bucketName);
-            }
-            boolean exists = this.client.doesObjectExist(bucketName,imageUrl);
-            if(exists){
-                this.suffix = FileUtil.getSuffix(imageUrl);
-                imageUrl = Randoms.alpha(16) + this.suffix;
-            }
-            this.createNewFileName(imageUrl);
+            imageUrl = getName(imageUrl);
             this.client.putObject(bucketName, this.newFileName, uploadIs);
             return new VirtualFile()
                     .setOriginalFileName(FileUtil.getName(imageUrl))
@@ -73,10 +64,23 @@ public class AliyunOssApiClient extends BaseApiClient {
                     .setFileHash(DigestUtils.md5DigestAsHex(fileHashIs))
                     .setFullFilePath(this.domainUrl + this.newFileName);
         } catch (IOException e) {
-            throw new OssApiException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
+            throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         } finally {
             this.client.shutdown();
         }
+    }
+
+    private String getName(String imageUrl) {
+        if (!this.client.doesBucketExist(bucketName)) {
+            throw new ServiceException("[阿里云OSS] 无法上传文件！Bucket不存在：" + bucketName);
+        }
+        boolean exists = this.client.doesObjectExist(bucketName,imageUrl);
+        if(exists){
+            this.suffix = FileUtil.getSuffix(imageUrl);
+            imageUrl = Randoms.alpha(16) + this.suffix;
+        }
+        this.createNewFileName(imageUrl);
+        return imageUrl;
     }
 
     /**
@@ -88,20 +92,20 @@ public class AliyunOssApiClient extends BaseApiClient {
     public boolean removeFile(String fileName) {
         this.check();
         if (StringUtils.isEmpty(fileName)) {
-            throw new OssApiException("[" + this.storageType + "]删除文件失败：文件key为空");
+            throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
         try {
             boolean exists = this.client.doesBucketExist(bucketName);
             if (!exists) {
-                throw new OssApiException("[阿里云OSS] 文件删除失败！Bucket不存在：" + bucketName);
+                throw new ServiceException("[阿里云OSS] 文件删除失败！Bucket不存在：" + bucketName);
             }
             if (!this.client.doesObjectExist(bucketName, fileName)) {
-                throw new OssApiException("[阿里云OSS] 文件删除失败！文件不存在：" + bucketName + "/" + fileName);
+                throw new ServiceException("[阿里云OSS] 文件删除失败！文件不存在：" + bucketName + "/" + fileName);
             }
             this.client.deleteObject(bucketName, fileName);
             return true;
         } catch (Exception e) {
-            throw new OssApiException(e.getMessage());
+            throw new ServiceException(e.getMessage());
         } finally {
             this.client.shutdown();
         }
@@ -123,15 +127,7 @@ public class AliyunOssApiClient extends BaseApiClient {
     public VirtualFile multipartUpload(InputStream inputStream,String fileName) {
         this.check();
         final Date startDate = new Date();
-        if (!this.client.doesBucketExist(bucketName)) {
-            throw new OssApiException("[阿里云OSS] 无法上传文件！Bucket不存在：" + bucketName);
-        }
-        boolean exists = this.client.doesObjectExist(bucketName,fileName);
-        if(exists){
-            this.suffix = FileUtil.getSuffix(fileName);
-            fileName = Randoms.alpha(16) + this.suffix;
-        }
-        this.createNewFileName(fileName);
+        fileName = getName(fileName);
         // 创建InitiateMultipartUploadRequest对象。
         InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest(bucketName, this.newFileName);
         // 初始化分片。
@@ -141,7 +137,7 @@ public class AliyunOssApiClient extends BaseApiClient {
         // partETags是PartETag的集合。PartETag由分片的ETag和分片号组成。
         List<PartETag> partETags = new ArrayList<PartETag>();
         // 计算文件有多少个分片。
-        final long partSize = 5 * 1024 * 1024L;
+        final long partSize = 1024 * 1024L;
         long fileLength = 0;
         try {
             fileLength = inputStream.available();
@@ -157,6 +153,10 @@ public class AliyunOssApiClient extends BaseApiClient {
         for (int i = 0; i < partCount; i++) {
             long startPos = i * partSize;
             long curPartSize = (i + 1 == partCount) ? (fileLength - startPos) : partSize;
+            //控制输出小数点后的位数
+            DecimalFormat df = new DecimalFormat("#.##");
+            float f = (i / (float) partCount) * 100;
+            log.info("已下载：" + df.format(f) + "%\t\t");
             try (InputStream instream = StreamUtil.clone(inputStream)) {
                 // 跳过已经上传的分片。
                 instream.skip(startPos);
@@ -175,8 +175,9 @@ public class AliyunOssApiClient extends BaseApiClient {
                 partETags.add(uploadPartResult.getPartETag());
                 progressListener.process(i,partCount);
             } catch (Exception e) {
-                log.info(e.getMessage());
-                throw new OssApiException("[" + this.storageType + "]文件分片上传失败：" + e.getMessage());
+//                log.info(e.toString());
+//                throw new ServiceException("[" + this.storageType + "]文件分片上传失败：" + e.getMessage());
+                e.printStackTrace();
             }
         }
         // 创建CompleteMultipartUploadRequest对象。
@@ -201,9 +202,14 @@ public class AliyunOssApiClient extends BaseApiClient {
     }
 
     @Override
+    public VirtualFile resumeUpload(InputStream inputStream, String fileName) {
+        return null;
+    }
+
+    @Override
     protected void check() {
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
-            throw new QiniuApiException("[" + this.storageType + "]尚未配置阿里云，文件上传功能暂时不可用！");
+            throw new ServiceException("[" + this.storageType + "]尚未配置阿里云，文件上传功能暂时不可用！");
         }
         this.client = new OSSClient(endpoint, accessKey, secretKey);
     }
@@ -217,15 +223,15 @@ public class AliyunOssApiClient extends BaseApiClient {
     public InputStream downloadFileStream(String fileName) {
         this.check();
         if (StringUtils.isEmpty(fileName)) {
-            throw new OssApiException("[" + this.storageType + "]下载文件失败：文件key为空");
+            throw new ServiceException("[" + this.storageType + "]下载文件失败：文件key为空");
         }
         try {
             boolean exists = this.client.doesBucketExist(bucketName);
             if (!exists) {
-                throw new OssApiException("[阿里云OSS] 文件删除失败！Bucket不存在：" + bucketName);
+                throw new ServiceException("[阿里云OSS] 文件删除失败！Bucket不存在：" + bucketName);
             }
             if (!this.client.doesObjectExist(bucketName, fileName)) {
-                throw new OssApiException("[阿里云OSS] 文件下载失败！文件不存在：" + bucketName + "/" + fileName);
+                throw new ServiceException("[阿里云OSS] 文件下载失败！文件不存在：" + bucketName + "/" + fileName);
             }
             OSSObject object = this.client.getObject(bucketName, fileName);
             return object.getObjectContent();

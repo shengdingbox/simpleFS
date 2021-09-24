@@ -1,7 +1,7 @@
 package com.zhouzifei.tool.media.file.fileClient;
 
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.exception.LocalApiException;
 import com.zhouzifei.tool.media.file.StreamUtil;
 import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
@@ -31,7 +31,7 @@ public class LocalApiClient extends BaseApiClient {
 
     public LocalApiClient init(String url, String rootPath, String uploadType) {
         if (StringUtils.isEmpty(url) || StringUtils.isEmpty(rootPath)) {
-            throw new LocalApiException("[" + this.storageType + "]尚未配置Nginx文件服务器，文件上传功能暂时不可用！");
+            throw new ServiceException("[" + this.storageType + "]尚未配置Nginx文件服务器，文件上传功能暂时不可用！");
         }
         this.url = url;
         this.rootPath = rootPath;
@@ -60,7 +60,7 @@ public class LocalApiClient extends BaseApiClient {
                     .setFileHash(DigestUtils.md5DigestAsHex(fileHashIs))
                     .setFullFilePath(this.url + this.newFileName);
         } catch (Exception e) {
-            throw new LocalApiException("[" + this.storageType + "]文件上传失败：" + e.getMessage() + imageUrl);
+            throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage() + imageUrl);
         } finally {
             if (is != null) {
                 try {
@@ -75,16 +75,16 @@ public class LocalApiClient extends BaseApiClient {
     @Override
     public boolean removeFile(String key) {
         if (StringUtils.isEmpty(key)) {
-            throw new LocalApiException("[" + this.storageType + "]删除文件失败：文件key为空");
+            throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
         File file = new File(this.rootPath + key);
         if (!file.exists()) {
-            throw new LocalApiException("[" + this.storageType + "]删除文件失败：文件不存在[" + this.rootPath + key + "]");
+            throw new ServiceException("[" + this.storageType + "]删除文件失败：文件不存在[" + this.rootPath + key + "]");
         }
         try {
             return file.delete();
         } catch (Exception e) {
-            throw new LocalApiException("[" + this.storageType + "]删除文件失败：" + e.getMessage());
+            throw new ServiceException("[" + this.storageType + "]删除文件失败：" + e.getMessage());
         }
     }
 

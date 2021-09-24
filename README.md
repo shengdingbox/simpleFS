@@ -1,32 +1,30 @@
+# 什么是 commonTool？
+commonTool，如你所见，它是一个小型整合型的工具类，带有整合(阿里云,七牛云,又拍云,腾讯云,华为云,~~百度云~~,本地上传)OSS上传,短信发送(阿里云,腾讯云,七牛云),文件加工类,，它可以让我们脱离繁琐的开发流程，让开发变得**So easy!**
+-------------------------------
 <p align="center">
-	<a target="_blank" href="https://search.maven.org/search?q=JustAuth">
+	<a target="_blank" href="https://search.maven.org/search?q=mediaTool">
 		<img src="https://img.shields.io/github/v/release/shengdingbox/mediaTool?style=flat-square" ></img>
 	</a>
-	<a target="_blank" href="https://oss.sonatype.org/content/repositories/snapshots/me/zhyd/oauth/JustAuth/">
+	<a target="_blank" href="https://oss.sonatype.org/content/repositories/snapshots/com/zhouzfei/mediaTool/">
 		<img src="https://img.shields.io/nexus/s/com.zhouzifei/mediaTool.svg?server=https://oss.sonatype.org&style=flat-square" ></img>
 	</a>
-	<a target="_blank" href="https://gitee.com/yadong.zhang/JustAuth/blob/master/LICENSE">
+	<a target="_blank" href="https://github.com/shengdingbox/mediaTool/blob/master/LICENSE">
 		<img src="https://img.shields.io/apm/l/vim-mode.svg?color=yellow" ></img>
 	</a>
 	<a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">
 		<img src="https://img.shields.io/badge/JDK-1.8+-green.svg" ></img>
 	</a>
-	<a target="_blank" href="https://justauth.wiki" title="参考文档">
+	<a target="_blank" href="https://docs.zhouzifei.com" title="参考文档">
 		<img src="https://img.shields.io/badge/Docs-latest-blueviolet.svg" ></img>
 	</a>
-	<a href="https://codecov.io/gh/justauth/JustAuth">
-		<img src="https://codecov.io/gh/justauth/JustAuth/branch/master/graph/badge.svg?token=zYiAqd9aFz" />
+	<a href='https://gitee.com/zifeiZhou/mediaTool/stargazers'>
+	  <img src='https://gitee.com/zifeiZhou/mediaTool/badge/star.svg?theme=gvp' alt='star'></img>
 	</a>
-	<a href='https://gitee.com/yadong.zhang/JustAuth/stargazers'>
-	  <img src='https://gitee.com/zifeiZhou/commonTool/badge/star.svg?theme=gvp' alt='star'></img>
-	</a>
-	<a target="_blank" href='https://github.com/zhangyd-c/JustAuth'>
+	<a target="_blank" href='https://github.com/shengdingbox/mediaTool/'>
 		<img src="https://img.shields.io/github/stars/shengdingbox/mediaTool.svg?style=social" alt="github star"></img>
 	</a>
 </p>
-# 什么是 commonTool？
-commonTool，如你所见，它是一个小型整合型的工具类，带有整合(阿里云,七牛云,又拍云,腾讯云,华为云,~~百度云~~,本地上传)OSS上传,短信发送(阿里云,腾讯云,七牛云),文件加工类,，它可以让我们脱离繁琐的开发流程，让开发变得**So easy!**
--------------------------------
+
 | 站点 | 文件上传 | 分片上传 | 断点续传 | 文件下载 | 文件删除 |
 | :--: | :--: | :--: | :--: | :--: | :--: |
 | **阿里云OSS**  |✔|✔|✔|✔|✔|

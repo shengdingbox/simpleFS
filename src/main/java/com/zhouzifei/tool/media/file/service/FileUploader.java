@@ -5,6 +5,8 @@ import com.zhouzifei.tool.config.properties.FileProperties;
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.media.file.fileClient.*;
 import com.zhouzifei.tool.media.file.listener.ProgressListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 
 /**
@@ -13,19 +15,19 @@ import com.zhouzifei.tool.media.file.listener.ProgressListener;
  * @remark 2019年7月16日
  * @since 1.0
  */
+@Component
 public class FileUploader {
 
     ProgressListener progressListener;
 
-    public FileUploader setProgressListener(ProgressListener progressListener) {
-        this.progressListener = progressListener;
-        return this;
-    }
+    @Autowired
+    FastDfsOssApiClient fastDfsOssApiClient;
+
     public ApiClient getApiClient(FileProperties fileProperties) {
         String storageType = fileProperties.getStorageTypeConst().getStorageType();
         if(storageType.equals(StorageTypeConst.LOCAL.getStorageType())) {
             String domainUrl = fileProperties.getDomainUrl();
-            String localFilePath = fileProperties.getLocalFilePath();
+            String localFilePath = fileProperties.getEndpoint();
             final LocalApiClient localApiClient = new LocalApiClient().init(domainUrl, localFilePath, fileProperties.getPathPrefix());
             return localApiClient.setProgressListener(progressListener);
         }else if(storageType.equals(StorageTypeConst.QINIUYUN.getStorageType())){
@@ -61,6 +63,10 @@ public class FileUploader {
             String url = fileProperties.getDomainUrl();
             String bucketName = fileProperties.getBucketName();
             return new HuaweiCloudOssApiClient().init(accessKeyId, accessKeySecret,endpoint,bucketName,url, fileProperties.getPathPrefix());
+        }else if(storageType.equals(StorageTypeConst.FASTDFS.getStorageType())) {
+            String serviceUrl = fileProperties.getEndpoint();
+            String url = fileProperties.getDomainUrl();
+            return fastDfsOssApiClient.init(serviceUrl,url);
         }else{
             throw new ServiceException("[文件服务]请选择文件存储类型！");
         }

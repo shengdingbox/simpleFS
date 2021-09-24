@@ -40,7 +40,7 @@ public class Swagger2 {
 	 * @return 文档基本信息
 	 */
 	private ApiInfo apiInfo() {
-		Contact contact = new Contact("商户管理服务组", "/v1/about", "");
+		Contact contact = new Contact("mediaTool在线文档", "/v1/about", "");
 		return new ApiInfoBuilder().title("商户管理服务API文档").description("商户管理服务1.0").termsOfServiceUrl("icitic")
 				.contact(contact).version("1.0").build();
 	}

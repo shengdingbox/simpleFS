@@ -2,14 +2,13 @@ package com.zhouzifei.tool.media.file;
 
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.exception.GlobalFileException;
 import com.zhouzifei.tool.html.Randoms;
+import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -198,7 +197,7 @@ public class FileUtil{
     public static InputStream getInputStreamByUrl(String url, String referer) {
         HttpGet httpGet = new HttpGet(checkUrl(url));
         httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(referer)) {
+        if (StringUtils.isNotEmpty(referer)) {
             httpGet.setHeader("referer", referer);
         }
         CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -320,7 +319,7 @@ public class FileUtil{
                     .setSuffix(FileUtil.getSuffix(file.getName()));
         } catch (Exception e) {
             e.printStackTrace();
-            throw new GlobalFileException("获取图片信息发生异常！", e);
+            throw new ServiceException("获取图片信息发生异常!{}", e.getMessage());
         }
     }
 
@@ -341,7 +340,7 @@ public class FileUtil{
                     .setSuffix(FileUtil.getSuffix(Objects.requireNonNull(multipartFile.getOriginalFilename())));
         } catch (Exception e) {
             e.printStackTrace();
-            throw new GlobalFileException("获取图片信息发生异常！", e);
+            throw new ServiceException("获取图片信息发生异常！{}", e.getMessage());
         }
     }
 
@@ -361,7 +360,7 @@ public class FileUtil{
             //获取默认图像的高度，宽度
             return new VirtualFile().setSize(available);
         } catch (Exception e) {
-            throw new GlobalFileException("获取图片信息发生异常！", e);
+            throw new ServiceException("获取图片信息发生异常！{}", e.getMessage());
         }
     }
 }

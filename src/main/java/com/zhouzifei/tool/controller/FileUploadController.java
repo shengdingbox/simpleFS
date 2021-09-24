@@ -7,9 +7,12 @@ import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.properties.FileProperties;
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.entity.VirtualFile;
+import com.zhouzifei.tool.holder.RequestHolder;
+import com.zhouzifei.tool.media.file.FileUtil;
 import com.zhouzifei.tool.media.file.service.ApiClient;
 import com.zhouzifei.tool.media.file.service.FastdfsClientUtil;
 import com.zhouzifei.tool.media.file.service.FileUploader;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.system.ApplicationHome;
@@ -22,10 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,6 +50,18 @@ public class FileUploadController {
 
     @PostMapping({"/upload"})
     public VirtualFile upload(MultipartFile file, HttpServletRequest request, StorageTypeConst storageTypeConst) {
+        FileUploader uploader = new FileUploader();
+        final String storageType = storageTypeConst.getStorageType();
+        CacheEngine cacheEngine = new FileCacheEngine();
+        final Object fileProperties = cacheEngine.get(storageType, "fileProperties");
+        if(null == fileProperties){
+            throw new ServiceException("该空间未配置,请POST请求/config添加配置");
+        }
+        ApiClient apiClient = uploader.getApiClient((FileProperties)fileProperties);
+        return apiClient.uploadFile(file);
+    }
+    @PostMapping({"/ceshi"})
+    public VirtualFile ceshi(MultipartFile file, HttpServletRequest request, StorageTypeConst storageTypeConst) {
         FileUploader uploader = new FileUploader();
         final String storageType = storageTypeConst.getStorageType();
         CacheEngine cacheEngine = new FileCacheEngine();
@@ -133,7 +145,10 @@ public class FileUploadController {
     }
     @PostMapping({"/delete"})
     public String delete(String url) {
-        this.fastdfsClientUtil.deleteFile(url);
+        final String[] sessionKeys = RequestHolder.getSessionKeys();
+        System.out.println(sessionKeys);
+
+//        this.fastdfsClientUtil.deleteFile(url);
         return "ok";
     }
     @GetMapping({"/oldUrl"})
@@ -144,17 +159,7 @@ public class FileUploadController {
         return modelAndView;
         //download(fdstUrl+oldUrl,response);
     }
-    @PostMapping({"/open"})
-    public ModelAndView open(String idNbr,ModelAndView modelAndView) {
-        if("1".equals(idNbr)){
-            isUpload = true;
-        }else if("0".equals(idNbr)){
-            isUpload = false;
-        }
-        modelAndView.setViewName("index");
-        modelAndView.addObject("idNbr",idNbr);
-        return modelAndView;
-    }
+
     @PostMapping({"/download"})
     public void download(String url,  HttpServletResponse response) {
         ServletOutputStream out = null;
@@ -181,8 +186,12 @@ public class FileUploadController {
             }
         }
     }
-    public static void main(String[] args) {
-        String s = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-        System.out.println(s);
+    public static void main(String[] args) throws IOException {
+        final FileInputStream fileInputStream = new FileInputStream("/Users/Dabao/git.mp4");
+        final String md5Hex = DigestUtils.md5Hex(fileInputStream);
+        final FileCacheEngine fileCacheEngine = new FileCacheEngine();
+//        FileUtil.down("https://vd4.bdstatic.com/mda-kj0ry8h7pjtsn4fu/sc/mda-kj0ry8h7pjtsn4fu.mp4?v_from_s=hkapp-haokan-tucheng&auth_key=1631587610-0-0-220e26be5a0e7a96d6cc1a210931e0a5&bcevod_channel=searchbox_feed&pd=1&pt=3&abtest=3000185_2","/Users/Dabao/","git");
+        fileCacheEngine.add(md5Hex,"file",fileInputStream);
+        System.out.println(md5Hex);
     }
 }

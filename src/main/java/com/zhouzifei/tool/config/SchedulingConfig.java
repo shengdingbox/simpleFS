@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @EnableScheduling
 public class SchedulingConfig implements SchedulingConfigurer {
 
-    private AtomicInteger integer = new AtomicInteger(0);
+    private final AtomicInteger integer = new AtomicInteger(0);
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
