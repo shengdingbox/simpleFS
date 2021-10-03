@@ -2,7 +2,7 @@ package com.zhouzifei.tool.media.file.fileClient;
 
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.media.file.FileUtil;
+import com.zhouzifei.tool.media.file.util.FileUtil;
 import com.zhouzifei.tool.media.file.listener.ProgressListener;
 import com.zhouzifei.tool.media.file.service.ApiClient;
 import com.zhouzifei.tool.util.StringUtils;

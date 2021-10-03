@@ -6,7 +6,7 @@ import com.zhouzifei.tool.config.properties.FileProperties;
 import com.zhouzifei.tool.dto.M3u8DTO;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.image.xmly;
-import com.zhouzifei.tool.media.file.MediaFormat;
+import com.zhouzifei.tool.media.file.util.MediaFormat;
 import com.zhouzifei.tool.util.StringUtils;
 import com.zhouzifei.tool.util.ThreadManager;
 import lombok.extern.slf4j.Slf4j;

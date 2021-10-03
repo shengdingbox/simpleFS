@@ -1,12 +1,14 @@
 package com.zhouzifei.tool.cache.util;
 
 import com.qcloud.cos.utils.IOUtils;
-import com.zhouzifei.tool.media.file.FileUtil;
+import com.zhouzifei.tool.cache.FileCacheEngine;
+import com.zhouzifei.tool.media.file.util.FileUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
 
 
 /**
@@ -76,9 +78,9 @@ public class FileManager {
 	 * @param key
 	 */
 	public void remove(String cacheName, Serializable key) {
-		File file=new File(directory, File.separator+key.toString());
+		File file=new File(directory, cacheName+File.separator+key.toString());
 		if(file.isFile()) {
-			file.delete();
+			final boolean delete = file.delete();
 		}
 	}
 	public void remove( Serializable key) {
@@ -101,5 +103,20 @@ public class FileManager {
 	{
 		clear(CacheName);
 	}
-	
+	public File[] getList(String cacheName){
+		File file=new File(directory, cacheName);
+		return file.listFiles();
+	}
+	public File[] getList(){
+		return directory.listFiles();
+	}
+	public static void main(String[] args) {
+		final FileCacheEngine fileCacheEngine = new FileCacheEngine();
+		fileCacheEngine.add("12","213");
+		System.out.println(fileCacheEngine.get("12"));
+		fileCacheEngine.remove("12");
+		System.out.println(fileCacheEngine.get("12"));
+		System.out.println(Arrays.toString(fileCacheEngine.getList()));
+
+	}
 }

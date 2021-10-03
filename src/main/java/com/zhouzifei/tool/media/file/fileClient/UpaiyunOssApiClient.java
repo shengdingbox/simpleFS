@@ -4,8 +4,8 @@ package com.zhouzifei.tool.media.file.fileClient;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.util.StringUtils;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.media.file.FileUtil;
-import com.zhouzifei.tool.media.file.service.UpaiManager;
+import com.zhouzifei.tool.media.file.util.FileUtil;
+import com.zhouzifei.tool.media.file.common.upaiyun.UpaiManager;
 
 import java.io.File;
 import java.io.IOException;

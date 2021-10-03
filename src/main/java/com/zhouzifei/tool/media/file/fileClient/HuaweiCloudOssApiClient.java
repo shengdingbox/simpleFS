@@ -7,8 +7,8 @@ import com.obs.services.model.ObsObject;
 import com.obs.services.model.PutObjectResult;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.html.Randoms;
-import com.zhouzifei.tool.media.file.FileUtil;
+import com.zhouzifei.tool.html.util.Randoms;
+import com.zhouzifei.tool.media.file.util.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
 
 import java.io.File;

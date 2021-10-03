@@ -2,8 +2,8 @@ package com.zhouzifei.tool.media.file.fileClient;
 
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.media.file.StreamUtil;
-import com.zhouzifei.tool.media.file.FileUtil;
+import com.zhouzifei.tool.media.file.util.StreamUtil;
+import com.zhouzifei.tool.media.file.util.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.FileCopyUtils;

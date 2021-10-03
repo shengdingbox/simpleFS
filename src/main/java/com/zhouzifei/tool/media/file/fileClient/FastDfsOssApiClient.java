@@ -4,12 +4,12 @@ package com.zhouzifei.tool.media.file.fileClient;
 import com.qcloud.cos.utils.IOUtils;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.media.common.fastdfs.ClientGlobal;
-import com.zhouzifei.tool.media.common.fastdfs.StorageClient;
-import com.zhouzifei.tool.media.common.fastdfs.TrackerClient;
-import com.zhouzifei.tool.media.common.fastdfs.TrackerServer;
-import com.zhouzifei.tool.media.common.fastdfs.common.NameValuePair;
-import com.zhouzifei.tool.media.file.FileUtil;
+import com.zhouzifei.tool.media.file.common.fastdfs.ClientGlobal;
+import com.zhouzifei.tool.media.file.common.fastdfs.StorageClient;
+import com.zhouzifei.tool.media.file.common.fastdfs.TrackerClient;
+import com.zhouzifei.tool.media.file.common.fastdfs.TrackerServer;
+import com.zhouzifei.tool.media.file.common.fastdfs.common.NameValuePair;
+import com.zhouzifei.tool.media.file.util.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -56,7 +56,6 @@ public class FastDfsOssApiClient extends BaseApiClient {
         String key = FileUtil.generateTempFileName(imageUrl);
         this.createNewFileName(key);
         try {
-            final int available = is.available();
             //tracker 客户端
             TrackerClient trackerClient = new TrackerClient();
             //获取trackerServer
@@ -87,10 +86,20 @@ public class FastDfsOssApiClient extends BaseApiClient {
         if (StringUtils.isNullOrEmpty(key)) {
             throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
-//        // 删除文件
-//        final FastdfsClientUtil FastdfsClientUtil = new FastdfsClientUtil();
-//        FastdfsClientUtil.deleteFile(key);
-        return true;
+        //tracker 客户端
+        TrackerClient trackerClient = new TrackerClient();
+        //获取trackerServer
+        try {
+            TrackerServer trackerServer = trackerClient.getTrackerServer();
+            //创建StorageClient 对象
+            StorageClient storageClient = new StorageClient(trackerServer);
+            //文件元数据信息组
+            final int deleteFile = storageClient.delete_file("group1", key);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override

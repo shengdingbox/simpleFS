@@ -1,7 +1,7 @@
 package com.zhouzifei.tool.html.verification;
 
-import com.zhouzifei.tool.html.GifEncoder;
-import com.zhouzifei.tool.html.Randoms;
+import com.zhouzifei.tool.html.util.GifEncoder;
+import com.zhouzifei.tool.html.util.Randoms;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;

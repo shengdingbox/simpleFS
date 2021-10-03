@@ -1,6 +1,6 @@
 package com.zhouzifei.tool.html.verification;
 
-import com.zhouzifei.tool.html.Randoms;
+import com.zhouzifei.tool.html.util.Randoms;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

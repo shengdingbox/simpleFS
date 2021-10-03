@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.zhouzifei.tool.holder.RequestHolder;
-import com.zhouzifei.tool.html.IpUtil;
+import com.zhouzifei.tool.html.util.IpUtil;
 
 /**
  * 

@@ -2,8 +2,8 @@ package com.zhouzifei.tool.image;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.zhouzifei.tool.html.Randoms;
-import com.zhouzifei.tool.media.file.FileUtil;
+import com.zhouzifei.tool.html.util.Randoms;
+import com.zhouzifei.tool.media.file.util.FileUtil;
 
 import java.io.*;
 
@@ -14,10 +14,8 @@ import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.CookieSpecRegistries;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
@@ -93,7 +91,7 @@ public class alisearch {
     }
 
         public static void main (String[]args) throws FileNotFoundException {
-            final File file = new File("/Users/Dabao/Downloads/123.jpg");
+            final File file = new File("/Users/Dabao/Desktop/WechatIMG6786.jpeg");
             final FileInputStream inputStream = new FileInputStream(file);
             String result = post("https://icbu-picture-sh.oss-cn-shanghai.aliyuncs.com"
                     , inputStream);

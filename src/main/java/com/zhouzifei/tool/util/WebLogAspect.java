@@ -1,7 +1,7 @@
 package com.zhouzifei.tool.util;
 
 import com.google.gson.Gson;
-import com.zhouzifei.tool.html.IpUtil;
+import com.zhouzifei.tool.html.util.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;

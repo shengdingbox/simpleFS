@@ -1,8 +1,7 @@
 package com.zhouzifei.tool.util;
 
-import com.zhouzifei.tool.media.file.StreamUtil;
+import com.zhouzifei.tool.media.file.util.StreamUtil;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;

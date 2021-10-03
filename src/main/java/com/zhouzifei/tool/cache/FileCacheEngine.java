@@ -4,6 +4,7 @@ import com.zhouzifei.tool.cache.common.SerializationUtils;
 import com.zhouzifei.tool.cache.util.FileManager;
 import com.zhouzifei.tool.entity.VirtualFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
@@ -64,7 +65,7 @@ public class FileCacheEngine implements CacheEngine {
 		
 	}
 	@Override
-	public void remove( Serializable key) {
+	public void remove(Serializable key) {
 		remove(FOLDER_NAME, key);
 		
 	}
@@ -93,6 +94,15 @@ public class FileCacheEngine implements CacheEngine {
 			e.printStackTrace();
 		}
 		
+	}
+	public File[] getList(){
+		return getList(FOLDER_NAME);
+	}
+	public File[] getAll(){
+		return getList();
+	}
+	public File[] getList(String cacheName){
+		return FILE_MANAGER.getList(cacheName);
 	}
 	public static void main(String[] args) {
 

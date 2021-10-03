@@ -25,6 +25,9 @@ commonTool，如你所见，它是一个小型整合型的工具类，带有整�
 	</a>
 </p>
 
+# 支持站点
+-------------------------------
+
 | 站点 | 文件上传 | 分片上传 | 断点续传 | 文件下载 | 文件删除 |
 | :--: | :--: | :--: | :--: | :--: | :--: |
 | **阿里云OSS**  |✔|✔|✔|✔|✔|
@@ -136,6 +139,8 @@ public class M3u8DownloadUtil {
 - `网易云`免费空间50G,免费流量20G/月（目前发现最慷慨的一家）[https://www.163yun.com/nos/free](https://www.163yun.com/nos/free)
 - `青云`免费空间10G,免费流量1G/月,另外注意没有免费请求额度[https://www.qingcloud.com/pricing-standard](https://www.qingcloud.com/pricing-standard)
 - `阿里云`免费空间40G,免费流量10G/月 （限定新用户、限时6个月）[https://www.aliyun.com/product/oss](https://www.aliyun.com/product/oss)
+- `FASTDFS`一个开源的轻量级分布式文件系统[https://github.com/happyfish100/fastdfs/wiki/](https://github.com/happyfish100/fastdfs/wiki/)
+- `FASTDFS`一个开源的轻量级分布式文件系统[https://github.com/happyfish100/fastdfs/wiki/](https://github.com/happyfish100/fastdfs/wiki/)
 
 
 

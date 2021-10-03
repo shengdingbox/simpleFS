@@ -2,8 +2,8 @@ package com.zhouzifei.tool.image;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.zhouzifei.tool.html.Randoms;
-import com.zhouzifei.tool.media.file.FileUtil;
+import com.zhouzifei.tool.html.util.Randoms;
+import com.zhouzifei.tool.media.file.util.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -51,9 +51,6 @@ public class xmly {
     }
     public static String filePic(File file) throws IOException {
         final InputStream inputStream = new FileInputStream(file);
-        if(null == inputStream){
-            throw new RuntimeException();
-        }
         String result = post("https://upload.ximalaya.com/dtres/headerThumb/upload"
                 , "_xmLog=h5&2872be80-f5d5-4747-9b75-cb9e34503cf0&2.2.17; Hm_lvt_4a7d8ec50cfd6af753c4f8aee3425070=1612664140; trackType=web; fds_otp=8172383124598533914; 1&remember_me=y; 1&_token=296993092&6B62AF70140N62AD80A28DA7DB1479A11D32B64352BEB4ECBC37887968F72543742F4606E28F13M5F3014F4AE8BE20_; 1_l_flag=296993092&6B62AF70140N62AD80A28DA7DB1479A11D32B64352BEB4ECBC37887968F72543742F4606E28F13M5F3014F4AE8BE20__2021-02-0710:16:26; x_xmly_traffic=utm_source%253A%2526utm_medium%253A%2526utm_campaign%253A%2526utm_content%253A%2526utm_term%253A%2526utm_from%253A; Hm_lpvt_4a7d8ec50cfd6af753c4f8aee3425070=1612664187"
                 , inputStream);

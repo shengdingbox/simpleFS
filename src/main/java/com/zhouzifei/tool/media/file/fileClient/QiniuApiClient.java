@@ -11,10 +11,10 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import com.zhouzifei.tool.common.ServiceException;
-import com.zhouzifei.tool.html.Randoms;
+import com.zhouzifei.tool.html.util.Randoms;
 import com.zhouzifei.tool.util.StringUtils;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.media.file.FileUtil;
+import com.zhouzifei.tool.media.file.util.FileUtil;
 
 import java.io.File;
 import java.io.InputStream;
