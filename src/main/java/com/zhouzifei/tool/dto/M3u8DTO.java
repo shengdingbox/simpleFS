@@ -2,7 +2,6 @@ package com.zhouzifei.tool.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import org.aspectj.lang.annotation.DeclareAnnotation;
 
 /**
  * @author 周子斐

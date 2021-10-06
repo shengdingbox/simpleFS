@@ -1,8 +1,5 @@
 package com.zhouzifei.tool.util;
 
-import cn.hutool.core.lang.PatternPool;
-import cn.hutool.core.util.StrUtil;
-
 import java.math.BigDecimal;
 import java.util.regex.Pattern;
 
@@ -12,7 +9,7 @@ import java.util.regex.Pattern;
  * @version 1.0
  */
 
-public class StringUtils extends org.apache.commons.lang.StringUtils {
+public class StringUtils{
 
     public static boolean isBlank(String str) {
         return str == null || str.length() == 0;
@@ -47,18 +44,19 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         BigDecimal tb = new BigDecimal(1 << 10).multiply(gb);
         BigDecimal pb = new BigDecimal(1 << 10).multiply(tb);
         BigDecimal eb = new BigDecimal(1 << 10).multiply(pb);
-        if (bigDecimal.divide(kb, scale, BigDecimal.ROUND_HALF_UP).compareTo(unit) < 0)
+        if (bigDecimal.divide(kb, scale, BigDecimal.ROUND_HALF_UP).compareTo(unit) < 0) {
             return bigDecimal.divide(unit, scale, BigDecimal.ROUND_HALF_UP).toString() + " B";
-        else if (bigDecimal.divide(mb, scale, BigDecimal.ROUND_HALF_UP).compareTo(unit) < 0)
+        } else if (bigDecimal.divide(mb, scale, BigDecimal.ROUND_HALF_UP).compareTo(unit) < 0) {
             return bigDecimal.divide(kb, scale, BigDecimal.ROUND_HALF_UP).toString() + " KB";
-        else if (bigDecimal.divide(gb, scale, BigDecimal.ROUND_HALF_UP).compareTo(unit) < 0)
+        } else if (bigDecimal.divide(gb, scale, BigDecimal.ROUND_HALF_UP).compareTo(unit) < 0) {
             return bigDecimal.divide(mb, scale, BigDecimal.ROUND_HALF_UP).toString() + " MB";
-        else if (bigDecimal.divide(tb, scale, BigDecimal.ROUND_HALF_UP).compareTo(unit) < 0)
+        } else if (bigDecimal.divide(tb, scale, BigDecimal.ROUND_HALF_UP).compareTo(unit) < 0) {
             return bigDecimal.divide(gb, scale, BigDecimal.ROUND_HALF_UP).toString() + " GB";
-        else if (bigDecimal.divide(pb, scale, BigDecimal.ROUND_HALF_UP).compareTo(unit) < 0)
+        } else if (bigDecimal.divide(pb, scale, BigDecimal.ROUND_HALF_UP).compareTo(unit) < 0) {
             return bigDecimal.divide(tb, scale, BigDecimal.ROUND_HALF_UP).toString() + " TB";
-        else if (bigDecimal.divide(eb, scale, BigDecimal.ROUND_HALF_UP).compareTo(unit) < 0)
+        } else if (bigDecimal.divide(eb, scale, BigDecimal.ROUND_HALF_UP).compareTo(unit) < 0) {
             return bigDecimal.divide(pb, scale, BigDecimal.ROUND_HALF_UP).toString() + " PB";
+        }
         return bigDecimal.divide(eb, scale, BigDecimal.ROUND_HALF_UP).toString() + " EB";
     }
 
@@ -78,7 +76,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     public static boolean isMatch(String regex, String content) {
         if (content == null) {
             return false;
-        } else if (StrUtil.isEmpty(regex)) {
+        } else if (isEmpty(regex)) {
             return true;
         } else {
             Pattern pattern = PatternPool.get(regex, 32);
@@ -91,4 +89,5 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     public static boolean isNullOrEmpty(String s) {
         return isBlank(s) || isEmpty(s);
     }
+
 }
