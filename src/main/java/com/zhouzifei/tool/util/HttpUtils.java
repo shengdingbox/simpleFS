@@ -1,9 +1,9 @@
 package com.zhouzifei.tool.util;
 
 import com.zhouzifei.tool.dto.HttpResponses;
+import com.zhouzifei.tool.html.util.Randoms;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
@@ -16,15 +16,16 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -41,6 +42,7 @@ import java.util.*;
  */
 public class HttpUtils {
 
+    public static Map<String, String> nullMap = new HashMap<>();
     /**
      * get
      *
@@ -363,7 +365,35 @@ public class HttpUtils {
             throw new RuntimeException(ex);
         }
     }
-
+    public static  String postFile(String url, Map<String,String> headers, InputStream inputStream,String fileName){
+        //flush输出流的缓冲
+        HttpClient httpclient = new DefaultHttpClient();
+        try {
+            HttpPost httppost = new HttpPost(url);
+            InputStreamBody bin = new InputStreamBody(inputStream, fileName);
+            MultipartEntity reqEntity = new MultipartEntity();
+            reqEntity.addPart("file", bin);
+            httppost.setEntity(reqEntity);
+            for (Map.Entry<String, String> e : headers.entrySet()) {
+                httppost.addHeader(e.getKey(), e.getValue());
+            }
+            HttpResponse response = httpclient.execute(httppost);
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                HttpEntity resEntity = response.getEntity();
+                //EntityUtils.consume(resEntity);
+                return EntityUtils.toString(resEntity);
+            }
+        } catch (ParseException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                httpclient.getConnectionManager().shutdown();
+            } catch (Exception ignore) {
+            }
+        }
+        return null;
+    }
     public static void main(String[] args) throws Exception {
         HashMap<String, String> map = new HashMap<>();
         map.put("imgurl","http://imgsrc.baidu.com/forum/pic/item/09f790529822720edafc8a9d76cb0a46f21faba3.jpg");
