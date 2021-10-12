@@ -12,7 +12,6 @@ import java.io.Serializable;
 /**
  * @author 周子斐 (17600004572@163.com)
  * @remark 2021/1/26
-
  * @Description
  */
 @Component
@@ -49,5 +48,17 @@ public class FileProperties implements Serializable {
      * 地域节点（EndPoint）
      */
     private String endpoint;
+    /**
+     * 账号（username）
+     */
+    private String username;
+    /**
+     * 密码（password）
+     */
+    private String password;
+    /**
+     * 登陆凭证（token）
+     */
+    private String token;
 
 }

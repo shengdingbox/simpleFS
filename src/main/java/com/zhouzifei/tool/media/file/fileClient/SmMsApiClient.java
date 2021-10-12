@@ -1,27 +1,22 @@
 package com.zhouzifei.tool.media.file.fileClient;
 
 import com.alibaba.fastjson.JSONObject;
-import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.ServiceException;
-import com.aliyun.oss.model.*;
-import com.google.gson.JsonObject;
-import com.sun.corba.se.impl.oa.toa.TOA;
 import com.zhouzifei.tool.entity.VirtualFile;
 import com.zhouzifei.tool.html.util.Randoms;
 import com.zhouzifei.tool.media.file.util.FileUtil;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
-import com.zhouzifei.tool.util.HttpData;
-import com.zhouzifei.tool.util.HttpUtils;
+import com.zhouzifei.tool.util.HttpNewUtils;
 import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
 import org.springframework.util.DigestUtils;
 
 import java.io.*;
-import java.text.DecimalFormat;
-import java.util.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author 周子斐 (17600004572@163.com)
@@ -33,8 +28,8 @@ import java.util.*;
 public class SmMsApiClient extends BaseApiClient {
 
     private Map<String, String> hears = new HashMap<>();
-    private String token;
-    private String url = "https://sm.ms/api/v2";
+    private static String token;
+    private String requestUrl = "https://sm.ms/api/v2";
 
     public SmMsApiClient() {
         super("阿里云OSS");
@@ -45,27 +40,20 @@ public class SmMsApiClient extends BaseApiClient {
         super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         if (StringUtils.isEmpty(token)) {
             //获取token
-            Map<String, String> map = new HashMap<>();
-            map.put("username", accessKey);
-            map.put("password", secretKey);
-            final HttpResponse httpResponse;
-            try {
-                httpResponse = HttpUtils.doPost(url, "/token", HttpUtils.nullMap, HttpUtils.nullMap, map);
-                final HttpEntity entity = httpResponse.getEntity();
-                final String s = EntityUtils.toString(entity);
-                final JSONObject jsonObject = JSONObject.parseObject(s);
-                final Object data = jsonObject.get("data");
-                final JSONObject dataJson = JSONObject.parseObject((String) data);
-                final Object token1 = dataJson.get("token");
-                this.token = (String) token1;
-            } catch (Exception e) {
-                e.printStackTrace();
+            final String s1 = "username="+accessKey+"&password="+secretKey;
+            final String s = HttpNewUtils.DataPost(requestUrl + "/token", s1);
+            final JSONObject jsonObject = JSONObject.parseObject(s);
+            if(!(Boolean) jsonObject.get("success")){
+                throw new ServiceException("[" + this.storageType + "]初始化失败：" + jsonObject);
             }
-        }
-        hears.put("token", this.token);
-        hears.put("Content-Type", "multipart/form-data");
-        return this;
+            final JSONObject data = (JSONObject)jsonObject.get("data");
+            final Object token1 = data.get("token");
+            this.token = (String) token1;
     }
+        hears.put("token",this.token);
+        hears.put("Content-Type","multipart/form-data");
+        return this;
+}
 
     @Override
     public VirtualFile uploadFile(InputStream is, String imageUrl) {
@@ -73,11 +61,68 @@ public class SmMsApiClient extends BaseApiClient {
         Date startTime = new Date();
         try (InputStream uploadIs = StreamUtil.clone(is);
              InputStream fileHashIs = StreamUtil.clone(is)) {
-            final String fileName = Randoms.alpha(6) + "/" + Randoms.alpha(20) + ".jpg";
-            String result = HttpUtils.postFile(url + "/upload"
-                    , hears
-                    , uploadIs, fileName);
-            final JSONObject parse = JSONObject.parseObject(result);
+            final String fileName = Randoms.alpha(20) + ".jpg";
+                // 换行符
+                final String newLine = "\r\n";
+                final String boundaryPrefix = "--";
+                // 定义数据分隔线
+                String BOUNDARY = "========7d4a6d158c9";
+                // 服务器的域名
+                URL url = new URL(requestUrl + "/upload");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                // 设置为POST情
+                conn.setRequestMethod("POST");
+                // 发送POST请求必须设置如下两行
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setUseCaches(false);
+                // 设置请求头参数
+                conn.setRequestProperty("connection", "Keep-Alive");
+                conn.setRequestProperty("Charsert", "UTF-8");
+                conn.setRequestProperty("Authorization", "Lt6rQon73DOyNrZaeCtaZxrUf6zLfE86");
+                conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+                OutputStream out = new DataOutputStream(conn.getOutputStream());
+                // 上传文件
+                File file = new File(fileName);
+                StringBuilder sb = new StringBuilder();
+                sb.append(boundaryPrefix);
+                sb.append(BOUNDARY);
+                sb.append(newLine);
+                // 文件参数,photo参数名可以随意修改
+                sb.append("Content-Disposition: form-data;name=\"smfile\";filename=\"" + fileName
+                        + "\"" + newLine);
+                sb.append("Content-Type:multipart/form-data");
+                // 参数头设置完以后需要两个换行，然后才是参数内容
+                sb.append(newLine);
+                sb.append(newLine);
+                // 将参数头的数据写入到输出流中
+                out.write(sb.toString().getBytes());
+                byte[] bufferOut = new byte[1024];
+                int bytes = 0;
+                // 每次读1KB数据,并且将文件数据写入到输出流中
+                while ((bytes = is.read(bufferOut)) != -1) {
+                    out.write(bufferOut, 0, bytes);
+                }
+                // 最后添加换行
+                out.write(newLine.getBytes());
+                is.close();
+                // 定义最后数据分隔线，即--加上BOUNDARY再加上--。
+                byte[] end_data = (newLine + boundaryPrefix + BOUNDARY + boundaryPrefix + newLine)
+                        .getBytes();
+                // 写上结尾标识
+                out.write(end_data);
+                out.flush();
+                out.close();
+
+                // 定义BufferedReader输入流来读取URL的响应
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    conn.getInputStream()));
+            String line = null;
+            StringBuilder result = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                result.append(line);
+            }
+            final JSONObject parse = JSONObject.parseObject(result.toString());
             final Object data = parse.get("data");
             final JSONObject dataJosn = JSONObject.parseObject((String) data);
             final Object newFileUrl = dataJosn.get("url");
@@ -288,9 +333,14 @@ public class SmMsApiClient extends BaseApiClient {
 //        }
 //    }
     public static void main(String[] args) throws IOException {
-        final File file = new File("/Users/Dabao/Downloads/vycqrhm2g3ryix7x.gif");
-        final FileInputStream fileInputStream = new FileInputStream(file);
-        final String s = DigestUtils.md5DigestAsHex(fileInputStream);
-        System.out.println(s);
+        Map<String, String> map = new HashMap<>();
+        map.put("username", "xiaofei");
+        map.put("password", "ZHOUdabao521");
+//        final String s1 = JSONObject.toJSONString(map);
+        String s1 = "username=xiaofei&password=ZHOUdabao521";
+        final SmMsApiClient smMsApiClient = new SmMsApiClient();
+        final String url = smMsApiClient.requestUrl;
+        final String s2 = HttpNewUtils.DataPost(url + "/token", s1);
+        System.out.println(s2);
     }
 }

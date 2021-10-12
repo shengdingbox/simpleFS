@@ -5,7 +5,6 @@ import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.properties.FileProperties;
 import com.zhouzifei.tool.dto.M3u8DTO;
 import com.zhouzifei.tool.entity.VirtualFile;
-import com.zhouzifei.tool.image.xmly;
 import com.zhouzifei.tool.media.file.util.MediaFormat;
 import com.zhouzifei.tool.util.StringUtils;
 import com.zhouzifei.tool.util.ThreadManager;
@@ -145,16 +144,14 @@ public class M3u8DownloadFactory {
         private int totalCount;
 
         //解密后的片段
-        private Set<File> finishedFiles = new ConcurrentSkipListSet<>(Comparator.comparingInt(o -> Integer.parseInt(o.getName().replace(".xyz", ""))));
+        private final Set<File> finishedFiles = new ConcurrentSkipListSet<>(Comparator.comparingInt(
+                o -> Integer.parseInt(o.getName().replace(".xyz", ""))));
 
         //已经下载的文件大小
         private BigDecimal downloadBytes = new BigDecimal(0);
 
         //监听间隔
         private volatile long interval = 0L;
-
-        //监听事件
-        private DownloadListener listener = null;
 
         //当前步骤 1：解析视频地址 2：下载视频 3：下载完成，正在合并视频 4：结束
         private int step = 1;
@@ -224,7 +221,7 @@ public class M3u8DownloadFactory {
                 if (StringUtils.isEmpty(tsUrl)) {
                     log.info("不需要解密");
                 }
-                startM3u8ToCloud();
+                runDownloadTask();
             });
             return downloadUrl;
         }
@@ -248,39 +245,6 @@ public class M3u8DownloadFactory {
             }
 
         }
-
-        private void startM3u8ToCloud() {
-            this.step = 2;
-            //线程池
-            final ThreadManager.ThreadPollProxy fixedThreadPool = ThreadManager.getThreadPollProxy(threadCount,10,1000);
-            int i = 0;
-            totalCount = tsSet.size();
-            //计数器
-            final CountDownLatch latch = new CountDownLatch(totalCount);
-            for (int j = 0; j < tsSetAll.size(); j++) {
-                String s = tsSetAll.get(j);
-                if (s.contains("#EXTINF")) {
-                    int index = (j + 1);
-                    String tsUrl = tsSetAll.get(index);
-                    fixedThreadPool.execute(() -> {
-                        try {
-                            final String post = xmly.pic(tsUrl);
-                            if (11==totalCount){
-                                throw new RuntimeException();
-                            }
-                            tsSetAll.set(index, post);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } finally {
-                            finishedCount++;
-                            latch.countDown();
-                        }
-                    });
-                }
-            }
-            uploadListener(latch);
-        }
-
         private void uploadListener(CountDownLatch latch) {
             new Thread(() -> {
                 log.info("检测到{}个视频片段，开始下载！", totalCount);
@@ -834,7 +798,7 @@ public class M3u8DownloadFactory {
         }
 
         private void addListener(DownloadListener downloadListener) {
-            this.listener = downloadListener;
+            //监听事件
         }
 
         public Set<String> getTsSet() {
@@ -852,7 +816,7 @@ public class M3u8DownloadFactory {
 
     public static void main(String[] args) {
         M3u8DTO m3u8Download = M3u8DTO.builder()
-                .m3u8Url("https://hnzy3.queshechaye.com:65/20210523/TcNy0aBO/2000kb/hls/index.m3u8")
+                .m3u8Url("https://cdn.oss-cn-hangzhou.myqcloud.com.xuetuiguang.cn/m3u8video/shouquan.m3u8")
                 .fileName("miaozhun")
                 .filePath("/Users/Dabao/mp4")
                 .retryCount("3")

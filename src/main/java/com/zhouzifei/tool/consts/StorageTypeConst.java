@@ -22,6 +22,8 @@ public enum StorageTypeConst {
     YOUPAIYUN("youpaiyun", "又拍云免费空间10G,免费流量15G/月(非开通就有,需要额外申请又拍云联盟,限时1年）https://www.upyun.com/league"),
     HUAWEIYUN("huaweiyun", "HUAWEI"),
     FASTDFS("fastdfs", "FAST-DFS"),
+    SMMS("smms", "SMMS"),
+    XMLY("xmly", "XMLY"),
     ;
 
     private String storageType;

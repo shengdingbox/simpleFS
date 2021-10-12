@@ -41,8 +41,8 @@ public class FileUploader {
             String bucketName = fileProperties.getBucketName();
             return new AliyunOssApiClient().init(endpoint, accessKeyId, accessKeySecret, domainUrl, bucketName,fileProperties.getPathPrefix());
         }else if(storageType.equals(StorageTypeConst.YOUPAIYUN.getStorageType())) {
-            String operatorName = fileProperties.getAccessId();
-            String operatorPwd = fileProperties.getSecretKey();
+            String operatorName = fileProperties.getUsername();
+            String operatorPwd = fileProperties.getPassword();
             String url = fileProperties.getDomainUrl();
             String bucketName = fileProperties.getBucketName();
             return new UpaiyunOssApiClient().init(operatorName, operatorPwd,bucketName,url, fileProperties.getPathPrefix());
@@ -63,7 +63,19 @@ public class FileUploader {
         }else if(storageType.equals(StorageTypeConst.FASTDFS.getStorageType())) {
             String serviceUrl = fileProperties.getEndpoint();
             String url = fileProperties.getDomainUrl();
-            return new FastDfsOssApiClient().init(serviceUrl,url);
+            return new FastDfsOssApiClient().init(serviceUrl, url);
+        }else if(storageType.equals(StorageTypeConst.SMMS.getStorageType())) {
+            String username = fileProperties.getUsername();
+            String password = fileProperties.getPassword();
+            String token = fileProperties.getToken();
+            String pathPrefix = fileProperties.getPathPrefix();
+            return new SmMsApiClient().init(username, password, token, pathPrefix);
+        }else if(storageType.equals(StorageTypeConst.XMLY.getStorageType())) {
+            String username = fileProperties.getUsername();
+            String password = fileProperties.getPassword();
+            String token = fileProperties.getToken();
+            String pathPrefix = fileProperties.getPathPrefix();
+            return new XMLYApiClient().init(username,password,token,pathPrefix);
         }else{
             throw new ServiceException("[文件服务]请选择文件存储类型！");
         }

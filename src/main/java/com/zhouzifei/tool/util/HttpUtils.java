@@ -37,18 +37,16 @@ import java.util.*;
 /**
  * @author 周子斐 (17600004572@163.com)
  * @remark 2020/4/19
-
  * @Description
  */
 public class HttpUtils {
-
     public static Map<String, String> nullMap = new HashMap<>();
+
     /**
      * get
      *
      * @param host
      * @param path
-     
      * @param headers
      * @param querys
      * @return
@@ -57,7 +55,7 @@ public class HttpUtils {
     public static HttpResponses doGet(String host, String path,
                                       Map<String, String> headers,
                                       Map<String, String> querys) throws Exception {
-        String urlNameString = buildUrl(host,path,querys);
+        String urlNameString = buildUrl(host, path, querys);
         URL realUrl = new URL(urlNameString);
         // 打开和URL之间的连接
         URLConnection connection = realUrl.openConnection();
@@ -67,7 +65,7 @@ public class HttpUtils {
         connection.setRequestProperty("connection", "Keep-Alive");
         connection.setRequestProperty("user-agent",
                 "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-        set.forEach(key-> connection.setRequestProperty(key,headers.get(key)));
+        set.forEach(key -> connection.setRequestProperty(key, headers.get(key)));
         // 建立实际的连接
         connection.connect();
         // 获取所有响应头字段
@@ -85,6 +83,7 @@ public class HttpUtils {
         httpResponses.setBody(result.toString());
         return httpResponses;
     }
+
     /**
      * get
      *
@@ -117,7 +116,6 @@ public class HttpUtils {
      *
      * @param host
      * @param path
-     
      * @param headers
      * @param querys
      * @param bodys
@@ -143,7 +141,7 @@ public class HttpUtils {
                 nameValuePairList.add(new BasicNameValuePair(key, bodys.get(key)));
             }
             UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(nameValuePairList, "utf-8");
-            formEntity.setContentType("application/x-www-form-urlencoded; charset=UTF-8");
+            formEntity.setContentType("multipart/form-data; charset=UTF-8");
             request.setEntity(formEntity);
         }
 
@@ -162,9 +160,9 @@ public class HttpUtils {
      * @throws Exception
      */
     public static HttpResponse doPost(String host, String path,
-                                       Map<String, String> headers,
-                                       Map<String, String> querys,
-                                       String body)
+                                      Map<String, String> headers,
+                                      Map<String, String> querys,
+                                      String body)
             throws Exception {
         HttpClient httpClient = wrapClient(host);
 
@@ -185,7 +183,6 @@ public class HttpUtils {
      *
      * @param host
      * @param path
-     
      * @param headers
      * @param querys
      * @param body
@@ -193,9 +190,9 @@ public class HttpUtils {
      * @throws Exception
      */
     public static HttpResponse doPost(String host, String path,
-                                       Map<String, String> headers,
-                                       Map<String, String> querys,
-                                       byte[] body)
+                                      Map<String, String> headers,
+                                      Map<String, String> querys,
+                                      byte[] body)
             throws Exception {
         HttpClient httpClient = wrapClient(host);
 
@@ -216,7 +213,6 @@ public class HttpUtils {
      *
      * @param host
      * @param path
-     
      * @param headers
      * @param querys
      * @param body
@@ -224,9 +220,9 @@ public class HttpUtils {
      * @throws Exception
      */
     public static HttpResponse doPut(String host, String path,
-                                      Map<String, String> headers,
-                                      Map<String, String> querys,
-                                      String body)
+                                     Map<String, String> headers,
+                                     Map<String, String> querys,
+                                     String body)
             throws Exception {
         HttpClient httpClient = wrapClient(host);
 
@@ -254,9 +250,9 @@ public class HttpUtils {
      * @throws Exception
      */
     public static HttpResponse doPut(String host, String path,
-                                      Map<String, String> headers,
-                                      Map<String, String> querys,
-                                      byte[] body)
+                                     Map<String, String> headers,
+                                     Map<String, String> querys,
+                                     byte[] body)
             throws Exception {
         HttpClient httpClient = wrapClient(host);
 
@@ -283,8 +279,8 @@ public class HttpUtils {
      * @throws Exception
      */
     public static HttpResponse doDelete(String host, String path,
-                                         Map<String, String> headers,
-                                         Map<String, String> querys)
+                                        Map<String, String> headers,
+                                        Map<String, String> querys)
             throws Exception {
         HttpClient httpClient = wrapClient(host);
 
@@ -365,14 +361,16 @@ public class HttpUtils {
             throw new RuntimeException(ex);
         }
     }
-    public static  String postFile(String url, Map<String,String> headers, InputStream inputStream,String fileName){
+
+    public static String postFile(String url, Map<String, String> headers, String bodyName, InputStream inputStream, String fileName) {
         //flush输出流的缓冲
         HttpClient httpclient = new DefaultHttpClient();
         try {
+            bodyName = com.zhouzifei.tool.util.StringUtils.isEmpty(bodyName) ? "file" : bodyName;
             HttpPost httppost = new HttpPost(url);
             InputStreamBody bin = new InputStreamBody(inputStream, fileName);
             MultipartEntity reqEntity = new MultipartEntity();
-            reqEntity.addPart("file", bin);
+            reqEntity.addPart(bodyName, bin);
             httppost.setEntity(reqEntity);
             for (Map.Entry<String, String> e : headers.entrySet()) {
                 httppost.addHeader(e.getKey(), e.getValue());
@@ -394,9 +392,10 @@ public class HttpUtils {
         }
         return null;
     }
+
     public static void main(String[] args) throws Exception {
         HashMap<String, String> map = new HashMap<>();
-        map.put("imgurl","http://imgsrc.baidu.com/forum/pic/item/09f790529822720edafc8a9d76cb0a46f21faba3.jpg");
+        map.put("imgurl", "http://imgsrc.baidu.com/forum/pic/item/09f790529822720edafc8a9d76cb0a46f21faba3.jpg");
         HttpResponses httpResponses = HttpUtils.doGet("https://api.uomg.com", "/api/image.360", new HashMap<>(), map);
         System.out.println(httpResponses);
     }
