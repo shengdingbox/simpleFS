@@ -2,7 +2,8 @@ package com.zhouzifei.tool.cache.util;
 
 import com.qcloud.cos.utils.IOUtils;
 import com.zhouzifei.tool.cache.FileCacheEngine;
-import com.zhouzifei.tool.media.file.util.FileUtil;
+import com.zhouzifei.tool.util.FileUtil;
+
 
 import java.io.File;
 import java.io.FileInputStream;

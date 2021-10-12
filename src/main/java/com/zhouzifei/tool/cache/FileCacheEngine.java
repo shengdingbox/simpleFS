@@ -2,7 +2,7 @@ package com.zhouzifei.tool.cache;
 
 import com.zhouzifei.tool.cache.common.SerializationUtils;
 import com.zhouzifei.tool.cache.util.FileManager;
-import com.zhouzifei.tool.entity.VirtualFile;
+import com.zhouzifei.tool.dto.VirtualFile;
 
 import java.io.File;
 import java.io.IOException;

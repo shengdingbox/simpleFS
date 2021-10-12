@@ -1,8 +1,6 @@
 package com.zhouzifei.tool.util;
 
 import com.zhouzifei.tool.dto.HttpResponses;
-import com.zhouzifei.tool.html.util.Randoms;
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -366,7 +364,7 @@ public class HttpUtils {
         //flush输出流的缓冲
         HttpClient httpclient = new DefaultHttpClient();
         try {
-            bodyName = com.zhouzifei.tool.util.StringUtils.isEmpty(bodyName) ? "file" : bodyName;
+            bodyName = StringUtils.isEmpty(bodyName) ? "file" : bodyName;
             HttpPost httppost = new HttpPost(url);
             InputStreamBody bin = new InputStreamBody(inputStream, fileName);
             MultipartEntity reqEntity = new MultipartEntity();
