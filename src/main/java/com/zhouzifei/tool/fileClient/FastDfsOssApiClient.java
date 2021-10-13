@@ -18,8 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author 周子斐
@@ -73,10 +72,10 @@ public class FastDfsOssApiClient extends BaseApiClient {
                     .setSuffix(this.suffix)
                     .setUploadStartTime(startTime)
                     .setUploadEndTime(new Date())
-                    .setFilePath(this.newFileName)
+                    .setFilePath(fullPath)
                     .setFullFilePath(this.domainUrl + "/" + fullPath);
         } catch (IOException var6) {
-            log.error("FDFS upload error ！ res：{}", var6);
+            log.info("上传失败,失败原因{}", var6.getMessage());
             throw new ServiceException("文件上传异常!");
         }
     }
@@ -93,9 +92,11 @@ public class FastDfsOssApiClient extends BaseApiClient {
             TrackerServer trackerServer = trackerClient.getTrackerServer();
             //创建StorageClient 对象
             StorageClient storageClient = new StorageClient(trackerServer);
+            final String group = getGroup(key);
+            final String filePath = getFilePath(key);
             //文件元数据信息组
-            final int deleteFile = storageClient.delete_file("group1", key);
-            return true;
+            final int deleteFile = storageClient.delete_file(group,filePath);
+            return !(deleteFile == 0);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -137,7 +138,15 @@ public class FastDfsOssApiClient extends BaseApiClient {
     protected void check() {
 
     }
-
+    public static String getGroup(String fileName) {
+        final String[] split = fileName.split("/");
+        return split[0];
+    }
+    public static String getFilePath(String fileName) {
+        final String[] split = fileName.split("/");
+        List<String> strings = new ArrayList<>(Arrays.asList(split).subList(1, split.length));
+        return String.join("/", strings);
+    }
     @Override
     public InputStream downloadFileStream(String key) {
         final byte[] bytes = "FastdfsClientUtil.downFile(key)".getBytes();

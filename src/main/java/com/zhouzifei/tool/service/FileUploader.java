@@ -22,55 +22,55 @@ public class FileUploader {
 
     public ApiClient getApiClient(FileProperties fileProperties) {
         String storageType = fileProperties.getStorageTypeConst().getStorageType();
-        if(storageType.equals(StorageTypeConst.LOCAL.getStorageType())) {
+        if(StorageTypeConst.LOCAL.getStorageType().equals(storageType)) {
             String domainUrl = fileProperties.getDomainUrl();
             String localFilePath = fileProperties.getEndpoint();
             final LocalApiClient localApiClient = new LocalApiClient().init(domainUrl, localFilePath, fileProperties.getPathPrefix());
             return localApiClient.setProgressListener(progressListener);
-        }else if(storageType.equals(StorageTypeConst.QINIUYUN.getStorageType())){
+        }else if(StorageTypeConst.QINIUYUN.getStorageType().equals(storageType)){
             String accessKey = fileProperties.getAccessId();
             String secretKey = fileProperties.getSecretKey();
             String bucketName = fileProperties.getBucketName();
             String baseUrl = fileProperties.getDomainUrl();
             return new QiniuApiClient().init(accessKey, secretKey, bucketName, baseUrl, fileProperties.getPathPrefix());
-        }else if(storageType.equals(StorageTypeConst.ALIYUN.getStorageType())){
+        }else if(StorageTypeConst.ALIYUN.getStorageType().equals(storageType)){
             String endpoint = fileProperties.getEndpoint();
             String accessKeyId = fileProperties.getAccessId();
             String accessKeySecret = fileProperties.getSecretKey();
             String domainUrl = fileProperties.getDomainUrl();
             String bucketName = fileProperties.getBucketName();
             return new AliyunOssApiClient().init(endpoint, accessKeyId, accessKeySecret, domainUrl, bucketName,fileProperties.getPathPrefix());
-        }else if(storageType.equals(StorageTypeConst.YOUPAIYUN.getStorageType())) {
+        }else if(StorageTypeConst.YOUPAIYUN.getStorageType().equals(storageType)) {
             String operatorName = fileProperties.getUsername();
             String operatorPwd = fileProperties.getPassword();
             String url = fileProperties.getDomainUrl();
             String bucketName = fileProperties.getBucketName();
             return new UpaiyunOssApiClient().init(operatorName, operatorPwd,bucketName,url, fileProperties.getPathPrefix());
-        }else if(storageType.equals(StorageTypeConst.TENGXUNYUN.getStorageType())) {
+        }else if(StorageTypeConst.TENGXUNYUN.getStorageType().equals(storageType)) {
             String accessKeyId = fileProperties.getAccessId();
             String accessKeySecret = fileProperties.getSecretKey();
             String endpoint = fileProperties.getEndpoint();
             String url = fileProperties.getDomainUrl();
             String bucketName = fileProperties.getBucketName();
             return new QCloudOssApiClient().init(accessKeyId, accessKeySecret,endpoint,bucketName,url, fileProperties.getPathPrefix());
-        }else if(storageType.equals(StorageTypeConst.HUAWEIYUN.getStorageType())) {
+        }else if(StorageTypeConst.HUAWEIYUN.getStorageType().equals(storageType)) {
             String accessKeyId = fileProperties.getAccessId();
             String accessKeySecret = fileProperties.getSecretKey();
             String endpoint = fileProperties.getEndpoint();
             String url = fileProperties.getDomainUrl();
             String bucketName = fileProperties.getBucketName();
             return new HuaweiCloudOssApiClient().init(accessKeyId, accessKeySecret,endpoint,bucketName,url, fileProperties.getPathPrefix());
-        }else if(storageType.equals(StorageTypeConst.FASTDFS.getStorageType())) {
+        }else if(StorageTypeConst.FASTDFS.getStorageType().equals(storageType)) {
             String serviceUrl = fileProperties.getEndpoint();
             String url = fileProperties.getDomainUrl();
             return new FastDfsOssApiClient().init(serviceUrl, url);
-        }else if(storageType.equals(StorageTypeConst.SMMS.getStorageType())) {
+        }else if(StorageTypeConst.SMMS.getStorageType().equals(storageType)) {
             String username = fileProperties.getUsername();
             String password = fileProperties.getPassword();
             String token = fileProperties.getToken();
             String pathPrefix = fileProperties.getPathPrefix();
             return new SmMsApiClient().init(username, password, token, pathPrefix);
-        }else if(storageType.equals(StorageTypeConst.XMLY.getStorageType())) {
+        }else if(StorageTypeConst.XMLY.getStorageType().equals(storageType)) {
             String username = fileProperties.getUsername();
             String password = fileProperties.getPassword();
             String token = fileProperties.getToken();

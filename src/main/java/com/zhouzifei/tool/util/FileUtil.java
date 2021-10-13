@@ -79,7 +79,8 @@ public class FileUtil {
     public static String getSuffix(String fileName) {
         int index = fileName.lastIndexOf(".");
         index = -1 == index ? fileName.length() : index;
-        return fileName.substring(index);
+        final String substring = fileName.substring(index);
+        return substring.replace(".", "");
     }
 
     public static String getSuffixByUrl(String imgUrl) {
