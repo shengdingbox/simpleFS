@@ -1,4 +1,4 @@
-package com.zhouzifei.tool.config.properties;
+package com.zhouzifei.tool.config;
 
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import lombok.Data;
