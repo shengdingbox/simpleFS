@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
+import java.util.Set;
 
 public class HttpData {
 
@@ -33,7 +34,10 @@ public class HttpData {
             // 设置字符编码
             connection.setRequestProperty("Charset", "UTF-8");
             connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
-            hears.forEach(connection::setRequestProperty);
+            final Set<String> set = hears.keySet();
+            for (String key : set) {
+                connection.setRequestProperty(key, hears.get(key));
+            }
 //            connection.setInstanceFollowRedirects(false);
             // 打开到此 URL 引用的资源的通信链接（如果尚未建立这样的连接）。
             connection.connect();

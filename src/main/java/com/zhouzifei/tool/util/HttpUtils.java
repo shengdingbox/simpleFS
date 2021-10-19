@@ -63,7 +63,9 @@ public class HttpUtils {
         connection.setRequestProperty("connection", "Keep-Alive");
         connection.setRequestProperty("user-agent",
                 "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-        set.forEach(key -> connection.setRequestProperty(key, headers.get(key)));
+        for (String key : set) {
+            connection.setRequestProperty(key, headers.get(key));
+        }
         // 建立实际的连接
         connection.connect();
         // 获取所有响应头字段
