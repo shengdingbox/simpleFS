@@ -1,11 +1,7 @@
 package com.zhouzifei.tool.consts;
 
-import javafx.scene.chart.ValueAxis;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author 周子斐 (17600004572@163.com)
