@@ -10,7 +10,7 @@ notifications:
 
 script:
   - export TZ=Asia/Shanghai
-  - mvn install -DskipTests=true  -B -V
+  - mvn install -DskipTests=true
   - mvn cobertura:cobertura
 
 after_success:
