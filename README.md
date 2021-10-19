@@ -17,11 +17,14 @@ commonTool，如你所见，它是一个小型整合型的工具类，带有整�
 	<a target="_blank" href="https://docs.zhouzifei.com" title="参考文档">
 		<img src="https://img.shields.io/badge/Docs-latest-blueviolet.svg" />
 	</a>
+	<a href="https://codecov.io/gh/shengdingbox/simpleFS">
+      <img src="https://codecov.io/gh/shengdingbox/simpleFS/branch/master/graph/badge.svg?token=FRL4DCBK5K"/>
+    </a>
 	<a href='https://gitee.com/zifeiZhou/simpleFS/stargazers'>
 	<img src='https://gitee.com/zifeiZhou/simpleFS/badge/star.svg?theme=dark' alt='star'/>
 	</a>
-	<a target="_blank" href='https://github.com/shengdingbox/mediaTool/'>
-		<img src="https://img.shields.io/github/stars/shengdingbox/mediaTool.svg?style=social" alt="github star"></img>
+	<a target="_blank" href='https://github.com/shengdingbox/simpleFS/'>
+		<img src="https://img.shields.io/github/stars/shengdingbox/simpleFS.svg?style=social" alt="github star"></img>
 	</a>
 </p>
 
@@ -43,9 +46,37 @@ commonTool，如你所见，它是一个小型整合型的工具类，带有整�
 ```xml
 <dependency>
   <groupId>com.zhouzifei</groupId>
-  <artifactId>commonTool</artifactId>
-  <version>最新版本(1.0.3)</version>
+  <artifactId>simpleFS</artifactId>
+  <version>{latest-version}</version>
 </dependency>
+```
+> **latest-version** 版本为：
+> - 稳定版：![](https://img.shields.io/github/v/release/shengdingbox/simpleFS?style=flat-square) 
+> - 快照版：![](https://img.shields.io/nexus/s/https/oss.sonatype.org/me.zhyd.oauth/JustAuth.svg?style=flat-square)
+> > 注意：无法引入可添加中央仓库地址。
+>
+> 
+> ```xml
+> <repositories>
+>     <repository>
+>         <id>ossrh-snapshot</id>
+>         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+>         <snapshots>
+>             <enabled>true</enabled>
+>         </snapshots>
+>     </repository>
+> </repositories>
+> ```
+> 
+> 如果你想第一时间获取 JustAuth 的最新快照，可以添加下列代码，每次构建时都检查是否有最新的快照（默认每天检查）。
+> 
+> ```diff
+>        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+>         <snapshots>
+> +           <updatePolicy>always</updatePolicy>
+>             <enabled>true</enabled>
+>         </snapshots>
+> ```
 ```
 - 安装方式(2)-使用源码安装到本地仓库
 ```shell

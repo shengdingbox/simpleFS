@@ -16,4 +16,4 @@ script:
   - mvn cobertura:cobertura -Dcobertura.report.format=xml -Dmaven.javadoc.skip.true
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash) -t c590f330-6d1e-4baf-9cbe-e376c11cd96f
