@@ -1,12 +1,12 @@
-# 什么是 commonTool？
-commonTool，如你所见，它是一个小型整合型的工具类，带有整合(阿里云,七牛云,又拍云,腾讯云,华为云,~~百度云~~,本地上传)OSS上传,短信发送(阿里云,腾讯云,七牛云),文件加工类,，它可以让我们脱离繁琐的开发流程，让开发变得**So easy!**
+# 什么是 simpleFS？
+simpleFS，如你所见，它是一个小型整合型的工具类，带有整合(阿里云,七牛云,又拍云,腾讯云,华为云,~~百度云~~,本地上传)OSS上传,短信发送(阿里云,腾讯云,七牛云),文件加工类,，它可以让我们脱离繁琐的开发流程，让开发变得**So easy!**
 -------------------------------
 <p align="center">
 	<a target="_blank" href="https://github.com/shengdingbox/simpleFS/releases/">
 		<img src="https://img.shields.io/github/v/release/shengdingbox/simpleFS?style=flat-square" />
 	</a>
-	<a target="_blank" href="https://oss.sonatype.org/content/repositories/snapshots/com/zhouzifei/mediaTool/">
-		<img src="https://img.shields.io/nexus/s/com.zhouzifei/ediaTool.svg?server=https://oss.sonatype.org&style=flat-square"/>
+	<a target="_blank" href="https://oss.sonatype.org/content/repositories/snapshots/com/zhouzifei/simpleFS/">
+		<img src="https://img.shields.io/nexus/s/com.zhouzifei/simpleFS.svg?server=https://oss.sonatype.org&style=flat-square"/>
 	</a>
 	<a target="_blank" href="https://github.com/shengdingbox/mediaTool/blob/master/LICENSE">
 		<img src="https://img.shields.io/apm/l/vim-mode.svg?color=yellow" />
@@ -20,11 +20,14 @@ commonTool，如你所见，它是一个小型整合型的工具类，带有整�
 	<a href="https://codecov.io/gh/shengdingbox/simpleFS">
       <img src="https://codecov.io/gh/shengdingbox/simpleFS/branch/master/graph/badge.svg?token=FRL4DCBK5K"/>
     </a>
+    <a href="https://app.travis-ci.com/github/shengdingbox/simpleFS">
+      <img src="https://app.travis-ci.com/shengdingbox/simpleFS.svg?branch=master"/>
+    </a>
 	<a href='https://gitee.com/zifeiZhou/simpleFS/stargazers'>
 	<img src='https://gitee.com/zifeiZhou/simpleFS/badge/star.svg?theme=dark' alt='star'/>
 	</a>
 	<a target="_blank" href='https://github.com/shengdingbox/simpleFS/'>
-		<img src="https://img.shields.io/github/stars/shengdingbox/simpleFS.svg?style=social" alt="github star"></img>
+		<img src="https://img.shields.io/github/stars/shengdingbox/simpleFS.svg?style=social" alt="github star"/>
 	</a>
 </p>
 
@@ -51,8 +54,7 @@ commonTool，如你所见，它是一个小型整合型的工具类，带有整�
 </dependency>
 ```
 > **latest-version** 版本为：
-> - 稳定版：![](https://img.shields.io/github/v/release/shengdingbox/simpleFS?style=flat-square) 
-> - 快照版：![](https://img.shields.io/nexus/s/https/oss.sonatype.org/me.zhyd.oauth/JustAuth.svg?style=flat-square)
+> - ![](https://img.shields.io/github/v/release/shengdingbox/simpleFS?style=flat-square) 
 > > 注意：无法引入可添加中央仓库地址。
 >
 > 
@@ -68,7 +70,7 @@ commonTool，如你所见，它是一个小型整合型的工具类，带有整�
 > </repositories>
 > ```
 > 
-> 如果你想第一时间获取 JustAuth 的最新快照，可以添加下列代码，每次构建时都检查是否有最新的快照（默认每天检查）。
+> 如果你想第一时间获取 simpleFS 的最新快照，可以添加下列代码，每次构建时都检查是否有最新的快照（默认每天检查）。
 > 
 > ```diff
 >        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -77,11 +79,11 @@ commonTool，如你所见，它是一个小型整合型的工具类，带有整�
 >             <enabled>true</enabled>
 >         </snapshots>
 > ```
-```
+
 - 安装方式(2)-使用源码安装到本地仓库
 ```shell
-git clone https://gitee.com/zifeiZhou/commonTool.git(Gitee)
-git clone https://github.com/shengdingbox/commonTool.git(Github)
+git clone https://gitee.com/zifeiZhou/simpleFS.git(Gitee)
+git clone https://github.com/shengdingbox/simpleFS.git(Github)
 mvn clean install
 ```
 ## 功能介绍
@@ -176,4 +178,4 @@ public class M3u8DownloadUtil {
 
 
 ## 在线文档
-- <a href = "http://docs.shengdingbox.com/">http://docs.shengdingbox.com/</a>
+- <a href = "http://docs.zhouzifei.com/">http://docs.zhouzifei.com/</a>
