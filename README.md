@@ -54,7 +54,8 @@ simpleFS，如你所见，它是一个小型整合型的工具类，带有整合
 </dependency>
 ```
 > **latest-version** 版本为：
-> - ![](https://img.shields.io/github/v/release/shengdingbox/simpleFS?style=flat-square) 
+> - 稳定版本：![](https://img.shields.io/github/v/release/shengdingbox/simpleFS?style=flat-square) 
+> - 快照版本：![](https://img.shields.io/maven-metadata/v.svg?label=snapshots&metadataUrl=https://repo1.maven.org/maven2/com/zhouzifei/simpleFS/maven-metadata.xml&style=flat-square) 
 > > 注意：无法引入可添加中央仓库地址。
 >
 > 
