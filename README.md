@@ -6,7 +6,7 @@ simpleFS，如你所见，它是一个小型整合型的工具类，带有整合
 		<img src="https://img.shields.io/github/v/release/shengdingbox/simpleFS?style=flat-square" />
 	</a>
 	<a target="_blank" href="https://oss.sonatype.org/content/repositories/snapshots/com/zhouzifei/simpleFS/">
-		<img src="https://img.shields.io/nexus/s/com.zhouzifei/simpleFS.svg?server=https://oss.sonatype.org&style=flat-square"/>
+		<img src="https://img.shields.io/maven-metadata/v.svg?label=simpleFS&metadataUrl=https://repo1.maven.org/maven2/com/zhouzifei/simpleFS/maven-metadata.xml&style=flat-square"/>
 	</a>
 	<a target="_blank" href="https://github.com/shengdingbox/mediaTool/blob/master/LICENSE">
 		<img src="https://img.shields.io/apm/l/vim-mode.svg?color=yellow" />
