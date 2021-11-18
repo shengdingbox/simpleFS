@@ -30,13 +30,12 @@ public class UpaiyunOssApiClient extends BaseApiClient {
         super("又拍云");
     }
 
-    public UpaiyunOssApiClient init(String operatorName, String operatorPwd, String bucketName, String baseUrl, String uploadType) {
+    public UpaiyunOssApiClient init(String operatorName, String operatorPwd, String bucketName, String baseUrl) {
         if (StringUtils.isNullOrEmpty(operatorName) || StringUtils.isNullOrEmpty(operatorPwd) || StringUtils.isNullOrEmpty(bucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
         }
         upaiManager = new UpaiManager(bucketName, operatorName, operatorPwd);
         this.baseUrl = baseUrl;
-        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         return this;
     }
     @Override

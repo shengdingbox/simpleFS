@@ -32,7 +32,7 @@ public class QCloudOssApiClient extends BaseApiClient {
         super("腾讯云");
     }
 
-    public QCloudOssApiClient init(String accessKey, String secretKey,String endpoint, String bucketName, String baseUrl, String uploadType) {
+    public QCloudOssApiClient init(String accessKey, String secretKey,String endpoint, String bucketName, String baseUrl) {
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置腾讯云，文件上传功能暂时不可用！");
         }
@@ -42,7 +42,6 @@ public class QCloudOssApiClient extends BaseApiClient {
         cosClient = new COSClient(cred, clientConfig);
         this.bucket = bucketName;
         this.path = baseUrl;
-        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         return this;
     }
 

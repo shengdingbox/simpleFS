@@ -31,7 +31,7 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
         super("华为云");
     }
 
-    public HuaweiCloudOssApiClient init(String accessKey, String secretKey, String endpoint, String bucketName, String baseUrl, String uploadType) {
+    public HuaweiCloudOssApiClient init(String accessKey, String secretKey, String endpoint, String bucketName, String baseUrl) {
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(endpoint)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置华为云，文件上传功能暂时不可用！");
         }
@@ -39,7 +39,6 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
         obsClient = new ObsClient(accessKey, secretKey, endpoint);
         this.bucket = bucketName;
         this.path = baseUrl;
-        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         return this;
     }
 

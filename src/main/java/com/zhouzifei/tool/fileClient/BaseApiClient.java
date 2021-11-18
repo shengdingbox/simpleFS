@@ -19,7 +19,7 @@ import java.io.*;
 public abstract class BaseApiClient implements ApiClient {
 
     protected String storageType;
-    protected String folder = "";
+    protected String folder = "/";
     public ProgressListener progressListener = newListener();
     protected String suffix;
     protected String newFileName;
@@ -74,14 +74,14 @@ public abstract class BaseApiClient implements ApiClient {
     /**
      * 将网络图片转存到云存储中
      *
-     * @param imgUrl  网络图片地址
+     * @param userName  网络图片地址
      * @param referer 为了预防某些网站做了权限验证，不加referer可能会403
      */
     @Override
-    public VirtualFile saveToCloudStorage(String imgUrl, String referer,String fileName) {
-        try (InputStream is = FileUtil.getInputStreamByUrl(imgUrl, referer)) {
+    public VirtualFile saveToCloudStorage(String userName, String referer,String fileName) {
+        try (InputStream is = FileUtil.getInputStreamByUrl(userName, referer)) {
             if(StringUtils.isEmpty(fileName)){
-                fileName = imgUrl;
+                fileName = userName;
             }
             return this.uploadFile(is, fileName);
         } catch (Exception e) {

@@ -22,26 +22,25 @@ import java.util.Date;
  * @since 1.0
  */
 public class LocalApiClient extends BaseApiClient {
-    private static final String DEFAULT_PREFIX = "local/";
+
     private String url;
     private String rootPath;
     public LocalApiClient() {
         super("Nginx文件服务器");
     }
 
-    public LocalApiClient init(String url, String rootPath, String uploadType) {
+    public LocalApiClient init(String url, String rootPath) {
         if (StringUtils.isEmpty(url) || StringUtils.isEmpty(rootPath)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置Nginx文件服务器，文件上传功能暂时不可用！");
         }
         this.url = url;
         this.rootPath = rootPath;
-        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         return this;
     }
 
     @Override
-    public VirtualFile uploadFile(InputStream is, String imageUrl) {
-        String key = FileUtil.generateTempFileName(imageUrl);
+    public VirtualFile uploadFile(InputStream is, String userName) {
+        String key = FileUtil.generateTempFileName(userName);
         this.createNewFileName(key);
         Date startTime = new Date();
 
@@ -60,7 +59,7 @@ public class LocalApiClient extends BaseApiClient {
                     .setFileHash(DigestUtils.md5DigestAsHex(fileHashIs))
                     .setFullFilePath(this.url + this.newFileName);
         } catch (Exception e) {
-            throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage() + imageUrl);
+            throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage() + userName);
         } finally {
             if (is != null) {
                 try {

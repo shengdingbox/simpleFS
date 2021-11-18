@@ -32,7 +32,7 @@ public class XMLYApiClient  extends BaseApiClient {
     public XMLYApiClient() {
         super("喜马拉雅");
     }
-    public XMLYApiClient init(String accessKey, String secretKey, String token, String uploadType) {
+    public XMLYApiClient init(String token) {
         if (StringUtils.isEmpty(token)) {
 //            //获取token
 //            final String s1 = "username="+accessKey+"&password="+secretKey;
@@ -46,7 +46,6 @@ public class XMLYApiClient  extends BaseApiClient {
 //            XMLYApiClient.token = (String) token1;
         }else{
             XMLYApiClient.token = "1&_token="+token+";&"+token;
-            super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         }
         return this;
     }
