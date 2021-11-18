@@ -112,7 +112,7 @@ public class XMLYApiClient  extends BaseApiClient {
     }
 
     @Override
-    public void downloadFile(String fileName, String localFile) {
+    public void downloadFileToLocal(String fileName, String localFile) {
 
     }
 

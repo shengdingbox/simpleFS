@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.util.Date;
 
 /**
- * 
  * @author 周子斐 (17600004572@163.com)
  * @version 1.0
  * @remark 2019年7月16日
@@ -25,6 +24,7 @@ public class LocalApiClient extends BaseApiClient {
 
     private String url;
     private String rootPath;
+
     public LocalApiClient() {
         super("Nginx文件服务器");
     }
@@ -40,10 +40,8 @@ public class LocalApiClient extends BaseApiClient {
 
     @Override
     public VirtualFile uploadFile(InputStream is, String userName) {
-        String key = FileUtil.generateTempFileName(userName);
-        this.createNewFileName(key);
         Date startTime = new Date();
-
+        this.createNewFileName(userName);
         String realFilePath = this.rootPath + this.newFileName;
         FileUtil.checkFilePath(realFilePath);
         try (InputStream uploadIs = StreamUtil.clone(is);
@@ -51,7 +49,7 @@ public class LocalApiClient extends BaseApiClient {
              FileOutputStream fos = new FileOutputStream(realFilePath)) {
             FileCopyUtils.copy(uploadIs, fos);
             return new VirtualFile()
-                    .setOriginalFileName(FileUtil.getName(key))
+                    .setOriginalFileName(FileUtil.getName(userName))
                     .setSuffix(this.suffix)
                     .setUploadStartTime(startTime)
                     .setUploadEndTime(new Date())
@@ -103,7 +101,7 @@ public class LocalApiClient extends BaseApiClient {
     }
 
     @Override
-    public InputStream downloadFileStream(String key) {
-        return FileUtil.getInputStreamByUrl(url + key, "");
+    public InputStream downloadFileStream(String userName) {
+        return FileUtil.getInputStreamByUrl(url + userName, "");
     }
 }

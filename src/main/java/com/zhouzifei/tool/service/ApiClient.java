@@ -1,8 +1,11 @@
-package com.zhouzifei.tool.media.file.service;
+package com.zhouzifei.tool.service;
 
+import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.MetaDataRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.InputStream;
 
@@ -47,7 +50,13 @@ public interface ApiClient {
      * @param fileName 文件名称
      * @param localFile 本地路径
      */
-    void downloadFile(String fileName,  String localFile);
+    void downloadFileToLocal(String fileName,  String localFile);
+
+    /**
+     * 下载文件
+     * @param fileName 文件名称
+     */
+    InputStream downloadFileStream(String fileName);
 
     /**
      * 网络文件转存
@@ -73,11 +82,25 @@ public interface ApiClient {
     VirtualFile multipartUpload(InputStream inputStream,String fileName);
     /**
      * InputStream
+     * @param file 文件
+     * @param metaDataRequest 文件名称
+     * @return 完成的文件信息
+     */
+    VirtualFile multipartUpload(MultipartFile file, MetaDataRequest metaDataRequest, HttpServletRequest request);
+    /**
+     * InputStream
      * @param inputStream 文件
      * @param fileName 文件名称
      * @return 断点续传
      */
     abstract VirtualFile resumeUpload(InputStream inputStream,String fileName);
+    /**
+     * InputStream
+     * @param metaDataRequest 文件
+     * @param request 文件名称
+     * @return 断点续传
+     */
+    abstract CheckFileResult checkFile(MetaDataRequest metaDataRequest, HttpServletRequest request);
 
 
 }
