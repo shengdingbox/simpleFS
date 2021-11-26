@@ -35,9 +35,8 @@ public class SmMsApiClient extends BaseApiClient {
         super("阿里云OSS");
     }
 
-    public SmMsApiClient init(String accessKey, String secretKey, String token, String uploadType) {
-        this.token = token;
-        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
+    public SmMsApiClient init(String accessKey, String secretKey, String token) {
+        SmMsApiClient.token = token;
         if (StringUtils.isEmpty(token)) {
             //获取token
             final String s1 = "username="+accessKey+"&password="+secretKey;
@@ -48,9 +47,9 @@ public class SmMsApiClient extends BaseApiClient {
             }
             final JSONObject data = (JSONObject)jsonObject.get("data");
             final Object token1 = data.get("token");
-            this.token = (String) token1;
+            SmMsApiClient.token = (String) token1;
     }
-        hears.put("token",this.token);
+        hears.put("token", SmMsApiClient.token);
         hears.put("Content-Type","multipart/form-data");
         return this;
 }

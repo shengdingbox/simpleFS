@@ -6,11 +6,15 @@ import com.obs.services.model.DeleteObjectResult;
 import com.obs.services.model.ObsObject;
 import com.obs.services.model.PutObjectResult;
 import com.zhouzifei.tool.common.ServiceException;
+import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.RandomsUtil;
 import com.zhouzifei.tool.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +35,7 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
         super("华为云");
     }
 
-    public HuaweiCloudOssApiClient init(String accessKey, String secretKey, String endpoint, String bucketName, String baseUrl, String uploadType) {
+    public HuaweiCloudOssApiClient init(String accessKey, String secretKey, String endpoint, String bucketName, String baseUrl) {
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(endpoint)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置华为云，文件上传功能暂时不可用！");
         }
@@ -39,7 +43,6 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
         obsClient = new ObsClient(accessKey, secretKey, endpoint);
         this.bucket = bucketName;
         this.path = baseUrl;
-        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         return this;
     }
 
@@ -93,6 +96,16 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
 
     @Override
     public VirtualFile multipartUpload(InputStream inputStream, String fileName) {
+        return null;
+    }
+
+    @Override
+    public VirtualFile multipartUpload(MultipartFile file, MetaDataRequest metaDataRequest, HttpServletRequest request) {
+        return null;
+    }
+
+    @Override
+    public CheckFileResult checkFile(MetaDataRequest metaDataRequest, HttpServletRequest request) {
         return null;
     }
 

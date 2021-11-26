@@ -1,13 +1,16 @@
 package com.zhouzifei.tool.fileClient;
 
 import com.zhouzifei.tool.common.ServiceException;
+import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.listener.ProgressListener;
-import com.zhouzifei.tool.media.file.service.ApiClient;
+import com.zhouzifei.tool.service.ApiClient;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 
 /**
@@ -19,29 +22,36 @@ import java.io.*;
 public abstract class BaseApiClient implements ApiClient {
 
     protected String storageType;
-    protected String folder = "";
+    protected String folder = "/";
     public ProgressListener progressListener = newListener();
     protected String suffix;
     protected String newFileName;
 
-    protected  ProgressListener newListener(){
+    protected ProgressListener newListener() {
         return new ProgressListener() {
             @Override
-            public void start(String msg) {}
+            public void start(String msg) {
+            }
+
             @Override
-            public void process(int finished, int sum) { }
+            public void process(int finished, int sum) {
+            }
+
             @Override
-            public void end(VirtualFile virtualFile) { }
+            public void end(VirtualFile virtualFile) {
+            }
         };
     }
 
     public BaseApiClient(String storageType) {
         this.storageType = storageType;
     }
+
     public ApiClient setProgressListener(ProgressListener progressListener) {
         this.progressListener = progressListener;
         return this;
     }
+
     @Override
     public VirtualFile uploadFile(MultipartFile file) {
         if (file == null) {
@@ -71,17 +81,18 @@ public abstract class BaseApiClient implements ApiClient {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
     }
+
     /**
      * 将网络图片转存到云存储中
      *
-     * @param imgUrl  网络图片地址
-     * @param referer 为了预防某些网站做了权限验证，不加referer可能会403
+     * @param userName 网络图片地址
+     * @param referer  为了预防某些网站做了权限验证，不加referer可能会403
      */
     @Override
-    public VirtualFile saveToCloudStorage(String imgUrl, String referer,String fileName) {
-        try (InputStream is = FileUtil.getInputStreamByUrl(imgUrl, referer)) {
-            if(StringUtils.isEmpty(fileName)){
-                fileName = imgUrl;
+    public VirtualFile saveToCloudStorage(String userName, String referer, String fileName) {
+        try (InputStream is = FileUtil.getInputStreamByUrl(userName, referer)) {
+            if (StringUtils.isEmpty(fileName)) {
+                fileName = userName;
             }
             return this.uploadFile(is, fileName);
         } catch (Exception e) {
@@ -92,18 +103,25 @@ public abstract class BaseApiClient implements ApiClient {
     protected abstract void check();
 
     @Override
-    public void downloadFile(String key, String localFile) {
+    public void downloadFileToLocal(String key, String localFile) {
         InputStream content = this.downloadFileStream(key);
         String saveFile = localFile + key;
         FileUtil.mkdirs(saveFile);
-        FileUtil.down(content,saveFile);
+        FileUtil.down(content, saveFile);
     }
-    void createNewFileName(String fileName) {
-        this.suffix = FileUtil.getSuffix(fileName);
-        this.newFileName = folder +fileName;
-    }
-    public abstract InputStream downloadFileStream(String key);
 
+    void createNewFileName(String fileName) {
+        this.suffix = "." + FileUtil.getSuffix(fileName);
+        this.newFileName = folder + fileName;
+    }
+    @Override
+    public VirtualFile multipartUpload(MultipartFile file, MetaDataRequest metaDataRequest, HttpServletRequest request) {
+        return null;
+    }
+    @Override
+    public CheckFileResult checkFile(MetaDataRequest metaDataRequest, HttpServletRequest request) {
+        return null;
+    }
 
     @Override
     public VirtualFile resumeUpload(InputStream inputStream, String fileName) {

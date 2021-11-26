@@ -3,6 +3,8 @@ package com.zhouzifei.tool.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 周子斐
  * @date 2021/1/28
@@ -10,7 +12,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class M3u8DTO {
+public class M3u8DTO implements Serializable {
     /**
      * 文件保存的路径
      */

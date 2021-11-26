@@ -41,14 +41,13 @@ public class QiniuApiClient extends BaseApiClient {
         super("七牛云");
     }
 
-    public QiniuApiClient init(String accessKey, String secretKey, String bucketName, String baseUrl, String uploadType) {
+    public QiniuApiClient init(String accessKey, String secretKey, String bucketName, String baseUrl) {
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
         }
         auth = Auth.create(accessKey, secretKey);
         this.bucket = bucketName;
         this.baseUrl = baseUrl;
-        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         return this;
     }
 

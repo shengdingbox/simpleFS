@@ -1,5 +1,6 @@
 package com.zhouzifei.tool.dto;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ResponseVO<T> {
+public class ResponseVO<T> implements Serializable {
     private Integer status;
     private String message;
     private T data;

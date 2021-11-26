@@ -3,14 +3,18 @@ package com.zhouzifei.tool.fileClient;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.ServiceException;
 import com.aliyun.oss.model.*;
+import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.RandomsUtil;
 import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -37,13 +41,12 @@ public class AliyunOssApiClient extends BaseApiClient {
         super("阿里云OSS");
     }
 
-    public AliyunOssApiClient init(String endpoint, String accessKey, String secretKey, String domainUrl, String bucketName,String  uploadType) {
+    public AliyunOssApiClient init(String endpoint, String accessKey, String secretKey, String domainUrl, String bucketName) {
         this.domainUrl = domainUrl;
         this.bucketName = bucketName;
         this.endpoint=endpoint;
         this.accessKey=accessKey;
         this.secretKey=secretKey;
-        super.folder = StringUtils.isEmpty(uploadType) ? "" : uploadType + "/";
         return this;
     }
 
@@ -202,7 +205,17 @@ public class AliyunOssApiClient extends BaseApiClient {
     }
 
     @Override
+    public VirtualFile multipartUpload(MultipartFile file, MetaDataRequest metaDataRequest, HttpServletRequest request) {
+        return null;
+    }
+
+    @Override
     public VirtualFile resumeUpload(InputStream inputStream, String fileName) {
+        return null;
+    }
+
+    @Override
+    public CheckFileResult checkFile(MetaDataRequest metaDataRequest, HttpServletRequest request) {
         return null;
     }
 
