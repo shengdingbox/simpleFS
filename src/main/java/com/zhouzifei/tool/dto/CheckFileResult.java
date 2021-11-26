@@ -2,9 +2,12 @@ package com.zhouzifei.tool.dto;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
+
 //上传前文件检测
 @Data
-public class CheckFileResult {
+public class CheckFileResult implements Serializable {
     private String fileMd5;
     //0:锁未占用,1:锁占用
     private Integer lock;

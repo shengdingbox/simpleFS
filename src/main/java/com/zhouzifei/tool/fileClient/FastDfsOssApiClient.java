@@ -1,19 +1,16 @@
 package com.zhouzifei.tool.fileClient;
 
 
-import com.alibaba.fastjson.JSONObject;
-import com.qcloud.cos.utils.CollectionUtils;
 import com.qcloud.cos.utils.IOUtils;
+import com.zhouzifei.cache.FileCacheEngine;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.common.fastdfs.*;
 import com.zhouzifei.tool.common.fastdfs.common.NameValuePair;
 import com.zhouzifei.tool.consts.UpLoadConstant;
 import com.zhouzifei.tool.dto.CheckFileResult;
-import com.zhouzifei.tool.dto.FileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.util.FileUtil;
-import com.zhouzifei.tool.util.RedisUtil;
 import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -125,6 +122,7 @@ public class FastDfsOssApiClient extends BaseApiClient {
         boolean currOwner = false;//真正的拥有者
         String chunk = metaDataRequest.getChunk();
         String chunks = metaDataRequest.getChunks();
+        FileCacheEngine fileCacheEngine = new FileCacheEngine();
         try {
             String userName = (String) request.getSession().getAttribute("name");
             if (StringUtils.isEmpty(userName)) {
@@ -138,22 +136,27 @@ public class FastDfsOssApiClient extends BaseApiClient {
                 metaDataRequest.setChunks("1");
                 chunks = "1";
             }
-            Long lock = RedisUtil.incrBy(chunklockName, 1);
+            Object o = fileCacheEngine.get(fileMd5, chunklockName);
+            Serializable serializable = null == o ? 0 : (String) o;
+            int num = Integer.parseInt(String.valueOf(serializable));
+            int lock = num + 1;
+            fileCacheEngine.add(fileMd5, chunklockName, lock);
             if (lock > 1) {
                 throw new ServiceException("请求块锁失败");
             }
             //写入锁的当前拥有者
             currOwner = true;
             BufferedOutputStream stream = null;
+            noGroupPath = "";
             String chunkCurrkey = UpLoadConstant.chunkCurr + fileMd5; //redis中记录当前应该穿第几块(从0开始)
-            String chunkCurr = RedisUtil.getString(chunkCurrkey);
+            String chunkCurr = (String) fileCacheEngine.get(fileMd5, chunkCurrkey);
             noGroupPath = "";
             Integer chunkSize = metaDataRequest.getChunkSize();
             if (StringUtils.isEmpty(chunkCurr)) {
-               RedisUtil.setString(chunkCurrkey,"0");
-               chunkCurr = "0";
+                fileCacheEngine.add(fileMd5, chunkCurrkey, 0);
+                chunkCurr = "0";
             }
-            Integer chunkCurr_int=Integer.parseInt(chunkCurr);
+            Integer chunkCurr_int = Integer.parseInt(chunkCurr);
             Integer chunk_int = Integer.parseInt(chunk);
             if (chunk_int < chunkCurr_int) {
                 throw new ServiceException("当前文件块已上传");
@@ -166,7 +169,7 @@ public class FastDfsOssApiClient extends BaseApiClient {
                 try {
                     //获取已经上传文件大小
                     Long historyUpload = 0L;
-                    String historyUploadStr = RedisUtil.getString(UpLoadConstant.historyUpload + fileMd5);
+                    String historyUploadStr = (String) fileCacheEngine.get(fileMd5, UpLoadConstant.historyUpload + fileMd5);
                     if (StringUtils.isNotEmpty(historyUploadStr)) {
                         historyUpload = Long.parseLong(historyUploadStr);
                     }
@@ -174,7 +177,7 @@ public class FastDfsOssApiClient extends BaseApiClient {
                     byte[] bytes = file.getBytes();
                     long fileSize = file.getSize();
                     if (chunk_int == 0) {
-                        RedisUtil.setString(chunkCurrkey, String.valueOf(chunkCurr_int + 1));
+                        fileCacheEngine.add(fileMd5, chunkCurrkey, String.valueOf(chunkCurr_int + 1));
                         log.info(chunk + ":redis块+1");
                         try {
                             //tracker 客户端
@@ -186,28 +189,28 @@ public class FastDfsOssApiClient extends BaseApiClient {
                             //文件元数据信息组
                             NameValuePair[] nameValuePairs = {new NameValuePair("author", "huhy")};
                             String suffix = FileUtil.getSuffix(fileName);
-                            String[] strings = storageClient.upload_appender_file(UpLoadConstant.DEFAULT_GROUP,bytes,0,(int)fileSize,suffix,nameValuePairs);
+                            String[] strings = storageClient.upload_appender_file(UpLoadConstant.DEFAULT_GROUP, bytes, 0, (int) fileSize, suffix, nameValuePairs);
                             path = strings[1];
                             noGroupPath = path;
                             log.info(chunk + ":更新完fastdfs");
                             if (noGroupPath == null) {
-                                RedisUtil.setString(chunkCurrkey, String.valueOf(chunkCurr_int));
+                                fileCacheEngine.add(fileMd5, chunkCurrkey, String.valueOf(chunkCurr_int));
                                 throw new ServiceException("获取远程文件路径出错");
                             }
 
                         } catch (Exception e) {
-                            RedisUtil.setString(chunkCurrkey, String.valueOf(chunkCurr_int));
+                            fileCacheEngine.add(fileMd5, chunkCurrkey, String.valueOf(chunkCurr_int));
                             // e.printStackTrace();
                             //还原历史块
                             log.error("初次上传远程文件出错", e);
                             throw new ServiceException("上传远程服务器文件出错");
                         }
-                        RedisUtil.setString(UpLoadConstant.fastDfsPath + fileMd5, path);
+                        fileCacheEngine.add(fileMd5, UpLoadConstant.fastDfsPath + fileMd5, path);
                         log.info("上传文件 result={}", path);
                     } else {
-                        RedisUtil.setString(chunkCurrkey, String.valueOf(chunkCurr_int + 1));
+                        fileCacheEngine.add(fileMd5, chunkCurrkey, String.valueOf(chunkCurr_int + 1));
                         log.info(chunk + ":redis块+1");
-                        noGroupPath = RedisUtil.getString(UpLoadConstant.fastDfsPath + fileMd5);
+                        fileCacheEngine.get(fileMd5, UpLoadConstant.fastDfsPath + fileMd5);
                         if (noGroupPath == null) {
                             throw new ServiceException("无法获取上传远程服务器文件出错");
                         }
@@ -219,10 +222,10 @@ public class FastDfsOssApiClient extends BaseApiClient {
                             //创建StorageClient 对象
                             StorageClient storageClient = new StorageClient(trackerServer);
                             //追加方式实际实用如果中途出错多次,可能会出现重复追加情况,这里改成修改模式,即时多次传来重复文件块,依然可以保证文件拼接正确
-                            storageClient.append_file(UpLoadConstant.DEFAULT_GROUP, noGroupPath, bytes, 0, (int)fileSize);
+                            storageClient.append_file(UpLoadConstant.DEFAULT_GROUP, noGroupPath, bytes, 0, (int) fileSize);
                             log.info(chunk + ":更新完fastdfs");
                         } catch (Exception e) {
-                            RedisUtil.setString(chunkCurrkey, String.valueOf(chunkCurr_int));
+                            fileCacheEngine.add(fileMd5, chunkCurrkey, String.valueOf(chunkCurr_int));
                             log.error("更新远程文件出错", e);
                             //   e.printStackTrace();
                             //  throw  new RuntimeException("初次上传远程文件出错");
@@ -231,23 +234,16 @@ public class FastDfsOssApiClient extends BaseApiClient {
                     }
                     //修改历史上传大小
                     historyUpload = historyUpload + fileSize;
-                    RedisUtil.setString(UpLoadConstant.historyUpload + fileMd5, String.valueOf(historyUpload));
+                    fileCacheEngine.add(fileMd5, UpLoadConstant.historyUpload + fileMd5, String.valueOf(historyUpload));
                     //最后一块,清空upload,写入数据库
                     Long size = metaDataRequest.getSize();
                     Integer chunks_int = Integer.parseInt(metaDataRequest.getChunks());
                     if (chunk_int + 1 == chunks_int) {
                         //持久化上传完成文件,也可以存储在mysql中
-                        FileResult fileResult = new FileResult();
-                        fileResult.setMd5(fileMd5);
-                        fileResult.setName(fileName);
-                        fileResult.setLenght(size);
-                        fileResult.setUrl(UpLoadConstant.DEFAULT_GROUP + "/" + noGroupPath);
-                        RedisUtil.rpush(UpLoadConstant.completedList, JSONObject.toJSONString(fileResult));
-                        RedisUtil.delKeys(new String[]{UpLoadConstant.chunkCurr + fileMd5,
-                                UpLoadConstant.fastDfsPath + fileMd5,
-                                UpLoadConstant.currLocks + fileMd5,
-                                UpLoadConstant.lockOwner + fileMd5
-                        });
+                        fileCacheEngine.remove(fileMd5, UpLoadConstant.chunkCurr + fileMd5);
+                        fileCacheEngine.remove(fileMd5, UpLoadConstant.fastDfsPath + fileMd5);
+                        fileCacheEngine.remove(fileMd5, UpLoadConstant.currLocks + fileMd5);
+                        fileCacheEngine.remove(fileMd5, UpLoadConstant.lockOwner + fileMd5);
                     }
                 } catch (Exception e) {
                     log.error("上传文件错误", e);
@@ -258,7 +254,7 @@ public class FastDfsOssApiClient extends BaseApiClient {
         } finally {
             //锁的当前拥有者才能释放块上传锁
             if (currOwner) {
-                RedisUtil.setString(chunklockName, "0");
+                fileCacheEngine.add(fileMd5, chunklockName, "0");
             }
         }
         log.info("***********结束**********");
@@ -277,6 +273,7 @@ public class FastDfsOssApiClient extends BaseApiClient {
     public CheckFileResult checkFile(MetaDataRequest metaDataRequest, HttpServletRequest request) {
         //storageClient.deleteFile(UpLoadConstant.DEFAULT_GROUP, "M00/00/D1/eSqQlFsM_RWASgIyAAQLLONv59s385.jpg");
         String userName = (String) request.getSession().getAttribute("name");
+        FileCacheEngine fileCacheEngine = new FileCacheEngine();
         if (StringUtils.isEmpty(userName)) {
             request.getSession().setAttribute("name", "yxqy");
         }
@@ -286,32 +283,26 @@ public class FastDfsOssApiClient extends BaseApiClient {
         }
         CheckFileResult checkFileResult = new CheckFileResult();
         //模拟从mysql中查询文件表的md5,这里从redis里查询
-        List<String> fileList = RedisUtil.getListAll(UpLoadConstant.completedList);
-        if (!CollectionUtils.isNullOrEmpty(fileList)) {
-            for (String e : fileList) {
-                JSONObject obj = JSONObject.parseObject(e);
-                String md5 = StringUtils.isEmpty(obj.getString("md5")) ? "0" : obj.getString("md5");
-                if (md5.equals(fileMd5)) {
-                    checkFileResult.setTotalSize(obj.getLong("lenght"));
-                    checkFileResult.setViewPath(obj.getString("url"));
-                    return checkFileResult;
-                }
-            }
-        }
         //查询锁占用
         String lockName = UpLoadConstant.currLocks + fileMd5;
-        Long lock = RedisUtil.incrBy(lockName, 1);
+        Integer i = fileCacheEngine.get(fileMd5, lockName,Integer.class);
+        if(null == i){
+           i = 0;
+           fileCacheEngine.add(fileMd5, lockName,"0");
+        }
+        int lock = i + 1;
+        fileCacheEngine.add(fileMd5, lockName, lock);
         String lockOwner = UpLoadConstant.lockOwner + fileMd5;
         String chunkCurrkey = UpLoadConstant.chunkCurr + fileMd5;
         if (lock > 1) {
             checkFileResult.setLock(1);
             //检查是否为锁的拥有者,如果是放行
-            String oWner = RedisUtil.getString(lockOwner);
+            String oWner = fileCacheEngine.get(fileMd5, lockOwner,String.class);
             if (StringUtils.isEmpty(oWner)) {
                 throw new ServiceException("无法获取文件锁拥有者");
             } else {
                 if (oWner.equals(request.getSession().getAttribute("name"))) {
-                    String chunkCurr = RedisUtil.getString(chunkCurrkey);
+                    String chunkCurr = (String)fileCacheEngine.get(fileMd5, chunkCurrkey);
                     if (StringUtils.isEmpty(chunkCurr)) {
                         throw new ServiceException("无法获取当前文件chunkCurr");
                     }
@@ -323,8 +314,8 @@ public class FastDfsOssApiClient extends BaseApiClient {
             }
         } else {
             //初始化锁.分块
-            RedisUtil.setString(lockOwner, (String) request.getSession().getAttribute("name"));
-            RedisUtil.setString(chunkCurrkey, "0"); //第一块索引是0,与前端保持一致
+            fileCacheEngine.add(fileMd5,lockOwner,request.getSession().getAttribute("name"));
+            fileCacheEngine.add(fileMd5,chunkCurrkey,"0");
             checkFileResult.setChunkCurr(0);
             return checkFileResult;
         }
@@ -373,7 +364,7 @@ public class FastDfsOssApiClient extends BaseApiClient {
             final String group = getGroup(fileName);
             final String filePath = getFilePath(fileName);
             FileInfo fileInfo = storageClient.query_file_info(group, filePath);
-            if(null == fileInfo){
+            if (null == fileInfo) {
                 throw new ServiceException("文件不存在");
             }
             byte[] bytes = storageClient.download_file(group, filePath);

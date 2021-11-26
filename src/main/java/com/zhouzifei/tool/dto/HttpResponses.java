@@ -2,6 +2,7 @@ package com.zhouzifei.tool.dto;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.Map;
  * @Description
  */
 @Data
-public class HttpResponses {
+public class HttpResponses implements Serializable {
     Map<String, List<String>> map = new HashMap<>();
 
     String body = "";

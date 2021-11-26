@@ -1,12 +1,22 @@
 package com.zhouzifei.tool.dto;
 
+<<<<<<< HEAD
 public class FileResult {
+=======
+import lombok.Data;
+
+import java.io.Serializable;
+
+@Data
+public class FileResult implements Serializable {
+>>>>>>> d7b7b4a3260e02bed4eb3fed74d199d8c4b2939d
     //文件名
     private String url;
     //文件md5
     private String md5;
     //文件名称
     private String name;
+<<<<<<< HEAD
 
     //文件大小
     private Long lenght;
@@ -42,4 +52,8 @@ public class FileResult {
     public void setLenght(Long lenght) {
         this.lenght = lenght;
     }
+=======
+    //文件大小
+    private Long lenght;
+>>>>>>> d7b7b4a3260e02bed4eb3fed74d199d8c4b2939d
 }

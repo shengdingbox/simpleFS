@@ -3,6 +3,8 @@ package com.zhouzifei.tool.dto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author 周子斐 (17600004572@163.com)
@@ -12,7 +14,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public abstract class AbstractEntity {
+public abstract class AbstractEntity implements Serializable {
     private String bucketName;
 
     public AbstractEntity() {
