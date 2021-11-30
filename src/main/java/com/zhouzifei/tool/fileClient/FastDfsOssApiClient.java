@@ -112,22 +112,18 @@ public class FastDfsOssApiClient extends BaseApiClient {
     }
 
     @Override
-    public VirtualFile multipartUpload(MultipartFile file, MetaDataRequest metaDataRequest, HttpServletRequest request) {
+    public VirtualFile multipartUpload(MultipartFile file, MetaDataRequest metaDataRequest) {
         Date startTime = new Date();
         final String fileName = file.getOriginalFilename();
         this.createNewFileName(fileName);
         String fileMd5 = metaDataRequest.getFileMd5();
-        String noGroupPath;//存储在fastdfs不带组的路径
+        String noGroupPath = "";//存储在fastdfs不带组的路径
         String chunklockName = UpLoadConstant.chunkLock + fileMd5;
         boolean currOwner = false;//真正的拥有者
         String chunk = metaDataRequest.getChunk();
         String chunks = metaDataRequest.getChunks();
         FileCacheEngine fileCacheEngine = new FileCacheEngine();
         try {
-            String userName = (String) request.getSession().getAttribute("name");
-            if (StringUtils.isEmpty(userName)) {
-                request.getSession().setAttribute("name", "yxqy");
-            }
             if (StringUtils.isEmpty(chunk)) {
                 metaDataRequest.setChunk("0");
                 chunk = "0";
@@ -148,7 +144,6 @@ public class FastDfsOssApiClient extends BaseApiClient {
             currOwner = true;
             String chunkCurrkey = UpLoadConstant.chunkCurr + fileMd5; //redis中记录当前应该穿第几块(从0开始)
             String chunkCurr = (String) fileCacheEngine.get(fileMd5, chunkCurrkey);
-            noGroupPath = "";
             Integer chunkSize = metaDataRequest.getChunkSize();
             if (StringUtils.isEmpty(chunkCurr)) {
                 fileCacheEngine.add(fileMd5, chunkCurrkey, 0);
@@ -208,7 +203,7 @@ public class FastDfsOssApiClient extends BaseApiClient {
                     } else {
                         fileCacheEngine.add(fileMd5, chunkCurrkey, String.valueOf(chunkCurr_int + 1));
                         log.info(chunk + ":redis块+1");
-                        fileCacheEngine.get(fileMd5, UpLoadConstant.fastDfsPath + fileMd5);
+                        noGroupPath = fileCacheEngine.get(fileMd5, UpLoadConstant.fastDfsPath + fileMd5,String.class);
                         if (noGroupPath == null) {
                             throw new ServiceException("无法获取上传远程服务器文件出错");
                         }

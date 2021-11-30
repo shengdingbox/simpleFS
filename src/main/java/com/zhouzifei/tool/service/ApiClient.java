@@ -86,7 +86,7 @@ public interface ApiClient {
      * @param metaDataRequest 文件名称
      * @return 完成的文件信息
      */
-    VirtualFile multipartUpload(MultipartFile file, MetaDataRequest metaDataRequest, HttpServletRequest request);
+    VirtualFile multipartUpload(MultipartFile file, MetaDataRequest metaDataRequest);
     /**
      * InputStream
      * @param inputStream 文件

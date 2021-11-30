@@ -115,7 +115,7 @@ public abstract class BaseApiClient implements ApiClient {
         this.newFileName = folder + fileName;
     }
     @Override
-    public VirtualFile multipartUpload(MultipartFile file, MetaDataRequest metaDataRequest, HttpServletRequest request) {
+    public VirtualFile multipartUpload(MultipartFile file, MetaDataRequest metaDataRequest) {
         return null;
     }
     @Override
