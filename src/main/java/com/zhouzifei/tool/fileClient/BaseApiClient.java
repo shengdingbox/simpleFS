@@ -1,5 +1,6 @@
 package com.zhouzifei.tool.fileClient;
 
+import com.zhouzifei.cache.FileCacheEngine;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
@@ -26,6 +27,11 @@ public abstract class BaseApiClient implements ApiClient {
     public ProgressListener progressListener = newListener();
     protected String suffix;
     protected String newFileName;
+    protected final Object LOCK = new Object();
+    protected final FileCacheEngine cacheEngine = new FileCacheEngine();
+    protected static final String SLASH = "/";
+    protected static final String TAG = "PartETag";
+    protected static final Integer ONE_INT = 1;
 
     protected ProgressListener newListener() {
         return new ProgressListener() {
@@ -114,10 +120,33 @@ public abstract class BaseApiClient implements ApiClient {
         this.suffix = "." + FileUtil.getSuffix(fileName);
         this.newFileName = folder + fileName;
     }
+
     @Override
-    public VirtualFile multipartUpload(MultipartFile file, MetaDataRequest metaDataRequest) {
+    public VirtualFile multipartUpload(File file, MetaDataRequest metaDataRequest) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            return this.multipartUpload(fileInputStream, metaDataRequest);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         return null;
     }
+
+    @Override
+    public VirtualFile multipartUpload(MultipartFile file, MetaDataRequest metaDataRequest) {
+        if (file == null) {
+            throw new ServiceException("[" + this.storageType + "]文件上传失败：文件不可为空");
+        }
+        try {
+            VirtualFile res = this.multipartUpload(file.getInputStream(), metaDataRequest);
+            VirtualFile imageInfo = FileUtil.getInfo(file);
+            return res.setSize(imageInfo.getSize())
+                    .setOriginalFileName(file.getOriginalFilename());
+        } catch (IOException e) {
+            throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
+        }
+    }
+
     @Override
     public CheckFileResult checkFile(MetaDataRequest metaDataRequest, HttpServletRequest request) {
         return null;

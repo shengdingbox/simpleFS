@@ -72,14 +72,14 @@ public interface ApiClient {
      * @param file 文件
      * @return 完成的文件信息
      */
-    VirtualFile multipartUpload(File file);
+    VirtualFile multipartUpload(File file,MetaDataRequest metaDataRequest);
     /**
      * InputStream
      * @param inputStream 文件
-     * @param fileName 文件名称
+     * @param metaDataRequest 文件名称
      * @return 完成的文件信息
      */
-    VirtualFile multipartUpload(InputStream inputStream,String fileName);
+    VirtualFile multipartUpload(InputStream inputStream, MetaDataRequest metaDataRequest);
     /**
      * InputStream
      * @param file 文件
@@ -93,7 +93,7 @@ public interface ApiClient {
      * @param fileName 文件名称
      * @return 断点续传
      */
-    abstract VirtualFile resumeUpload(InputStream inputStream,String fileName);
+     VirtualFile resumeUpload(InputStream inputStream,String fileName);
     /**
      * InputStream
      * @param metaDataRequest 文件

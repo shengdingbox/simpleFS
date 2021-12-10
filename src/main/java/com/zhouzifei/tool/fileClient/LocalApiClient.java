@@ -2,8 +2,10 @@ package com.zhouzifei.tool.fileClient;
 
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
 import com.zhouzifei.tool.util.FileUtil;
+import com.zhouzifei.tool.util.MediaFormat;
 import com.zhouzifei.tool.util.StringUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.FileCopyUtils;
@@ -86,12 +88,7 @@ public class LocalApiClient extends BaseApiClient {
     }
 
     @Override
-    public VirtualFile multipartUpload(File file) {
-        return null;
-    }
-
-    @Override
-    public VirtualFile multipartUpload(InputStream inputStream, String fileName) {
+    public VirtualFile multipartUpload(InputStream inputStream, MetaDataRequest metaDataRequest) {
         return null;
     }
 

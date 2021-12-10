@@ -4,10 +4,10 @@ package com.zhouzifei.tool.fileClient;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.common.upaiyun.UpaiManager;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -32,7 +32,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
 
     public UpaiyunOssApiClient init(String operatorName, String operatorPwd, String bucketName, String baseUrl) {
         if (StringUtils.isNullOrEmpty(operatorName) || StringUtils.isNullOrEmpty(operatorPwd) || StringUtils.isNullOrEmpty(bucketName)) {
-            throw new ServiceException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
+            throw new ServiceException("[" + this.storageType + "]尚未配置又拍云，文件上传功能暂时不可用！");
         }
         upaiManager = new UpaiManager(bucketName, operatorName, operatorPwd);
         this.baseUrl = baseUrl;
@@ -75,14 +75,8 @@ public class UpaiyunOssApiClient extends BaseApiClient {
             throw new ServiceException("[" + this.storageType + "]文件删除失败：" + e.getMessage());
         }
     }
-
     @Override
-    public VirtualFile multipartUpload(File file) {
-        return null;
-    }
-
-    @Override
-    public VirtualFile multipartUpload(InputStream inputStream, String fileName) {
+    public VirtualFile multipartUpload(InputStream inputStream, MetaDataRequest metaDataRequest) {
         return null;
     }
 
@@ -94,7 +88,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
     @Override
     public InputStream downloadFileStream(String key) {
         if (StringUtils.isNullOrEmpty(key)) {
-            throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
+            throw new ServiceException("[" + this.storageType + "]下载文件失败：文件key为空");
         }
         try {
             return Objects.requireNonNull(upaiManager.readFile(baseUrl + key).body()).byteStream();

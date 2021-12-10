@@ -11,15 +11,15 @@ import java.util.Map;
  */
 public enum StorageTypeConst {
 
-    ALIYUN("aliyun","阿里云免费空间40G,免费流量10G/月 （限定新用户、限时6个月）https://www.aliyun.com/product/oss"),
-    QINIUYUN("qiniu", "七牛云免费空间10G,免费流量10G/月,免费GET100万次/月https://www.qiniu.com/prices"),
+    ALIYUN("aliyun","阿里云OSS"),
+    QINIUYUN("qiniu", "七牛云存储"),
     LOCAL("local", "本地上传"),
-    TENGXUNYUN("tengxunyun", "腾讯云COS免费空间50G,免费流量10G/月 https://cloud.tencent.com/product/cos/option>"),
-    YOUPAIYUN("youpaiyun", "又拍云免费空间10G,免费流量15G/月(非开通就有,需要额外申请又拍云联盟,限时1年）https://www.upyun.com/league"),
-    HUAWEIYUN("huaweiyun", "HUAWEI"),
+    TENGXUNYUN("tengxunyun", "腾讯云COS"),
+    YOUPAIYUN("youpaiyun", "又拍云存储"),
+    HUAWEIYUN("huaweiyun", "华为云存储"),
     FASTDFS("fastdfs", "FAST-DFS"),
     SMMS("smms", "SMMS"),
-    XMLY("xmly", "XMLY"),
+    XMLY("xmly", "喜马拉雅图床"),
     ;
 
     private String storageType;
@@ -40,9 +40,10 @@ public enum StorageTypeConst {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-    public static Map<Object, Object> getMap() {
+
+    public static Map<String, String> getMap() {
         StorageTypeConst[] alarmGrades = StorageTypeConst.values();
-        Map<Object, Object> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         for (int i = 0; i < alarmGrades.length; i++) {
             final StorageTypeConst alarmGrade = alarmGrades[i];
             map.put(alarmGrade.getStorageType(), alarmGrade.getDesc());
@@ -68,7 +69,7 @@ public enum StorageTypeConst {
     //public static final Map<Object, Object> list = Arrays.stream(values()).collect(Collectors.toMap(StorageTypeConst::getStorageType, StorageTypeConst::getDesc));
 
     public static void main(String[] args) {
-        final Map<Object, Object> values = StorageTypeConst.getMap();
+        final Map<String, String> values = StorageTypeConst.getMap();
         System.out.println(values);
     }
 }

@@ -12,9 +12,9 @@ import java.io.Serializable;
  */
 @Data
 public class MetaDataRequest implements Serializable {
-    private String chunk;
+    private Integer chunk;
     private String fileMd5;
-    private String chunks;
+    private Integer chunks;
     private Integer chunkSize;
     private Integer chunkCurr;
     private Integer name;

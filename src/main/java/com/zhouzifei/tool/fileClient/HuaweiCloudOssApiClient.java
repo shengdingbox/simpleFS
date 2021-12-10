@@ -90,17 +90,7 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
     }
 
     @Override
-    public VirtualFile multipartUpload(File file) {
-        return null;
-    }
-
-    @Override
-    public VirtualFile multipartUpload(InputStream inputStream, String fileName) {
-        return null;
-    }
-
-    @Override
-    public VirtualFile multipartUpload(MultipartFile file, MetaDataRequest metaDataRequest) {
+    public VirtualFile multipartUpload(InputStream inputStream,MetaDataRequest metaDataRequest) {
         return null;
     }
 

@@ -12,6 +12,7 @@ import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.RandomsUtil;
 import com.zhouzifei.tool.util.StringUtils;
@@ -107,14 +108,8 @@ public class QiniuApiClient extends BaseApiClient {
             throw new ServiceException("[" + this.storageType + "]删除文件发生异常：" + r.toString());
         }
     }
-
     @Override
-    public VirtualFile multipartUpload(File file) {
-        return null;
-    }
-
-    @Override
-    public VirtualFile multipartUpload(InputStream inputStream, String fileName) {
+    public VirtualFile multipartUpload(InputStream inputStream, MetaDataRequest metaDataRequest) {
         return null;
     }
 

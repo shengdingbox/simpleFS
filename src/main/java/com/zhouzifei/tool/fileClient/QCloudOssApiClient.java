@@ -9,6 +9,7 @@ import com.qcloud.cos.model.*;
 import com.qcloud.cos.region.Region;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.RandomsUtil;
 import com.zhouzifei.tool.util.StringUtils;
@@ -78,12 +79,7 @@ public class QCloudOssApiClient extends BaseApiClient {
     }
 
     @Override
-    public VirtualFile multipartUpload(File file) {
-        return null;
-    }
-
-    @Override
-    public VirtualFile multipartUpload(InputStream inputStream, String fileName) {
+    public VirtualFile multipartUpload(InputStream inputStream, MetaDataRequest metaDataRequest) {
         return null;
     }
 

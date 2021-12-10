@@ -3,7 +3,9 @@ package com.zhouzifei.tool.fileClient;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.ServiceException;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.HttpUtils;
@@ -15,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +27,7 @@ import java.util.Map;
  * @date 2021/10/12
  * @Description
  */
-public class XMLYApiClient  extends BaseApiClient {
+public class XMLYApiClient extends BaseApiClient {
 
     private static String token;
     private String requestUrl = "https://upload.ximalaya.com/dtres/headerThumb/upload";
@@ -32,6 +35,7 @@ public class XMLYApiClient  extends BaseApiClient {
     public XMLYApiClient() {
         super("喜马拉雅");
     }
+
     public XMLYApiClient init(String token) {
         if (StringUtils.isEmpty(token)) {
 //            //获取token
@@ -39,21 +43,22 @@ public class XMLYApiClient  extends BaseApiClient {
 //            final String s = HttpNewUtils.DataPost(requestUrl + "/token", s1);
 //            final JSONObject jsonObject = JSONObject.parseObject(s);
 //            if(!(Boolean) jsonObject.get("success")){
-                throw new ServiceException("[" + this.storageType + "]初始化失败");
+            throw new ServiceException("[" + this.storageType + "]初始化失败");
 //            }
 //            final JSONObject data = (JSONObject)jsonObject.get("data");
 //            final Object token1 = data.get("token");
 //            XMLYApiClient.token = (String) token1;
-        }else{
-            XMLYApiClient.token = "1&_token="+token+";&"+token;
+        } else {
+            XMLYApiClient.token = "1&_token=" + token + ";&" + token;
         }
         return this;
     }
+
     @Override
     public VirtualFile uploadFile(MultipartFile file) {
-        try(InputStream inputStream= file.getInputStream();) {
+        try (InputStream inputStream = file.getInputStream();) {
             final String filename = file.getOriginalFilename();
-            return uploadFile(inputStream,filename);
+            return uploadFile(inputStream, filename);
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
@@ -61,9 +66,9 @@ public class XMLYApiClient  extends BaseApiClient {
 
     @Override
     public VirtualFile uploadFile(File file) {
-        try(InputStream inputStream= new FileInputStream(file);) {
+        try (InputStream inputStream = new FileInputStream(file);) {
             final String filename = file.getName();
-            return uploadFile(inputStream,filename);
+            return uploadFile(inputStream, filename);
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
@@ -71,8 +76,7 @@ public class XMLYApiClient  extends BaseApiClient {
 
     @Override
     public VirtualFile uploadFile(InputStream inputStream, String fileName) {
-        try (InputStream uploadIs = StreamUtil.clone(inputStream);
-             InputStream fileHashIs = StreamUtil.clone(inputStream)) {
+        try (InputStream uploadIs = StreamUtil.clone(inputStream); InputStream fileHashIs = StreamUtil.clone(inputStream)) {
             final String suffix = FileUtil.getSuffix(fileName);
             final Date startTime = new Date();
             Map<String, String> hears = new HashMap<>();
@@ -81,6 +85,11 @@ public class XMLYApiClient  extends BaseApiClient {
             final JSONObject parse = JSONObject.parseObject(result);
             if (null == parse) {
                 throw new RuntimeException();
+            }
+            final Boolean status = parse.getBoolean("status");
+            if (!status) {
+                final String msg = parse.getString("msg");
+                throw new ServiceException(msg);
             }
             final Object data = parse.get("data");
             if (null == data) {
@@ -92,16 +101,8 @@ public class XMLYApiClient  extends BaseApiClient {
             }
             final String url1 = (String) ((JSONObject) url).get("url");
             final String filePath = (String) ((JSONObject) url).get("dfsId");
-            return new VirtualFile()
-                    .setOriginalFileName(fileName)
-                    .setSuffix(suffix)
-                    .setUploadStartTime(startTime)
-                    .setUploadEndTime(new Date())
-                    .setFilePath(filePath)
-                    .setFileHash(DigestUtils.md5DigestAsHex(fileHashIs))
-                    .setFullFilePath(url1)
-                    .setSize(fileHashIs.available());
-        }catch (IOException e) {
+            return new VirtualFile().setOriginalFileName(fileName).setSuffix(suffix).setUploadStartTime(startTime).setUploadEndTime(new Date()).setFilePath(filePath).setFileHash(DigestUtils.md5DigestAsHex(fileHashIs)).setFullFilePath(url1).setSize(fileHashIs.available());
+        } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
     }
@@ -118,31 +119,29 @@ public class XMLYApiClient  extends BaseApiClient {
 
     @Override
     public InputStream downloadFileStream(String key) {
-        return null;
+        return FileUtil.getInputStreamByUrl(key, requestUrl);
     }
-
-    @Override
-    public VirtualFile saveToCloudStorage(String fileUrl, String referer, String fileName) {
-        return null;
-    }
-
     @Override
     protected void check() {
 
     }
 
     @Override
-    public VirtualFile multipartUpload(File file) {
-        return null;
-    }
-
-    @Override
-    public VirtualFile multipartUpload(InputStream inputStream, String fileName) {
-        return null;
+    public VirtualFile multipartUpload(InputStream inputStream, MetaDataRequest metaDataRequest) {
+        throw new ServiceException("[" + this.storageType + "]文件上传失败：该上传类型不支持分片上传");
     }
 
     @Override
     public VirtualFile resumeUpload(InputStream inputStream, String fileName) {
         return null;
+    }
+
+    public static void main(String[] args) {
+        final XMLYApiClient init = new XMLYApiClient().init("Hm_lvt_4a7d8ec50cfd6af753c4f8aee3425070=1639114684; login_type=password_mobile; _xmLog=h5&9ea2efdf-7a5a-4f8d-8269-d9934707ef09&2.4.7-alpha.3; xm-page-viewid=ximalaya-web; x_xmly_traffic=utm_source%253A%2526utm_medium%253A%2526utm_campaign%253A%2526utm_content%253A%2526utm_term%253A%2526utm_from%253A; fds_otp=6230401576727727914; 1&remember_me=y; 1&_token=296993092&6B46C2A0340N0CBC4A6620979932BB1AF9474CD57A95BFBAEA25D9FDEE7710FBF352868FED80140M28D23A81E28D8FF_; 1_l_flag=296993092&6B46C2A0340N0CBC4A6620979932BB1AF9474CD57A95BFBAEA25D9FDEE7710FBF352868FED80140M28D23A81E28D8FF__2021-12-1015:49:16; Hm_lpvt_4a7d8ec50cfd6af753c4f8aee3425070=1639122558\n" + "origin: https://www.ximalaya.com");
+        final VirtualFile virtualFile = init.uploadFile(new File("/Users/Dabao/Downloads/qrcode_for_gh_da74abc7de78_258.jpg"));
+        System.out.println(virtualFile);
+//        final String s1 = "username=17600004572&password=zhoudabao521.";
+//        final String s = HttpNewUtils.DataPost(requestUrl + "/token", s1);
+//        final JSONObject jsonObject = JSONObject.parseObject(s);
     }
 }

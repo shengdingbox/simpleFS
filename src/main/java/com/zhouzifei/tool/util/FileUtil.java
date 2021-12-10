@@ -15,7 +15,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 文件操作工具类
@@ -28,6 +31,7 @@ import java.util.Objects;
 @Slf4j
 public class FileUtil {
     private static final String[] PICTURE_SUFFIXS = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"};
+    private static final Map<String, AtomicInteger> chunkNumContainer = new ConcurrentHashMap<>();
 
     /**
      * 删除目录，返回删除的文件数
@@ -224,10 +228,10 @@ public class FileUtil {
 
     private static String parseInputStream(InputStream in) throws IOException {
         String result = "";
-        StringBuffer content = null;
+        StringBuilder content = null;
         if (null != in) {
             BufferedReader r = new BufferedReader(new InputStreamReader(in));
-            content = new StringBuffer();
+            content = new StringBuilder();
             String line = "";
             while ((line = r.readLine()) != null) {
                 content.append(line);
@@ -408,5 +412,21 @@ public class FileUtil {
         } catch (Exception e) {
             throw new ServiceException("获取图片信息发生异常！{}", e.getMessage());
         }
+    }
+    /**
+     * 添加分片并返回是否全部写入完毕
+     *
+     * @param md5
+     * @param chunks
+     * @return
+     */
+    public static boolean addChunkAndCheckAllDone(String md5, Integer chunks) {
+        chunkNumContainer.putIfAbsent(md5, new AtomicInteger());
+        int currentChunks = chunkNumContainer.get(md5).incrementAndGet();
+        if (currentChunks == chunks) {
+            chunkNumContainer.remove(md5);
+            return true;
+        }
+        return false;
     }
 }
