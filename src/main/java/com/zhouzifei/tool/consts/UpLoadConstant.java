@@ -22,6 +22,7 @@ public class UpLoadConstant {
     //默认分组
     public final static  String DEFAULT_GROUP = "group1";
     public final static  int ZERO_INT = 0;
+    public static final Long ZERO_LONG = 0L;
 
     //全部上传成功已完成
     public final static String completedList=uploading+"completedList";

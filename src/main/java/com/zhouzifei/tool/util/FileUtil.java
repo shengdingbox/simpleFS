@@ -1,9 +1,11 @@
 package com.zhouzifei.tool.util;
 
 import com.zhouzifei.tool.common.ServiceException;
+import com.zhouzifei.tool.consts.UpLoadConstant;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -13,12 +15,17 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.WritableByteChannel;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.zhouzifei.tool.consts.UpLoadConstant.ZERO_LONG;
 
 /**
  * 文件操作工具类
@@ -83,10 +90,14 @@ public class FileUtil {
     public static String getSuffix(String fileName) {
         int index = fileName.lastIndexOf(".");
         index = -1 == index ? fileName.length() : index;
+        return fileName.substring(index);
+    }
+    public static String getSuffixName(String fileName) {
+        int index = fileName.lastIndexOf(".");
+        index = -1 == index ? fileName.length() : index;
         final String substring = fileName.substring(index);
         return substring.replace(".", "");
     }
-
     public static String getSuffixByUrl(String imgUrl) {
         String defaultSuffix = "";
         if (StringUtils.isEmpty(imgUrl)) {
@@ -99,7 +110,18 @@ public class FileUtil {
         String fileSuffix = getSuffix(fileName);
         return StringUtils.isEmpty(fileSuffix) ? defaultSuffix : fileSuffix;
     }
-
+    public static String getSuffixNameByUrl(String imgUrl) {
+        String defaultSuffix = "";
+        if (StringUtils.isEmpty(imgUrl)) {
+            return defaultSuffix;
+        }
+        String fileName = imgUrl;
+        if (imgUrl.contains("/")) {
+            fileName = imgUrl.substring(imgUrl.lastIndexOf("/"));
+        }
+        String fileSuffix = getSuffixName(fileName);
+        return StringUtils.isEmpty(fileSuffix) ? defaultSuffix : fileSuffix;
+    }
     public static String generateTempFileName(String fileName) {
         return "temp" + getSuffixByUrl(fileName);
     }
@@ -246,7 +268,7 @@ public class FileUtil {
      *
      * @param url 待校验的url
      */
-    private static String checkUrl(String url) {
+    public static String checkUrl(String url) {
         if (!org.apache.commons.lang.StringUtils.isEmpty(url)) {
             if (url.startsWith("http://") || url.startsWith("https://")) {
                 return url;
@@ -283,7 +305,7 @@ public class FileUtil {
             if (file.isDirectory()) {
                 throw new IOException("File '" + file + "' exists but is a directory");
             }
-            if (file.canWrite() == false) {
+            if (!file.canWrite()) {
                 throw new IOException("File '" + file + "' cannot be written to");
             }
         } else {
@@ -297,22 +319,23 @@ public class FileUtil {
         return new FileOutputStream(file);
     }
 
-    public String download(String imgUrl, String referer, String localPath) {
-
-        String fileName = localPath + File.separator + RandomsUtil.alpha(16) + FileUtil.getSuffixByUrl(imgUrl);
-        try (InputStream is = FileUtil.getInputStreamByUrl(imgUrl, referer);
-             FileOutputStream fos = new FileOutputStream(fileName)) {
+    public static String download(String imgUrl, String referer, String localPath) {
+        String fileName;
+        try (InputStream is = FileUtil.getInputStreamByUrl(imgUrl, referer)) {
             if (null == is) {
                 return null;
             }
-            File file = new File(localPath);
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-            int bytesWritten = 0, byteCount = 0;
-            byte[] b = new byte[1024];
-            while ((byteCount = is.read(b)) != -1) {
-                fos.write(b, bytesWritten, byteCount);
+            fileName = DigestUtils.md5Hex(is);
+            try( FileOutputStream fos = new FileOutputStream(fileName);) {
+                File file = new File(localPath);
+                if (!file.exists()) {
+                    file.mkdirs();
+                }
+                int bytesWritten = 0, byteCount = 0;
+                byte[] b = new byte[1024];
+                while ((byteCount = is.read(b)) != -1) {
+                    fos.write(b, bytesWritten, byteCount);
+                }
             }
         } catch (IOException e) {
             log.error("Error.", e);
@@ -363,10 +386,7 @@ public class FileUtil {
             return new VirtualFile();
         }
         try {
-            return getInfo(new FileInputStream(file))
-                    .setSize(file.length())
-                    .setOriginalFileName(file.getName())
-                    .setSuffix(FileUtil.getSuffix(file.getName()));
+            return getInfo(new FileInputStream(file)).setSize(file.length()).setOriginalFileName(file.getName()).setSuffix(FileUtil.getSuffix(file.getName()));
         } catch (Exception e) {
             e.printStackTrace();
             throw new ServiceException("获取图片信息发生异常!{}", e.getMessage());
@@ -384,10 +404,7 @@ public class FileUtil {
             return new VirtualFile();
         }
         try {
-            return getInfo(multipartFile.getInputStream())
-                    .setSize(multipartFile.getSize())
-                    .setOriginalFileName(multipartFile.getOriginalFilename())
-                    .setSuffix(FileUtil.getSuffix(Objects.requireNonNull(multipartFile.getOriginalFilename())));
+            return getInfo(multipartFile.getInputStream()).setSize(multipartFile.getSize()).setOriginalFileName(multipartFile.getOriginalFilename()).setSuffix(FileUtil.getSuffix(Objects.requireNonNull(multipartFile.getOriginalFilename())));
         } catch (Exception e) {
             e.printStackTrace();
             throw new ServiceException("获取图片信息发生异常！{}", e.getMessage());
@@ -413,6 +430,7 @@ public class FileUtil {
             throw new ServiceException("获取图片信息发生异常！{}", e.getMessage());
         }
     }
+
     /**
      * 添加分片并返回是否全部写入完毕
      *
@@ -428,5 +446,28 @@ public class FileUtil {
             return true;
         }
         return false;
+    }
+    /**
+     * 获取输入流写入输出流
+     *
+     * @param fileInputStream
+     * @param outputStream
+     * @param size
+     * @throws IOException
+     */
+    public static void writeFileToStream(FileInputStream fileInputStream, OutputStream outputStream, Long size) throws IOException {
+        FileChannel fileChannel = fileInputStream.getChannel();
+        WritableByteChannel writableByteChannel = Channels.newChannel(outputStream);
+        fileChannel.transferTo(UpLoadConstant.ZERO_LONG, size, writableByteChannel);
+        outputStream.flush();
+        fileInputStream.close();
+        outputStream.close();
+        fileChannel.close();
+        writableByteChannel.close();
+    }
+
+    public static void main(String[] args) {
+        final String s = checkUrl("/uploads/2020/05/kkixeafkldy.jpg");
+        System.out.println(s);
     }
 }

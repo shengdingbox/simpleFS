@@ -5,7 +5,7 @@ import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.MetaDataRequest;
-import com.zhouzifei.tool.media.file.listener.ProgressListener;
+import com.zhouzifei.tool.listener.ProgressListener;
 import com.zhouzifei.tool.service.ApiClient;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;

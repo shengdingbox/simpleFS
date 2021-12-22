@@ -4,7 +4,7 @@ import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.fileClient.*;
-import com.zhouzifei.tool.media.file.listener.ProgressListener;
+import com.zhouzifei.tool.listener.ProgressListener;
 import org.springframework.stereotype.Component;
 
 
