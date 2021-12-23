@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+
 //上传前文件检测
 @Data
 public class CheckFileResult implements Serializable {
