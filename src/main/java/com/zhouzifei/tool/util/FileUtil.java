@@ -37,9 +37,7 @@ import static com.zhouzifei.tool.consts.UpLoadConstant.ZERO_LONG;
  */
 @Slf4j
 public class FileUtil {
-    private static final String[] PICTURE_SUFFIXS = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"};
     private static final Map<String, AtomicInteger> chunkNumContainer = new ConcurrentHashMap<>();
-
     /**
      * 删除目录，返回删除的文件数
      *
@@ -122,14 +120,6 @@ public class FileUtil {
         String fileSuffix = getSuffixName(fileName);
         return StringUtils.isEmpty(fileSuffix) ? defaultSuffix : fileSuffix;
     }
-    public static String generateTempFileName(String fileName) {
-        return "temp" + getSuffixByUrl(fileName);
-    }
-
-    public static boolean isPicture(String suffix) {
-        return !StringUtils.isEmpty(suffix) && Arrays.asList(PICTURE_SUFFIXS).contains(suffix.toLowerCase());
-    }
-
     public static void mkdirs(String filePath) {
         File file = new File(filePath);
         mkdirs(file);
@@ -374,63 +364,6 @@ public class FileUtil {
             throw new ServiceException("9999999", "文件下载失败", e);
         }
     }
-
-    /**
-     * 获取图片信息
-     *
-     * @param file
-     * @throws IOException
-     */
-    public static VirtualFile getInfo(File file) {
-        if (null == file) {
-            return new VirtualFile();
-        }
-        try {
-            return getInfo(new FileInputStream(file)).setSize(file.length()).setOriginalFileName(file.getName()).setSuffix(FileUtil.getSuffix(file.getName()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ServiceException("获取图片信息发生异常!{}", e.getMessage());
-        }
-    }
-
-    /**
-     * 获取图片信息
-     *
-     * @param multipartFile
-     * @throws IOException
-     */
-    public static VirtualFile getInfo(MultipartFile multipartFile) {
-        if (null == multipartFile) {
-            return new VirtualFile();
-        }
-        try {
-            return getInfo(multipartFile.getInputStream()).setSize(multipartFile.getSize()).setOriginalFileName(multipartFile.getOriginalFilename()).setSuffix(FileUtil.getSuffix(Objects.requireNonNull(multipartFile.getOriginalFilename())));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ServiceException("获取图片信息发生异常！{}", e.getMessage());
-        }
-    }
-
-    /**
-     * 获取图片信息
-     *
-     * @param inputStream
-     * @throws IOException
-     */
-    public static VirtualFile getInfo(InputStream inputStream) {
-        try (BufferedInputStream in = new BufferedInputStream(inputStream)) {
-            //字节流转图片对象
-            final int available = inputStream.available();
-            if (available <= 0) {
-                return new VirtualFile();
-            }
-            //获取默认图像的高度，宽度
-            return new VirtualFile().setSize(available);
-        } catch (Exception e) {
-            throw new ServiceException("获取图片信息发生异常！{}", e.getMessage());
-        }
-    }
-
     /**
      * 添加分片并返回是否全部写入完毕
      *

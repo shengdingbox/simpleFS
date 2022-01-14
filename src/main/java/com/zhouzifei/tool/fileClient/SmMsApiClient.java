@@ -3,6 +3,7 @@ package com.zhouzifei.tool.fileClient;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.ServiceException;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
 import com.zhouzifei.tool.util.FileUtil;
@@ -17,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,7 +58,7 @@ public class SmMsApiClient extends BaseApiClient {
 }
 
     @Override
-    public VirtualFile uploadFile(InputStream is, String imageUrl) {
+    public String uploadInputStream(InputStream is, String imageUrl) {
         this.check();
         Date startTime = new Date();
         try (InputStream uploadIs = StreamUtil.clone(is);
@@ -126,14 +128,7 @@ public class SmMsApiClient extends BaseApiClient {
             final Object data = parse.get("data");
             final JSONObject dataJosn = JSONObject.parseObject((String) data);
             final Object newFileUrl = dataJosn.get("url");
-            return new VirtualFile()
-                    .setOriginalFileName(FileUtil.getName(imageUrl))
-                    .setSuffix(this.suffix)
-                    .setUploadStartTime(startTime)
-                    .setUploadEndTime(new Date())
-                    .setFilePath(this.newFileName)
-                    .setFileHash(DigestUtils.md5DigestAsHex(fileHashIs))
-                    .setFullFilePath((String) newFileUrl);
+            return imageUrl;
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
@@ -147,6 +142,16 @@ public class SmMsApiClient extends BaseApiClient {
     @Override
     public VirtualFile multipartUpload(InputStream inputStream, MetaDataRequest metaDataRequest) {
         throw new ServiceException("[" + this.storageType + "]文件上传失败：该上传类型不支持分片上传");
+    }
+
+    @Override
+    public List<VirtualFile> fileList(FileListRequesr fileListRequesr){
+        return null;
+    }
+
+    @Override
+    public boolean exists(String fileName) {
+        return false;
     }
 
     @Override

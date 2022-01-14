@@ -17,6 +17,6 @@ public class MetaDataRequest implements Serializable {
     private Integer chunks;
     private Integer chunkSize;
     private Integer chunkCurr;
-    private Integer name;
+    private String name;
     private Long size;
 }

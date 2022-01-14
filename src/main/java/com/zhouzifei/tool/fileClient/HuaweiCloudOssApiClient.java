@@ -8,6 +8,7 @@ import com.obs.services.model.PutObjectResult;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.RandomsUtil;
@@ -18,7 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author 周子斐
@@ -35,44 +38,21 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
         super("华为云");
     }
 
-    public HuaweiCloudOssApiClient init(String accessKey, String secretKey, String endpoint, String bucketName, String baseUrl) {
+    public HuaweiCloudOssApiClient init(String accessKey, String secretKey, String endpoint, String bucketName, String domainUrl) {
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(endpoint)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置华为云，文件上传功能暂时不可用！");
         }
         // 创建ObsClient实例
         obsClient = new ObsClient(accessKey, secretKey, endpoint);
         this.bucket = bucketName;
-        this.path = baseUrl;
+        this.path = checkDomainUrl(domainUrl);
         return this;
     }
 
     @Override
-    public VirtualFile uploadFile(InputStream is, String fileName) {
-        try {
-            Date startTime = new Date();
-            final boolean exist = obsClient.doesObjectExist(bucket, fileName);
-            if(exist){
-                this.suffix = FileUtil.getSuffix(fileName);
-                fileName = RandomsUtil.alpha(16) + this.suffix;
-            }
-            this.createNewFileName(fileName);
-            PutObjectResult putObjectResult = obsClient.putObject(bucket, this.newFileName, is);
-            return new VirtualFile()
-                    .setOriginalFileName(fileName)
-                    .setSuffix(this.suffix)
-                    .setUploadStartTime(startTime)
-                    .setUploadEndTime(new Date())
-                    .setFilePath(this.newFileName)
-                    .setFileHash(putObjectResult.getObjectUrl())
-                    .setFullFilePath(this.path + this.newFileName);
-        } finally {
-            try {
-                obsClient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
+    public String uploadInputStream(InputStream is, String fileName) {
+        PutObjectResult putObjectResult = obsClient.putObject(bucket, this.newFileName, is);
+        return putObjectResult.getObjectKey();
     }
 
     @Override
@@ -80,8 +60,7 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
         if (StringUtils.isNullOrEmpty(fileName)) {
             throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
-        final boolean exist = obsClient.doesObjectExist(bucket, fileName);
-        if(!exist){
+        if(!exists(fileName)){
             throw new ServiceException("[阿里云OSS] 文件删除失败！文件不存在：" + bucket + "/" + fileName);
         }
         // 删除文件
@@ -97,6 +76,16 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
     @Override
     public CheckFileResult checkFile(MetaDataRequest metaDataRequest, HttpServletRequest request) {
         return null;
+    }
+
+    @Override
+    public List<VirtualFile> fileList(FileListRequesr fileListRequesr){
+        return null;
+    }
+
+    @Override
+    public boolean exists(String fileName) {
+        return obsClient.doesObjectExist(bucket, fileName);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.ServiceException;
 import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
 import com.zhouzifei.tool.util.FileUtil;
@@ -13,13 +14,11 @@ import com.zhouzifei.tool.util.StringUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,10 +74,8 @@ public class XMLYApiClient extends BaseApiClient {
     }
 
     @Override
-    public VirtualFile uploadFile(InputStream inputStream, String fileName) {
-        try (InputStream uploadIs = StreamUtil.clone(inputStream); InputStream fileHashIs = StreamUtil.clone(inputStream)) {
-            final String suffix = FileUtil.getSuffix(fileName);
-            final Date startTime = new Date();
+    public String uploadInputStream(InputStream inputStream, String fileName) {
+        try (InputStream uploadIs = StreamUtil.clone(inputStream)) {
             Map<String, String> hears = new HashMap<>();
             hears.put("Cookie", token);
             String result = HttpUtils.postFile(requestUrl, hears, "file", uploadIs, fileName);
@@ -99,9 +96,8 @@ public class XMLYApiClient extends BaseApiClient {
             if (null == url) {
                 throw new RuntimeException();
             }
-            final String url1 = (String) ((JSONObject) url).get("url");
-            final String filePath = (String) ((JSONObject) url).get("dfsId");
-            return new VirtualFile().setOriginalFileName(fileName).setSuffix(suffix).setUploadStartTime(startTime).setUploadEndTime(new Date()).setFilePath(filePath).setFileHash(DigestUtils.md5DigestAsHex(fileHashIs)).setFullFilePath(url1).setSize(fileHashIs.available());
+            this.newFileUrl = (String) ((JSONObject) url).get("url");
+            return  (String) ((JSONObject) url).get("dfsId");
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
@@ -134,6 +130,16 @@ public class XMLYApiClient extends BaseApiClient {
     @Override
     public VirtualFile resumeUpload(InputStream inputStream, String fileName) {
         return null;
+    }
+
+    @Override
+    public List<VirtualFile> fileList(FileListRequesr fileListRequesr){
+        return null;
+    }
+
+    @Override
+    public boolean exists(String fileName) {
+        return false;
     }
 
     public static void main(String[] args) {

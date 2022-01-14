@@ -6,13 +6,17 @@ import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.listener.ProgressListener;
+import com.zhouzifei.tool.media.file.util.StreamUtil;
 import com.zhouzifei.tool.service.ApiClient;
 import com.zhouzifei.tool.util.FileUtil;
+import com.zhouzifei.tool.util.RandomsUtil;
 import com.zhouzifei.tool.util.StringUtils;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.util.Date;
 
 /**
  * @author 周子斐 (17600004572@163.com)
@@ -23,10 +27,11 @@ import java.io.*;
 public abstract class BaseApiClient implements ApiClient {
 
     protected String storageType;
-    protected String folder = "/";
+    protected String folder = "";
     public ProgressListener progressListener = newListener();
     protected String suffix;
     protected String newFileName;
+    protected String newFileUrl;
     protected final Object LOCK = new Object();
     protected final FileCacheEngine cacheEngine = new FileCacheEngine();
     protected static final String SLASH = "/";
@@ -64,10 +69,7 @@ public abstract class BaseApiClient implements ApiClient {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：文件不可为空");
         }
         try {
-            VirtualFile res = this.uploadFile(file.getInputStream(), file.getOriginalFilename());
-            VirtualFile imageInfo = FileUtil.getInfo(file);
-            return res.setSize(imageInfo.getSize())
-                    .setOriginalFileName(file.getOriginalFilename());
+            return this.uploadFile(file.getInputStream(), file.getOriginalFilename());
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
@@ -79,12 +81,22 @@ public abstract class BaseApiClient implements ApiClient {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：文件不可为空");
         }
         try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
-            VirtualFile res = this.uploadFile(is, file.getName());
-            VirtualFile imageInfo = FileUtil.getInfo(file);
-            return res.setSize(imageInfo.getSize())
-                    .setOriginalFileName(file.getName());
+            return this.uploadFile(is, file.getName());
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
+        }
+    }
+
+    @Override
+    public VirtualFile uploadFile(InputStream is, String imageUrl) {
+        Date startTime = new Date();
+        this.checkName();
+        try (InputStream uploadIs = StreamUtil.clone(is);
+             InputStream fileHashIs = StreamUtil.clone(is)) {
+            final String filePath = this.uploadInputStream(uploadIs, imageUrl);
+            return VirtualFile.builder().originalFileName(this.newFileName).suffix(this.suffix).uploadStartTime(startTime).uploadEndTime(new Date()).filePath(filePath).fileHash(DigestUtils.md5DigestAsHex(fileHashIs)).fullFilePath(this.newFileUrl).build();
+        } catch (IOException ex) {
+            throw new ServiceException("[" + this.storageType + "]文件上传失败：" + ex.getMessage());
         }
     }
 
@@ -108,17 +120,31 @@ public abstract class BaseApiClient implements ApiClient {
 
     protected abstract void check();
 
+    protected  void checkName() {
+        this.check();
+        if(StringUtils.isEmpty(this.newFileName)||exists(this.newFileName)){
+            createNewFileName();
+        }
+    }
+
+    protected abstract String uploadInputStream(InputStream is, String fileName);
+
     @Override
     public void downloadFileToLocal(String key, String localFile) {
+        this.check();
         InputStream content = this.downloadFileStream(key);
         String saveFile = localFile + key;
         FileUtil.mkdirs(saveFile);
         FileUtil.down(content, saveFile);
     }
 
-    void createNewFileName(String fileName) {
-        this.suffix = "." + FileUtil.getSuffix(fileName);
-        this.newFileName = folder + fileName;
+    void createNewFileName() {
+        this.suffix = "." + FileUtil.getSuffix(this.newFileName);
+        this.newFileName = folder + RandomsUtil.alpha(16) + suffix;
+    }
+
+    String checkDomainUrl(String domainUrl) {
+        return domainUrl.endsWith("/") ? domainUrl : domainUrl + "/";
     }
 
     @Override
@@ -138,10 +164,7 @@ public abstract class BaseApiClient implements ApiClient {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：文件不可为空");
         }
         try {
-            VirtualFile res = this.multipartUpload(file.getInputStream(), metaDataRequest);
-            VirtualFile imageInfo = FileUtil.getInfo(file);
-            return res.setSize(imageInfo.getSize())
-                    .setOriginalFileName(file.getOriginalFilename());
+            return this.multipartUpload(file.getInputStream(), metaDataRequest);
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }

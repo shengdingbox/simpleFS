@@ -10,16 +10,19 @@ import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.consts.UpLoadConstant;
 import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 import static com.zhouzifei.tool.consts.UpLoadConstant.ZERO_INT;
@@ -50,14 +53,12 @@ public class FastDfsOssApiClient extends BaseApiClient {
             throw new ServiceException("[" + this.storageType + "]尚未配置阿里云FastDfs，文件上传功能暂时不可用！");
         }
         this.serverUrl = serverUrl;
-        this.domainUrl = domainUrl;
+        this.domainUrl = checkDomainUrl(domainUrl);
         return this;
     }
 
     @Override
-    public VirtualFile uploadFile(InputStream is, String fileName) {
-        Date startTime = new Date();
-        createNewFileName(fileName);
+    public String uploadInputStream(InputStream is, String fileName) {
         try {
             //tracker 客户端
             TrackerClient trackerClient = new TrackerClient();
@@ -70,8 +71,7 @@ public class FastDfsOssApiClient extends BaseApiClient {
             byte[] bytes = IOUtils.toByteArray(is);
             final String suffix = FileUtil.getSuffix(fileName);
             String[] txts = storageClient.upload_file(bytes, suffix, nameValuePairs);
-            final String fullPath = String.join("/", txts);
-            return new VirtualFile().setOriginalFileName(this.newFileName).setSuffix(this.suffix).setUploadStartTime(startTime).setUploadEndTime(new Date()).setFilePath(fullPath).setFullFilePath(this.domainUrl + "/" + fullPath);
+            return String.join("/", txts);
         } catch (IOException var6) {
             log.info("上传失败,失败原因{}", var6.getMessage());
             throw new ServiceException("文件上传异常!");
@@ -157,9 +157,30 @@ public class FastDfsOssApiClient extends BaseApiClient {
     }
 
     @Override
+    public List<VirtualFile> fileList(FileListRequesr fileListRequesr){
+        //tracker 客户端
+        TrackerClient trackerClient = new TrackerClient();
+        TrackerServer trackerServer = null;
+        try {
+            trackerServer = trackerClient.getTrackerServer();//创建StorageClient 对象
+            StorageClient storageClient = new StorageClient(trackerServer);
+            //FileInfo fileInfo = storageClient.(group, filePath);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean exists(String fileName) {
+        return false;
+    }
+
+    @Override
     public VirtualFile multipartUpload(InputStream inputStream, MetaDataRequest metaDataRequest) {
         Date startTime = new Date();
-        final Integer name = metaDataRequest.getName();
+        final String name = metaDataRequest.getName();
         final Integer chunkSize = metaDataRequest.getChunkSize();
         final Integer chunk = metaDataRequest.getChunk();
         final Integer chunks = metaDataRequest.getChunks();
@@ -195,7 +216,14 @@ public class FastDfsOssApiClient extends BaseApiClient {
                 final Object o = cacheEngine.get(storageType, fileMd5);
                 cacheEngine.remove(storageType, fileMd5);
                 final String filePath = UpLoadConstant.DEFAULT_GROUP + SLASH + o;
-                return new VirtualFile().setOriginalFileName(String.valueOf(name)).setFileHash(fileMd5).setSuffix(this.suffix).setUploadStartTime(startTime).setUploadEndTime(new Date()).setFilePath(filePath).setFullFilePath(this.serverUrl + filePath);
+                return VirtualFile.builder()
+                        .originalFileName(FileUtil.getName(String.valueOf(name)))
+                        .suffix(this.suffix)
+                        .uploadStartTime(startTime)
+                        .uploadEndTime(new Date())
+                        .filePath(this.newFileName)
+                        .fileHash(null)
+                        .fullFilePath(this.domainUrl + this.newFileName).build();
             }
         } catch (IOException e) {
             e.printStackTrace();

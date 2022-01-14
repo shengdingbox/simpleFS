@@ -2,12 +2,15 @@ package com.zhouzifei.tool.service;
 
 import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 /**
  * 
@@ -101,6 +104,15 @@ public interface ApiClient {
      * @return 断点续传
      */
     abstract CheckFileResult checkFile(MetaDataRequest metaDataRequest, HttpServletRequest request);
+    /**
+     * InputStream
+     * @param metaDataRequest 文件
+     * @param request 文件名称
+     * @return 断点续传
+     */
+    abstract List<VirtualFile> fileList(FileListRequesr fileListRequesr);
+
+    boolean exists(String fileName);
 
 
 }

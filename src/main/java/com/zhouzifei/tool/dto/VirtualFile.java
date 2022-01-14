@@ -3,6 +3,7 @@ package com.zhouzifei.tool.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,6 +15,7 @@ import lombok.EqualsAndHashCode;
  * @since 1.0
  */
 @Data
+@Builder
 @EqualsAndHashCode(callSuper = false)
 public class VirtualFile implements Serializable {
     /**

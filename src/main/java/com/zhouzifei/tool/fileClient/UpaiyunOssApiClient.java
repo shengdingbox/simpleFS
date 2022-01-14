@@ -4,14 +4,15 @@ package com.zhouzifei.tool.fileClient;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.common.upaiyun.UpaiManager;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
-import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
+import okhttp3.Response;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -24,39 +25,33 @@ public class UpaiyunOssApiClient extends BaseApiClient {
 
 
     private UpaiManager upaiManager;
-    private String baseUrl;
+    private String domainUrl;
 
     public UpaiyunOssApiClient() {
         super("又拍云");
     }
 
-    public UpaiyunOssApiClient init(String operatorName, String operatorPwd, String bucketName, String baseUrl) {
+    public UpaiyunOssApiClient init(String operatorName, String operatorPwd, String bucketName, String domainUrl) {
         if (StringUtils.isNullOrEmpty(operatorName) || StringUtils.isNullOrEmpty(operatorPwd) || StringUtils.isNullOrEmpty(bucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置又拍云，文件上传功能暂时不可用！");
         }
         upaiManager = new UpaiManager(bucketName, operatorName, operatorPwd);
-        this.baseUrl = baseUrl;
+        this.domainUrl = checkDomainUrl(domainUrl);
         return this;
     }
     @Override
-    public VirtualFile uploadFile(InputStream is, String imageUrl) {
+    public String uploadInputStream(InputStream is, String imageUrl) {
         // 切换 API 接口的域名接入点，默认为自动识别接入点
         upaiManager.setApiDomain(UpaiManager.ED_AUTO);
         // 设置连接超时时间，默认为30秒
         upaiManager.setTimeout(60);
-        Date startTime = new Date();
-        String key = FileUtil.generateTempFileName(imageUrl);
-        this.createNewFileName(key);
         try {
             Map<String, String> param = new HashMap<>();
-            upaiManager.writeFile(this.newFileName,is,param);
-            return new VirtualFile()
-                    .setOriginalFileName(key)
-                    .setSuffix(this.suffix)
-                    .setUploadStartTime(startTime)
-                    .setUploadEndTime(new Date())
-                    .setFilePath(this.newFileName)
-                    .setFullFilePath(this.baseUrl + this.newFileName);
+            final Response response = upaiManager.writeFile(this.newFileName, is, param);
+            if(!response.isSuccessful()){
+                throw new ServiceException("[" + this.storageType + "]文件上传失败.");
+            }
+            return this.newFileName;
         } catch (IOException ex) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + ex.getMessage());
         }
@@ -67,7 +62,6 @@ public class UpaiyunOssApiClient extends BaseApiClient {
         if (StringUtils.isNullOrEmpty(key)) {
             throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
-        // 删除文件
         try {
             upaiManager.deleteFile(key, null);
             return true;
@@ -81,6 +75,20 @@ public class UpaiyunOssApiClient extends BaseApiClient {
     }
 
     @Override
+    public List<VirtualFile> fileList(FileListRequesr fileListRequesr){
+        return null;
+    }
+
+    @Override
+    public boolean exists(String fileName) {
+        try (Response response = upaiManager.getFileInfo(domainUrl + fileName)) {
+            return StringUtils.isNotBlank(response.header("x-upyun-file-size"));
+        } catch (IOException e) {
+            throw new ServiceException("判断文件是否存在失败！fileInfo：" + fileName);
+        }
+    }
+
+    @Override
     protected void check() {
 
     }
@@ -91,7 +99,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
             throw new ServiceException("[" + this.storageType + "]下载文件失败：文件key为空");
         }
         try {
-            return Objects.requireNonNull(upaiManager.readFile(baseUrl + key).body()).byteStream();
+            return Objects.requireNonNull(upaiManager.readFile(domainUrl + key).body()).byteStream();
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件下载失败：" + e.getMessage());
         }

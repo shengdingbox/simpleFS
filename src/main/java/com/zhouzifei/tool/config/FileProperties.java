@@ -1,13 +1,10 @@
 package com.zhouzifei.tool.config;
 
-import com.zhouzifei.tool.consts.StorageTypeConst;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * @author 周子斐 (17600004572@163.com)

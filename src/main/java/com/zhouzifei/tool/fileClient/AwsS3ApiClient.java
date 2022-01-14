@@ -1,10 +1,14 @@
 package com.zhouzifei.tool.fileClient;
 
-import com.aliyun.oss.OSS;
-import com.aliyun.oss.OSSClient;
-import com.aliyun.oss.OSSClientBuilder;
-import com.aliyun.oss.ServiceException;
-import com.aliyun.oss.model.*;
+
+import com.amazonaws.SdkClientException;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.*;
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
@@ -14,7 +18,6 @@ import com.zhouzifei.tool.media.file.util.StreamUtil;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.RandomsUtil;
 import com.zhouzifei.tool.util.StringUtils;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -28,44 +31,42 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * @author 周子斐 (17600004572@163.com)
- * @version 1.0
- * @remark 2019年7月23日
- * @since 1.0
+ * @author 周子斐
+ * @date 2022/1/14
+ * @Description
  */
-@Slf4j
-public class AliyunOssApiClient extends BaseApiClient {
-
-    private OSS client;
-    private String domainUrl;
-    private String bucketName;
-    private String endpoint;
+public class AwsS3ApiClient extends BaseApiClient {
     private String accessKey;
     private String secretKey;
+    private String region;
+    private String endpoint;
+    private String bucketName;
+    private String domainUrl;
+    private AmazonS3 amazonS3;
 
-    public AliyunOssApiClient() {
-        super("阿里云OSS");
+    public AwsS3ApiClient() {
+        super("AWS-S3");
     }
 
-    public AliyunOssApiClient init(String endpoint, String accessKey, String secretKey, String domainUrl, String bucketName) {
+    public AwsS3ApiClient init(String endpoint, String accessKey, String secretKey, String domainUrl, String bucketName, String region) {
         this.domainUrl = checkDomainUrl(domainUrl);
         this.bucketName = bucketName;
         this.endpoint = endpoint;
         this.accessKey = accessKey;
         this.secretKey = secretKey;
+        this.region = region;
         return this;
     }
 
     @Override
     public String uploadInputStream(InputStream is, String imageUrl) {
-        this.check();
         try (InputStream uploadIs = StreamUtil.clone(is)) {
-            this.client.putObject(bucketName, this.newFileName, uploadIs);
-            return  newFileName;
+            amazonS3.putObject(bucketName, imageUrl, uploadIs, null);
+            return this.newFileName;
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         } finally {
-            this.client.shutdown();
+            this.amazonS3.shutdown();
         }
     }
     /**
@@ -80,19 +81,19 @@ public class AliyunOssApiClient extends BaseApiClient {
             throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
         try {
-            boolean exists = this.client.doesBucketExist(bucketName);
+            boolean exists = this.amazonS3.doesBucketExist(bucketName);
             if (!exists) {
                 throw new ServiceException("[阿里云OSS] 文件删除失败！Bucket不存在：" + bucketName);
             }
-            if (!this.client.doesObjectExist(bucketName, fileName)) {
+            if (!this.amazonS3.doesObjectExist(bucketName, fileName)) {
                 throw new ServiceException("[阿里云OSS] 文件删除失败！文件不存在：" + bucketName + "/" + fileName);
             }
-            this.client.deleteObject(bucketName, fileName);
+            this.amazonS3.deleteObject(bucketName, fileName);
             return true;
         } catch (Exception e) {
             throw new ServiceException(e.getMessage());
         } finally {
-            this.client.shutdown();
+            this.amazonS3.shutdown();
         }
     }
 
@@ -109,7 +110,7 @@ public class AliyunOssApiClient extends BaseApiClient {
             final Object o = super.cacheEngine.get(storageType, md5);
             if (Objects.isNull(o)) {
                 InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest(bucketName, name);
-                InitiateMultipartUploadResult initiateMultipartUploadResult = client.initiateMultipartUpload(request);
+                InitiateMultipartUploadResult initiateMultipartUploadResult = amazonS3.initiateMultipartUpload(request);
                 cacheEngine.add(storageType, md5, initiateMultipartUploadResult.getUploadId());
                 cacheEngine.add(storageType, md5 + SLASH + name, name);
                 cacheEngine.add(storageType, md5 + SLASH + TAG, new CopyOnWriteArrayList<>());
@@ -125,12 +126,12 @@ public class AliyunOssApiClient extends BaseApiClient {
         // 设置分片号。每一个上传的分片都有一个分片号，取值范围是1~10000，如果超出此范围，OSS将返回InvalidArgument错误码。
         uploadPartRequest.setPartNumber(chunk + ONE_INT);
         // 每个分片不需要按顺序上传，甚至可以在不同客户端上传，OSS会按照分片号排序组成完整的文件。
-        UploadPartResult uploadPartResult = client.uploadPart(uploadPartRequest);
+        UploadPartResult uploadPartResult = amazonS3.uploadPart(uploadPartRequest);
         // 每次上传分片之后，OSS的返回结果包含PartETag。PartETag将被保存在partETags中。
         ((CopyOnWriteArrayList) cacheEngine.get(storageType, md5 + SLASH + TAG)).add(uploadPartResult.getPartETag());
         // 关闭OSSClient。
-        client.shutdown();
-        VirtualFile virtualFile =  VirtualFile.builder()
+        amazonS3.shutdown();
+        final VirtualFile virtualFile = VirtualFile.builder()
                 .originalFileName(this.newFileName)
                 .suffix(this.suffix)
                 .uploadStartTime(startDate)
@@ -158,60 +159,65 @@ public class AliyunOssApiClient extends BaseApiClient {
         // 设置最大个数。
         final int maxKeys = 200;
         String nextContinuationToken = null;
-        ListObjectsV2Result result = null;
         // 指定前缀，例如exampledir/object。
         final String keyPrefix = fileListRequesr.getPrefix();
+        ListObjectsV2Result result = null;
         List<VirtualFile> virtualFiles = new ArrayList<>();
         // 指定返回结果使用URL编码，则您需要对结果中的prefix、delemiter、startAfter、key和commonPrefix进行URL解码。
         do {
-            ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request(bucketName).withMaxKeys(maxKeys);
-            listObjectsV2Request.setPrefix(keyPrefix);
-            listObjectsV2Request.setEncodingType("url");
-            listObjectsV2Request.setContinuationToken(nextContinuationToken);
-            result = client.listObjectsV2(listObjectsV2Request);
+            result = amazonS3.listObjectsV2(bucketName);
             // 文件名称解码。
-            for (OSSObjectSummary s : result.getObjectSummaries()) {
+            for (S3ObjectSummary s3ObjectSummary : result.getObjectSummaries()) {
                 String decodedKey = null;
                 try {
-                    decodedKey = URLDecoder.decode(s.getKey(), "UTF-8");
+                    decodedKey = URLDecoder.decode(s3ObjectSummary.getKey(), "UTF-8");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                VirtualFile virtualFile =  VirtualFile.builder()
+                VirtualFile virtualFile = VirtualFile.builder()
                         .originalFileName(decodedKey)
                         .suffix(this.suffix)
-                        .uploadStartTime(s.getLastModified())
-                        .uploadEndTime(s.getLastModified())
+                        .uploadStartTime(s3ObjectSummary.getLastModified())
+                        .uploadEndTime(s3ObjectSummary.getLastModified())
                         .filePath(this.newFileName)
-                        .size(s.getSize())
-                        .fileHash(s.getETag())
-                        .fullFilePath(domainUrl+decodedKey)
-                        .build();
+                        .size(s3ObjectSummary.getSize())
+                        .fileHash(s3ObjectSummary.getETag())
+                        .fullFilePath(domainUrl + decodedKey).build();
                 virtualFiles.add(virtualFile);
             }
             nextContinuationToken = result.getNextContinuationToken();
         } while (result.isTruncated());
         // 关闭OSSClient。
-        client.shutdown();
+        amazonS3.shutdown();
         return virtualFiles;
     }
 
     @Override
-    protected void check() {
-        final OSSClientBuilder ossClientBuilder = new OSSClientBuilder();
-        if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
-            throw new ServiceException("[" + this.storageType + "]尚未配置阿里云，文件上传功能暂时不可用！");
-        }
-        this.client =ossClientBuilder.build(endpoint, accessKey, secretKey);
-        boolean bucketExist = client.doesBucketExist(bucketName);
-        if (!bucketExist) {
-            client.createBucket(bucketName);
-        }
+    public boolean exists(String fileName) {
+        return amazonS3.doesObjectExist(bucketName, domainUrl + folder + fileName);
     }
 
     @Override
-    public boolean exists(String fileName) {
-        return client.doesObjectExist(bucketName,fileName);
+    protected void check() {
+        if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
+            throw new ServiceException("[" + this.storageType + "]尚未配置阿里云，文件上传功能暂时不可用！");
+        }
+        AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard()
+                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)));
+        if (StringUtils.isNotBlank(endpoint)) {
+            builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region));
+        } else if (StringUtils.isNotBlank(region)) {
+            builder.withRegion(region);
+        }
+        this.amazonS3 = builder.build();
+        try {
+            final boolean bucketExist = amazonS3.doesBucketExistV2(bucketName);
+            if (!bucketExist) {
+                amazonS3.createBucket(bucketName);
+            }
+        } catch (SdkClientException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -226,17 +232,17 @@ public class AliyunOssApiClient extends BaseApiClient {
             throw new ServiceException("[" + this.storageType + "]下载文件失败：文件key为空");
         }
         try {
-            boolean exists = this.client.doesBucketExist(bucketName);
+            boolean exists = this.amazonS3.doesBucketExist(bucketName);
             if (!exists) {
                 throw new ServiceException("[阿里云OSS] 文件删除失败！Bucket不存在：" + bucketName);
             }
-            if (!this.client.doesObjectExist(bucketName, fileName)) {
+            if (!this.amazonS3.doesObjectExist(bucketName, fileName)) {
                 throw new ServiceException("[阿里云OSS] 文件下载失败！文件不存在：" + bucketName + "/" + fileName);
             }
-            OSSObject object = this.client.getObject(bucketName, fileName);
+            final S3Object object = this.amazonS3.getObject(bucketName, fileName);
             return object.getObjectContent();
         } finally {
-            this.client.shutdown();
+            this.amazonS3.shutdown();
         }
     }
 }

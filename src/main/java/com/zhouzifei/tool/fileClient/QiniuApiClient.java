@@ -9,19 +9,19 @@ import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
+import com.qiniu.storage.model.FileInfo;
 import com.qiniu.util.Auth;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.util.FileUtil;
-import com.zhouzifei.tool.util.RandomsUtil;
 import com.zhouzifei.tool.util.StringUtils;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Date;
+import java.util.List;
 
 /**
  * Qiniu云操作文件的api：v1
@@ -36,19 +36,19 @@ public class QiniuApiClient extends BaseApiClient {
     private BucketManager bucketManager;
     private Auth auth;
     private String bucket;
-    private String baseUrl;
+    private String domainUrl;
 
     public QiniuApiClient() {
         super("七牛云");
     }
 
-    public QiniuApiClient init(String accessKey, String secretKey, String bucketName, String baseUrl) {
+    public QiniuApiClient init(String accessKey, String secretKey, String bucketName, String domainUrl) {
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
         }
         auth = Auth.create(accessKey, secretKey);
         this.bucket = bucketName;
-        this.baseUrl = baseUrl;
+        this.domainUrl = checkDomainUrl(domainUrl);
         return this;
     }
 
@@ -60,31 +60,19 @@ public class QiniuApiClient extends BaseApiClient {
      * @return 上传后的路径
      */
     @Override
-    public VirtualFile uploadFile(InputStream is, String fileName) {
-        Date startTime = new Date();
+    public String uploadInputStream(InputStream is, String fileName) {
         //Zone.zone0:华东
         //Zone.zone1:华北
         //Zone.zone2:华南
         //Zone.zoneNa0:北美
         Configuration cfg = new Configuration(Region.autoRegion());
         UploadManager uploadManager = new UploadManager(cfg);
-        this.suffix = FileUtil.getSuffix(fileName);
-        fileName = RandomsUtil.alpha(16) + this.suffix;
-        this.createNewFileName(fileName);
         try {
             String upToken = auth.uploadToken(this.bucket);
             Response response = uploadManager.put(is, this.newFileName, upToken, null, null);
-
             //解析上传成功的结果
             DefaultPutRet putRet = JSON.parseObject(response.bodyString(), DefaultPutRet.class);
-            return new VirtualFile()
-                    .setOriginalFileName(fileName)
-                    .setSuffix(this.suffix)
-                    .setUploadStartTime(startTime)
-                    .setUploadEndTime(new Date())
-                    .setFilePath(putRet.key)
-                    .setFileHash(putRet.hash)
-                    .setFullFilePath(this.baseUrl + putRet.key);
+            return putRet.key;
         } catch (QiniuException ex) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + ex.error());
         }
@@ -113,8 +101,22 @@ public class QiniuApiClient extends BaseApiClient {
         return null;
     }
 
-    public String getPath() {
-        return this.baseUrl;
+    @Override
+    public List<VirtualFile> fileList(FileListRequesr fileListRequesr){
+        return null;
+    }
+
+    @Override
+    public boolean exists(String fileName) {
+        try {
+            FileInfo stat = bucketManager.stat(bucket,domainUrl + fileName);
+            if (stat != null && stat.md5 != null) {
+                return true;
+            }
+        } catch (QiniuException e) {
+            throw new ServiceException("查询文件是否存在失败！" + e.code() + "，" + e.response.toString());
+        }
+        return false;
     }
 
     @Override
@@ -126,12 +128,12 @@ public class QiniuApiClient extends BaseApiClient {
     public InputStream downloadFileStream(String key) {
         try {
             String encodedFileName = URLEncoder.encode(key, "utf-8").replace("+", "%20");
-            String publicUrl = String.format("%s/%s", getPath(), encodedFileName);
+            String publicUrl = String.format("%s/%s", domainUrl, encodedFileName);
             long expireInSeconds = 3600;
             String finalUrl = auth.privateDownloadUrl(publicUrl, expireInSeconds);
             return FileUtil.getInputStreamByUrl(finalUrl, "");
         } catch (UnsupportedEncodingException e) {
-            throw new ServiceException("[" + this.storageType + "]下载文件发生异常：" + e.toString());
+            throw new ServiceException("[" + this.storageType + "]下载文件发生异常：" + e);
         }
     }
 }
