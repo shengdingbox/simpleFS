@@ -19,9 +19,7 @@ public class WebExceptionHandler {
 
 
     @ExceptionHandler({ServiceException.class})
-    @ResponseStatus(
-            code = HttpStatus.OK
-    )
+    @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
     public Response<?> handleServiceException(HttpServletRequest request, ServiceException e) {
         log.error("error ", e);
@@ -29,18 +27,14 @@ public class WebExceptionHandler {
     }
 
     @ExceptionHandler({Exception.class})
-    @ResponseStatus(
-            code = HttpStatus.INTERNAL_SERVER_ERROR
-    )
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public Response<?> defaultExceptionHandler(HttpServletRequest request, Exception e) {
         log.error("error ", e);
         return Response.code("999999").withMessage("internal error");
     }
 
-    @ResponseStatus(
-            code = HttpStatus.OK
-    )
+    @ResponseStatus(code = HttpStatus.OK)
     @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseBody
     public Response<?> methodArgumentNotValidException(MethodArgumentNotValidException e) {
@@ -52,7 +46,6 @@ public class WebExceptionHandler {
             FieldError fieldError = (FieldError)var4.next();
             firstErrorMsg = fieldError.getDefaultMessage();
         }
-
         return Response.code("999998").withMessage(firstErrorMsg);
     }
 

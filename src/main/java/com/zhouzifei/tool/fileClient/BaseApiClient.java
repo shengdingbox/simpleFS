@@ -114,7 +114,7 @@ public abstract class BaseApiClient implements ApiClient {
             }
             return this.uploadFile(is, fileName);
         } catch (Exception e) {
-            throw new ServiceException(e.getMessage());
+            throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
     }
 
@@ -153,9 +153,8 @@ public abstract class BaseApiClient implements ApiClient {
             FileInputStream fileInputStream = new FileInputStream(file);
             return this.multipartUpload(fileInputStream, metaDataRequest);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
-        return null;
     }
 
     @Override

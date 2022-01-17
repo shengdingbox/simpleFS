@@ -3,7 +3,6 @@ package com.zhouzifei.tool.fileClient;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.ServiceException;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
@@ -11,12 +10,12 @@ import com.zhouzifei.tool.media.file.util.StreamUtil;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.HttpUtils;
 import com.zhouzifei.tool.util.StringUtils;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.security.Key;
-import java.util.Date;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,7 @@ import java.util.Map;
 public class XMLYApiClient extends BaseApiClient {
 
     private static String token;
-    private String requestUrl = "https://upload.ximalaya.com/dtres/headerThumb/upload";
+    private final String requestUrl = "https://upload.ximalaya.com/dtres/headerThumb/upload";
 
     public XMLYApiClient() {
         super("喜马拉雅");
