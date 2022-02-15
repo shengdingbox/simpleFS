@@ -1,7 +1,6 @@
 package com.zhouzifei.tool.fileClient;
 
 import com.aliyun.oss.OSS;
-import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.ServiceException;
 import com.aliyun.oss.model.*;
@@ -11,8 +10,6 @@ import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
-import com.zhouzifei.tool.util.FileUtil;
-import com.zhouzifei.tool.util.RandomsUtil;
 import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -177,12 +174,19 @@ public class AliyunOssApiClient extends BaseApiClient {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
+                assert decodedKey != null;
+                if(decodedKey.contains("/")){
+                    final String[] split = decodedKey.split("");
+                    this.newFileName = split[split.length-1];
+                }else{
+                    this.newFileName = decodedKey;
+                }
                 VirtualFile virtualFile =  VirtualFile.builder()
-                        .originalFileName(decodedKey)
+                        .originalFileName(this.newFileName)
                         .suffix(this.suffix)
                         .uploadStartTime(s.getLastModified())
                         .uploadEndTime(s.getLastModified())
-                        .filePath(this.newFileName)
+                        .filePath(decodedKey)
                         .size(s.getSize())
                         .fileHash(s.getETag())
                         .fullFilePath(domainUrl+decodedKey)

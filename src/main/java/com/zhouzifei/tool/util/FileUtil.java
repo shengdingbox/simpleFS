@@ -38,6 +38,7 @@ import static com.zhouzifei.tool.consts.UpLoadConstant.ZERO_LONG;
 @Slf4j
 public class FileUtil {
     private static final Map<String, AtomicInteger> chunkNumContainer = new ConcurrentHashMap<>();
+
     /**
      * 删除目录，返回删除的文件数
      *
@@ -90,12 +91,14 @@ public class FileUtil {
         index = -1 == index ? fileName.length() : index;
         return fileName.substring(index);
     }
+
     public static String getSuffixName(String fileName) {
         int index = fileName.lastIndexOf(".");
         index = -1 == index ? fileName.length() : index;
         final String substring = fileName.substring(index);
         return substring.replace(".", "");
     }
+
     public static String getSuffixByUrl(String imgUrl) {
         String defaultSuffix = "";
         if (StringUtils.isEmpty(imgUrl)) {
@@ -108,6 +111,7 @@ public class FileUtil {
         String fileSuffix = getSuffix(fileName);
         return StringUtils.isEmpty(fileSuffix) ? defaultSuffix : fileSuffix;
     }
+
     public static String getSuffixNameByUrl(String imgUrl) {
         String defaultSuffix = "";
         if (StringUtils.isEmpty(imgUrl)) {
@@ -120,6 +124,7 @@ public class FileUtil {
         String fileSuffix = getSuffixName(fileName);
         return StringUtils.isEmpty(fileSuffix) ? defaultSuffix : fileSuffix;
     }
+
     public static void mkdirs(String filePath) {
         File file = new File(filePath);
         mkdirs(file);
@@ -135,59 +140,13 @@ public class FileUtil {
         }
     }
 
-    public static void checkFilePath(String realFilePath) {
+    public static File newFiles(String realFilePath) {
         if (StringUtils.isEmpty(realFilePath)) {
-            return;
+            realFilePath = System.getProperty("user.home") + File.separator;
         }
         File parentDir = new File(realFilePath).getParentFile();
-        if (!parentDir.exists()) {
-            parentDir.mkdirs();
-        }
-    }
-
-    //下载视频
-    public static void down(String src, String path, String name) {
-        try {
-            URL url = new URL(src);
-            // 2.获取链接
-            URLConnection conn = url.openConnection();
-            long length = conn.getContentLengthLong();
-            // 3.输入流
-            InputStream inStream = conn.getInputStream();
-            // 3.写入文件
-            File file = new File(path);
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-            String suffix = getSuffixByUrl(src);
-            String saveFile = path + name + suffix;
-            FileOutputStream fs = new FileOutputStream(saveFile);
-            byte[] buffer = new byte[1024];
-            int i = 0, j = 0;
-            int byteRead;
-            while ((byteRead = inStream.read(buffer)) != -1) {
-                i++;
-                fs.write(buffer, 0, byteRead);
-                if (i % 500 == 0) {
-                    j++;
-                    File file2 = new File(saveFile);
-                    //控制输出小数点后的位数
-                    DecimalFormat df = new DecimalFormat("#.##");
-                    float f = (file2.length() / (float) length) * 100;
-                    System.out.print("已下载：" + df.format(f) + "%\t\t");
-                    if (j % 5 == 0) {
-                        log.info("下载完成");
-                    }
-                }
-            }
-            log.info("\n已下载：100.00%");
-            inStream.close();
-            fs.close();
-        } catch (IOException e) {
-            e.toString();
-        } catch (Exception e) {
-            e.toString();
-        }
+        mkdirs(parentDir);
+        return parentDir;
     }
 
     public static String getName(String filePath) {
@@ -214,31 +173,41 @@ public class FileUtil {
         }
     }
 
-    public static InputStream getInputStreamByUrl(String url, String referer) {
-        HttpGet httpGet = new HttpGet(checkUrl(url));
-        httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
-        if (StringUtils.isNotEmpty(referer)) {
-            httpGet.setHeader("referer", referer);
-        }
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        CloseableHttpResponse response = null;
-        InputStream in = null;
+    public static InputStream getInputStreamByUrl(String src, String referer) {
         try {
-            response = httpclient.execute(httpGet);
-            in = response.getEntity().getContent();
-            if (response.getStatusLine().getStatusCode() == 200) {
-                return in;
-            } else {
-                log.error("Error. {}", parseInputStream(in));
-                return null;
+            URL url = new URL(Objects.requireNonNull(checkUrl(src)));
+            // 2.获取链接
+            URLConnection conn = url.openConnection();
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
+            if (StringUtils.isNotEmpty(referer)) {
+                conn.setRequestProperty("referer", referer);
             }
+            // 3.输入流
+            final InputStream inputStream = conn.getInputStream();
+            if (null == inputStream) {
+                HttpGet httpGet = new HttpGet(checkUrl(src));
+                httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
+                if (StringUtils.isNotEmpty(referer)) {
+                    httpGet.setHeader("referer", referer);
+                }
+                CloseableHttpClient httpclient = HttpClients.createDefault();
+                CloseableHttpResponse response = httpclient.execute(httpGet);
+                InputStream in = response.getEntity().getContent();
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    return in;
+                } else {
+                    log.error("Error. {}", parseInputStream(in));
+                    return null;
+                }
+            }
+            return inputStream;
         } catch (IOException e) {
             log.error(e.getMessage(), e);
+            return null;
         }
-        return in;
     }
 
-    private static String parseInputStream(InputStream in) throws IOException {
+    public static String parseInputStream(InputStream in) throws IOException {
         String result = "";
         StringBuilder content = null;
         if (null != in) {
@@ -259,7 +228,7 @@ public class FileUtil {
      * @param url 待校验的url
      */
     public static String checkUrl(String url) {
-        if (!org.apache.commons.lang.StringUtils.isEmpty(url)) {
+        if (StringUtils.isNotEmpty(url)) {
             if (url.startsWith("http://") || url.startsWith("https://")) {
                 return url;
             }
@@ -316,7 +285,7 @@ public class FileUtil {
                 return null;
             }
             fileName = DigestUtils.md5Hex(is);
-            try( FileOutputStream fos = new FileOutputStream(fileName);) {
+            try (FileOutputStream fos = new FileOutputStream(fileName);) {
                 File file = new File(localPath);
                 if (!file.exists()) {
                     file.mkdirs();
@@ -364,6 +333,45 @@ public class FileUtil {
             throw new ServiceException("9999999", "文件下载失败", e);
         }
     }
+
+    //下载视频
+    public static void down(String src, String referer, String path, String name) {
+        String suffix = getSuffixByUrl(src);
+        String saveFile = path + name + suffix;
+        try (InputStream inputStream = getInputStreamByUrl(src, referer); FileOutputStream fs = new FileOutputStream(saveFile)) {
+            // 3.写入文件
+            File file = new File(path);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            if (null == inputStream) {
+                return;
+            }
+            int length = inputStream.available();
+            byte[] buffer = new byte[1024];
+            int i = 0, j = 0;
+            int byteRead;
+            while ((byteRead = inputStream.read(buffer)) != -1) {
+                i++;
+                fs.write(buffer, 0, byteRead);
+                if (i % 500 == 0) {
+                    j++;
+                    File file2 = new File(saveFile);
+                    //控制输出小数点后的位数
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    float f = (file2.length() / (float) length) * 100;
+                    System.out.print("已下载：" + df.format(f) + "%\t\t");
+                    if (j % 5 == 0) {
+                        log.info("下载完成");
+                    }
+                }
+            }
+            log.info("\n已下载：100.00%");
+        } catch (Exception e) {
+            e.toString();
+        }
+    }
+
     /**
      * 添加分片并返回是否全部写入完毕
      *
@@ -380,6 +388,7 @@ public class FileUtil {
         }
         return false;
     }
+
     /**
      * 获取输入流写入输出流
      *
@@ -400,7 +409,8 @@ public class FileUtil {
     }
 
     public static void main(String[] args) {
-        final String s = checkUrl("/uploads/2020/05/kkixeafkldy.jpg");
+        final String s = "https://img1.bcoderss.com/wp-content/uploads/vip/极冬协奏曲-光-小提琴-洛天依手机壁纸.jpg";
+        FileUtil.down(s, s, "/Users/Dabao/apidocs", "123");
         System.out.println(s);
     }
 }

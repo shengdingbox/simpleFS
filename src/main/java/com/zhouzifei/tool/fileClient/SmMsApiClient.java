@@ -6,12 +6,8 @@ import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
-import com.zhouzifei.tool.util.FileUtil;
-import com.zhouzifei.tool.util.HttpNewUtils;
-import com.zhouzifei.tool.util.RandomsUtil;
-import com.zhouzifei.tool.util.StringUtils;
+import com.zhouzifei.tool.util.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.DigestUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -43,7 +39,7 @@ public class SmMsApiClient extends BaseApiClient {
         if (StringUtils.isEmpty(token)) {
             //获取token
             final String s1 = "username="+accessKey+"&password="+secretKey;
-            final String s = HttpNewUtils.DataPost(requestUrl + "/token", s1);
+            final String s = HttpUtils.DataPost(requestUrl + "/token", s1);
             final JSONObject jsonObject = JSONObject.parseObject(s);
             if(!(Boolean) jsonObject.get("success")){
                 throw new ServiceException("[" + this.storageType + "]初始化失败：" + jsonObject);
@@ -146,6 +142,11 @@ public class SmMsApiClient extends BaseApiClient {
 
     @Override
     public List<VirtualFile> fileList(FileListRequesr fileListRequesr){
+        final HashMap<String, String> map = new HashMap<>();
+        map.put("Content-Type","multipart/form-data");
+        map.put("Authorization",token);
+        final String data = HttpData.getData(requestUrl + "upload_history", map, 300);
+        System.out.println(data);
         return null;
     }
 
@@ -164,17 +165,6 @@ public class SmMsApiClient extends BaseApiClient {
         return null;
     }
     public static void main(String[] args) throws IOException {
-        Map<String, String> map = new HashMap<>();
-        map.put("username", "xiaofei");
-        map.put("password", "ZHOUdabao521");
-//        final String s1 = JSONObject.toJSONString(map);
-        String s1 = "username=xiaofei&password=ZHOUdabao521";
-        final SmMsApiClient smMsApiClient = new SmMsApiClient();
-        final String url = smMsApiClient.requestUrl;
-        final String s2 = HttpNewUtils.DataPost(url + "/token", s1);
-        final SmMsApiClient apiClient = smMsApiClient.init(null, null, s2);
-        final VirtualFile virtualFile = apiClient.uploadFile(new File("/Users/Dabao/Downloads/qrcode_for_gh_da74abc7de78_258.jpg"));
-        System.out.println(virtualFile);
-        System.out.println(s2);
+
     }
 }

@@ -1,368 +1,205 @@
 package com.zhouzifei.tool.util;
 
-import com.zhouzifei.tool.dto.HttpResponses;
-import org.apache.http.*;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.*;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * @author 周子斐 (17600004572@163.com)
- * @remark 2020/4/19
- * @Description
- */
 public class HttpUtils {
-    public static Map<String, String> nullMap = new HashMap<>();
 
-    /**
-     * get
-     *
-     * @param host
-     * @param path
-     * @param headers
-     * @param querys
-     * @return
-     * @throws Exception
-     */
-    public static HttpResponses doGet(String host, String path,
-                                      Map<String, String> headers,
-                                      Map<String, String> querys) throws Exception {
-        String urlNameString = buildUrl(host, path, querys);
-        URL realUrl = new URL(urlNameString);
-        // 打开和URL之间的连接
-        URLConnection connection = realUrl.openConnection();
-        // 设置通用的请求属性
-        Set<String> set = headers.keySet();
-        connection.setRequestProperty("accept", "*/*");
-        connection.setRequestProperty("connection", "Keep-Alive");
-        connection.setRequestProperty("user-agent",
-                "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-        for (String key : set) {
-            connection.setRequestProperty(key, headers.get(key));
+    public static String METHOD_GET = "GET";
+    public static String METHOD_POST = "POST";
+
+    public static int DEF_CONNECT_TIMEOUT = 2 * 1000;
+    public static int DEF_READ_TIMEOUT = 8 * 1000;
+    public static Charset DEF_CHARSET = StandardCharsets.UTF_8;
+    public static void main(String[] args) {
+        JSONObject x= HttpUtils.doGetAuthorization("https://amzrealtime.despatchcloud.co.uk/ws/v1/wsfulfilment/list_fulfilment_clients");
+        System.out.println(x);
+    }
+    public static JSONObject doGetAuthorization(String url) {
+        Map<String, String> headers=new HashMap<>();
+        headers.put("Authorization", "DC 454");
+        String xx= HttpUtils.Get(url, headers);
+        return JSONObject.parseObject(xx);
+    }
+    public static TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+        @Override
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+            return new java.security.cert.X509Certificate[]{};
         }
-        // 建立实际的连接
-        connection.connect();
-        // 获取所有响应头字段
-        Map<String, List<String>> map = connection.getHeaderFields();
-        // 定义 BufferedReader输入流来读取URL的响应
-        BufferedReader in = new BufferedReader(new InputStreamReader(
-                connection.getInputStream()));
-        String line;
-        StringBuilder result = new StringBuilder();
-        while ((line = in.readLine()) != null) {
-            result.append(line);
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
         }
-        HttpResponses httpResponses = new HttpResponses();
-        httpResponses.setMap(map);
-        httpResponses.setBody(result.toString());
-        return httpResponses;
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType) {
+        }
+    }};
+    public static void trustAll() {
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    static {
+        trustAll();
     }
 
-    /**
-     * get
-     *
-     * @param host
-     * @param path
-     * @param method
-     * @param headers
-     * @param querys
-     * @return
-     * @throws Exception
-     */
-    public static HttpResponse doGet(String host, String path, String method,
-                                     Map<String, String> headers,
-                                     Map<String, String> querys)
-            throws Exception {
-        HttpClient httpClient = wrapClient(host);
-        HttpGet request = new HttpGet(buildUrl(host, path, querys));
-        request.getParams().setParameter("http.protocol.allow-circular-redirects", false);
-        httpClient.getParams().setParameter("http.connection.timeout", 3000);
-        httpClient.getParams().setParameter("http.socket.timeout", 3000);
-        for (Map.Entry<String, String> e : headers.entrySet()) {
-            request.addHeader(e.getKey(), e.getValue());
-        }
-
-        return httpClient.execute(request);
+    public static String Get(String urlString) {
+        return HttpsGo(urlString, METHOD_GET, null, null, DEF_CONNECT_TIMEOUT, DEF_READ_TIMEOUT);
     }
 
-    /**
-     * post form
-     *
-     * @param host
-     * @param path
-     * @param headers
-     * @param querys
-     * @param bodys
-     * @return
-     * @throws Exception
-     */
-    public static HttpResponse doPost(String host, String path,
-                                      Map<String, String> headers,
-                                      Map<String, String> querys,
-                                      Map<String, String> bodys)
-            throws Exception {
-        HttpClient httpClient = wrapClient(host);
+    public static String Get(String urlString, Map<String, String> headers) {
+        return HttpsGo(urlString, METHOD_GET, headers, null, DEF_CONNECT_TIMEOUT, DEF_READ_TIMEOUT);
+    }
 
-        HttpPost request = new HttpPost(buildUrl(host, path, querys));
-        for (Map.Entry<String, String> e : headers.entrySet()) {
-            request.addHeader(e.getKey(), e.getValue());
-        }
-
-        if (bodys != null) {
-            List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
-
-            for (String key : bodys.keySet()) {
-                nameValuePairList.add(new BasicNameValuePair(key, bodys.get(key)));
+    public static String Get(String urlString, Map<String, String> headers, Map<String, String> params) {
+        if (params != null && !params.isEmpty()) {
+            StringBuilder url = new StringBuilder(urlString);
+            try {
+                boolean isFirst = true;
+                if (urlString.contains("?")) {
+                    if (!urlString.endsWith("&") && urlString.contains("&")) {
+                        isFirst = false;
+                    }
+                } else {
+                    url.append('?');
+                }
+                String paramsEncoding = DEF_CHARSET.name();
+                for (Map.Entry<String, String> entry : params.entrySet()) {
+                    if (isFirst) {
+                        isFirst = false;
+                    } else {
+                        url.append('&');
+                    }
+                    url.append(URLEncoder.encode(entry.getKey(), paramsEncoding));
+                    url.append('=');
+                    url.append(URLEncoder.encode(entry.getValue(), paramsEncoding));
+                }
+            } catch (Exception e) {
             }
-            UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(nameValuePairList, "utf-8");
-            formEntity.setContentType("multipart/form-data; charset=UTF-8");
-            request.setEntity(formEntity);
+            return Get(url.toString(), headers);
+        } else {
+            return Get(urlString, headers);
         }
-
-        return httpClient.execute(request);
     }
 
-    /**
-     * Post String
-     *
-     * @param host
-     * @param path
-     * @param headers
-     * @param querys
-     * @param body
-     * @return
-     * @throws Exception
-     */
-    public static HttpResponse doPost(String host, String path,
-                                      Map<String, String> headers,
-                                      Map<String, String> querys,
-                                      String body)
-            throws Exception {
-        HttpClient httpClient = wrapClient(host);
-
-        HttpPost request = new HttpPost(buildUrl(host, path, querys));
-        for (Map.Entry<String, String> e : headers.entrySet()) {
-            request.addHeader(e.getKey(), e.getValue());
-        }
-
-        if (StringUtils.isNotBlank(body)) {
-            request.setEntity(new StringEntity(body, "utf-8"));
-        }
-
-        return httpClient.execute(request);
+    public static String Post(String urlString, String contentType, byte[] content) {
+        Map<String, String> headers = new HashMap<String, String>(1);
+        headers.put("Content-Type", contentType);
+        return HttpsGo(urlString, METHOD_POST, headers, content, DEF_CONNECT_TIMEOUT, DEF_READ_TIMEOUT);
     }
 
-    /**
-     * Post stream
-     *
-     * @param host
-     * @param path
-     * @param headers
-     * @param querys
-     * @param body
-     * @return
-     * @throws Exception
-     */
-    public static HttpResponse doPost(String host, String path,
-                                      Map<String, String> headers,
-                                      Map<String, String> querys,
-                                      byte[] body)
-            throws Exception {
-        HttpClient httpClient = wrapClient(host);
-
-        HttpPost request = new HttpPost(buildUrl(host, path, querys));
-        for (Map.Entry<String, String> e : headers.entrySet()) {
-            request.addHeader(e.getKey(), e.getValue());
-        }
-
-        if (body != null) {
-            request.setEntity(new ByteArrayEntity(body));
-        }
-
-        return httpClient.execute(request);
+    public static String FormPost(String urlString, String content) {
+        Map<String, String> headers = new HashMap<String, String>(1);
+        headers.put("Content-Type", String.format("application/x-www-form-urlencoded; charset=%s", DEF_CHARSET.name()));
+        return HttpsGo(urlString, METHOD_POST, null, content.getBytes(DEF_CHARSET), DEF_CONNECT_TIMEOUT, DEF_READ_TIMEOUT);
     }
 
-    /**
-     * Put String
-     *
-     * @param host
-     * @param path
-     * @param headers
-     * @param querys
-     * @param body
-     * @return
-     * @throws Exception
-     */
-    public static HttpResponse doPut(String host, String path,
-                                     Map<String, String> headers,
-                                     Map<String, String> querys,
-                                     String body)
-            throws Exception {
-        HttpClient httpClient = wrapClient(host);
-
-        HttpPut request = new HttpPut(buildUrl(host, path, querys));
-        for (Map.Entry<String, String> e : headers.entrySet()) {
-            request.addHeader(e.getKey(), e.getValue());
-        }
-
-        if (StringUtils.isNotBlank(body)) {
-            request.setEntity(new StringEntity(body, "utf-8"));
-        }
-
-        return httpClient.execute(request);
+    public static String XmlPost(String urlString, String content) {
+        Map<String, String> headers = new HashMap<String, String>(1);
+        headers.put("Content-Type", String.format("text/html; charset=%s", DEF_CHARSET.name()));
+        return HttpsGo(urlString, METHOD_POST, headers, content.getBytes(DEF_CHARSET), DEF_CONNECT_TIMEOUT, DEF_READ_TIMEOUT);
     }
 
-    /**
-     * Put stream
-     *
-     * @param host
-     * @param path
-     * @param headers
-     * @param querys
-     * @param body
-     * @return
-     * @throws Exception
-     */
-    public static HttpResponse doPut(String host, String path,
-                                     Map<String, String> headers,
-                                     Map<String, String> querys,
-                                     byte[] body)
-            throws Exception {
-        HttpClient httpClient = wrapClient(host);
-
-        HttpPut request = new HttpPut(buildUrl(host, path, querys));
-        for (Map.Entry<String, String> e : headers.entrySet()) {
-            request.addHeader(e.getKey(), e.getValue());
-        }
-
-        if (body != null) {
-            request.setEntity(new ByteArrayEntity(body));
-        }
-
-        return httpClient.execute(request);
+    public static String JsonPost(String urlString, Object content) {
+        return JsonPost(urlString, JSONObject.toJSONString(content, SerializerFeature.DisableCircularReferenceDetect));
     }
 
-    /**
-     * Delete
-     *
-     * @param host
-     * @param path
-     * @param headers
-     * @param querys
-     * @return
-     * @throws Exception
-     */
-    public static HttpResponse doDelete(String host, String path,
-                                        Map<String, String> headers,
-                                        Map<String, String> querys)
-            throws Exception {
-        HttpClient httpClient = wrapClient(host);
-
-        HttpDelete request = new HttpDelete(buildUrl(host, path, querys));
-        for (Map.Entry<String, String> e : headers.entrySet()) {
-            request.addHeader(e.getKey(), e.getValue());
-        }
-
-        return httpClient.execute(request);
+    public static String JsonPost(String urlString, String content) {
+        Map<String, String> headers = new HashMap<>(1);
+        headers.put("Content-Type", String.format("application/json; charset=%s", DEF_CHARSET.name()));
+        return HttpsGo(urlString, METHOD_POST, headers, content.getBytes(DEF_CHARSET), DEF_CONNECT_TIMEOUT, DEF_READ_TIMEOUT);
     }
-
-    private static String buildUrl(String host, String path, Map<String, String> querys) throws UnsupportedEncodingException {
-        StringBuilder sbUrl = new StringBuilder();
-        sbUrl.append(host);
-        if (!StringUtils.isBlank(path)) {
-            sbUrl.append(path);
-        }
-        if (null != querys) {
-            StringBuilder sbQuery = new StringBuilder();
-            for (Map.Entry<String, String> query : querys.entrySet()) {
-                if (0 < sbQuery.length()) {
-                    sbQuery.append("&");
-                }
-                if (StringUtils.isBlank(query.getKey()) && !StringUtils.isBlank(query.getValue())) {
-                    sbQuery.append(query.getValue());
-                }
-                if (!StringUtils.isBlank(query.getKey())) {
-                    sbQuery.append(query.getKey());
-                    if (!StringUtils.isBlank(query.getValue())) {
-                        sbQuery.append("=");
-                        sbQuery.append(URLEncoder.encode(query.getValue(), "utf-8"));
+    public static String JsonPost(String urlString, String content,Map<String, String> headers) {
+        headers.put("Content-Type", String.format("application/json; charset=%s", DEF_CHARSET.name()));
+        return HttpsGo(urlString, METHOD_POST, headers, content.getBytes(DEF_CHARSET), DEF_CONNECT_TIMEOUT, DEF_READ_TIMEOUT);
+    }
+    public static String DataPost(String url,String param){
+        final HashMap<String, String> headers = new HashMap<>();
+        return DataPost(url, headers, param);
+    }
+    public static String DataPost(String url,Map<String, String> headers, String param) {
+            PrintWriter out = null;
+            BufferedReader in = null;
+            StringBuilder result = new StringBuilder();
+            try {
+                URL realUrl = new URL(url);
+                // 打开和URL之间的连接
+                URLConnection conn = realUrl.openConnection();
+                // 设置通用的请求属性
+                conn.setRequestProperty("accept", "*/*");
+                conn.setRequestProperty("connection", "Keep-Alive");
+                conn.setRequestProperty("user-agent",
+                        "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+                if (headers != null) {
+                    for (Map.Entry<String, String> entry : headers.entrySet()) {
+                        conn.addRequestProperty(entry.getKey(), entry.getValue());
                     }
                 }
+                // 发送POST请求必须设置如下两行
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                // 获取URLConnection对象对应的输出流
+                out = new PrintWriter(conn.getOutputStream());
+                // 发送请求参数
+                out.print(param);
+                // flush输出流的缓冲
+                out.flush();
+                // 定义BufferedReader输入流来读取URL的响应
+                in = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = in.readLine()) != null) {
+                    result.append(line);
+                }
+            } catch (Exception e) {
+                System.out.println("发送 POST 请求出现异常！"+e);
+                e.printStackTrace();
             }
-            if (0 < sbQuery.length()) {
-                sbUrl.append("?").append(sbQuery);
+            //使用finally块来关闭输出流、输入流
+            finally{
+                try{
+                    if(out!=null){
+                        out.close();
+                    }
+                    if(in!=null){
+                        in.close();
+                    }
+                }
+                catch(IOException ex){
+                    ex.printStackTrace();
+                }
             }
+            return result.toString();
         }
-
-        return sbUrl.toString();
-    }
-
-    private static HttpClient wrapClient(String host) {
-        HttpClient httpClient = new DefaultHttpClient();
-        if (host.startsWith("https://")) {
-            sslClient(httpClient);
-        }
-
-        return httpClient;
-    }
-
-    private static void sslClient(HttpClient httpClient) {
-        try {
-            SSLContext ctx = SSLContext.getInstance("TLS");
-            X509TrustManager tm = new X509TrustManager() {
-                @Override
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                @Override
-                public void checkClientTrusted(X509Certificate[] xcs, String str) {
-
-                }
-
-                @Override
-                public void checkServerTrusted(X509Certificate[] xcs, String str) {
-
-                }
-            };
-            ctx.init(null, new TrustManager[]{tm}, null);
-            SSLSocketFactory ssf = new SSLSocketFactory(ctx);
-            ssf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-            ClientConnectionManager ccm = httpClient.getConnectionManager();
-            SchemeRegistry registry = ccm.getSchemeRegistry();
-            registry.register(new Scheme("https", 443, ssf));
-        } catch (KeyManagementException | NoSuchAlgorithmException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    public static String postFile(String url, Map<String, String> headers, String bodyName, InputStream inputStream, String fileName) {
+    public static String filePost(String url, Map<String, String> headers, String bodyName, InputStream inputStream, String fileName) {
         //flush输出流的缓冲
         HttpClient httpclient = new DefaultHttpClient();
         try {
@@ -392,11 +229,101 @@ public class HttpUtils {
         }
         return null;
     }
+    public static String HttpsGo(String urlString, String method, Map<String, String> headers, byte[] content, int connectTimeout, int readTimeout) {
+        HttpsURLConnection conn = null;
+        try {
+            conn = (HttpsURLConnection) new URL(urlString).openConnection();
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new SecureRandom());
+            conn.setHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String arg0, SSLSession arg1) {
+                    return true;
+                }
+            });
+            conn.setSSLSocketFactory(sc.getSocketFactory());
+            conn.setRequestMethod(method);
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setUseCaches(false);
+            conn.setConnectTimeout(connectTimeout);
+            conn.setReadTimeout(readTimeout);
+            if (headers != null) {
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+                    conn.addRequestProperty(entry.getKey(), entry.getValue());
+                }
+            }
+            if (content != null) {
+                if (headers == null || !headers.containsKey("Content-Length")) {
+                    conn.addRequestProperty("Content-Length", Integer.toString(content.length));
+                }
+                try (OutputStream output = conn.getOutputStream()){
+                    output.write(content);
+                    output.flush();
+                }
+            }
+            return readContent(conn.getResponseCode() == 200 ? conn.getInputStream() : conn.getErrorStream(), getCharset(conn));
+        } catch (Exception e) {
+            return null;
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+    }
 
-    public static void main(String[] args) throws Exception {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("imgurl", "http://imgsrc.baidu.com/forum/pic/item/09f790529822720edafc8a9d76cb0a46f21faba3.jpg");
-        HttpResponses httpResponses = HttpUtils.doGet("https://api.uomg.com", "/api/image.360", new HashMap<>(), map);
-        System.out.println(httpResponses);
+    public static String encodeParams(Map<String, String> params, String paramsEncoding) throws Exception {
+        boolean isFirst = true;
+        StringBuilder encodedParams = new StringBuilder();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            if (isFirst) {
+                isFirst = false;
+            } else {
+                encodedParams.append('&');
+            }
+            encodedParams.append(URLEncoder.encode(entry.getKey(), paramsEncoding));
+            encodedParams.append('=');
+            encodedParams.append(URLEncoder.encode(entry.getValue(), paramsEncoding));
+        }
+        return encodedParams.toString();
+    }
+
+    public static String CHARSET_DEF = DEF_CHARSET.name();
+    private static final String CHARSET_STR = "charset=";
+    private static final int CHARSET_STR_LEN = CHARSET_STR.length();
+    private static String getCharset(HttpURLConnection conn) {
+        String contentType = conn.getHeaderField("Content-Type");
+        int length = contentType != null ? contentType.length() : 0;
+        if (length < CHARSET_STR_LEN) {
+            return CHARSET_DEF;
+        }
+        int pos = contentType != null ? contentType.indexOf("charset=") : -1;
+        if (pos < 0) {
+            return CHARSET_DEF;
+        }
+        return contentType.substring(pos + CHARSET_STR_LEN);
+    }
+
+    private static String readContent(InputStream input, String charset) throws Exception {
+        try {
+            int APPEND_LEN = 4 * 1024;
+            int offset = 0;
+            byte[] data = new byte[APPEND_LEN];
+            while (true) {
+                int len = input.read(data, offset, data.length - offset);
+                if (len == -1) {
+                    break;
+                }
+                offset += len;
+                if (offset >= data.length) {
+                    data = Arrays.copyOf(data, offset + APPEND_LEN);
+                }
+            }
+            return charset != null ? new String(data, 0, offset, charset) : new String(data, 0, offset);
+        } finally {
+            if (input != null) {
+                try { input.close(); } catch (Exception ignored) { }
+            }
+        }
     }
 }

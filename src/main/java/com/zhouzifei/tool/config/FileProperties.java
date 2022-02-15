@@ -34,6 +34,8 @@ public class FileProperties {
     private Boolean fastDFSOpen;
     private String fastDFSUrl;
     private String fastDFSServerUrl;
+    private String fastDFSUserName;
+    private String fastDFSPassWord;
 
     private Boolean huaweiOpen;
     private String huaweiUrl;

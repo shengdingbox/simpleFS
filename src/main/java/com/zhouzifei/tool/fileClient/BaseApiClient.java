@@ -69,7 +69,8 @@ public abstract class BaseApiClient implements ApiClient {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：文件不可为空");
         }
         try {
-            return this.uploadFile(file.getInputStream(), file.getOriginalFilename());
+            this.newFileName = file.getOriginalFilename();
+            return this.uploadFile(file.getInputStream(),this.newFileName);
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
@@ -80,6 +81,7 @@ public abstract class BaseApiClient implements ApiClient {
         if (file == null) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：文件不可为空");
         }
+        this.newFileName = file.getName();
         try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
             return this.uploadFile(is, file.getName());
         } catch (IOException e) {
@@ -88,12 +90,13 @@ public abstract class BaseApiClient implements ApiClient {
     }
 
     @Override
-    public VirtualFile uploadFile(InputStream is, String imageUrl) {
+    public VirtualFile uploadFile(InputStream is, String fileName) {
         Date startTime = new Date();
+        this.newFileName = fileName;
         this.checkName();
         try (InputStream uploadIs = StreamUtil.clone(is);
              InputStream fileHashIs = StreamUtil.clone(is)) {
-            final String filePath = this.uploadInputStream(uploadIs, imageUrl);
+            final String filePath = this.uploadInputStream(uploadIs, newFileName);
             return VirtualFile.builder().originalFileName(this.newFileName).suffix(this.suffix).uploadStartTime(startTime).uploadEndTime(new Date()).filePath(filePath).fileHash(DigestUtils.md5DigestAsHex(fileHashIs)).fullFilePath(this.newFileUrl).build();
         } catch (IOException ex) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + ex.getMessage());

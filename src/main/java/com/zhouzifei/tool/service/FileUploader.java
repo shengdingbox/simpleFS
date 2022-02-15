@@ -24,6 +24,9 @@ public class FileUploader {
         if(StorageTypeConst.LOCAL.getStorageType().equals(storageType)) {
             String localUrl = fileProperties.getLocalUrl();
             String localFilePath = fileProperties.getLocalFilePath();
+            if (!fileProperties.getLocalOpen()) {
+                throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+            }
             final LocalApiClient localApiClient = new LocalApiClient().init(localUrl, localFilePath);
             return localApiClient.setProgressListener(progressListener);
         }else if(StorageTypeConst.QINIUYUN.getStorageType().equals(storageType)){
@@ -31,6 +34,9 @@ public class FileUploader {
             String qiniuSecretKey = fileProperties.getQiniuSecretKey();
             String qiniuBucketName = fileProperties.getQiniuBucketName();
             String qiniuUrl = fileProperties.getQiniuUrl();
+            if (!fileProperties.getQiniuOpen()) {
+                throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+            }
             return new QiniuApiClient().init(qiniuAccessKey, qiniuSecretKey, qiniuBucketName, qiniuUrl);
         }else if(StorageTypeConst.ALIYUN.getStorageType().equals(storageType)){
             String aliEndpoint = fileProperties.getAliEndpoint();
@@ -38,12 +44,18 @@ public class FileUploader {
             String aliSecretKey = fileProperties.getAliSecretKey();
             String aliUrl = fileProperties.getAliUrl();
             String aliBucketName = fileProperties.getAliBucketName();
+            if (!fileProperties.getAliOpen()) {
+                throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+            }
             return new AliyunOssApiClient().init(aliEndpoint, aliAccessKey, aliSecretKey, aliUrl, aliBucketName);
         }else if(StorageTypeConst.YOUPAIYUN.getStorageType().equals(storageType)) {
             String uPaiUserName = fileProperties.getUPaiUserName();
             String uPaiPassWord = fileProperties.getUPaiPassWord();
             String uPaiUrl = fileProperties.getUPaiUrl();
             String uPaiBucketName = fileProperties.getUPaiBucketName();
+            if (!fileProperties.getUPaiOpen()) {
+                throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+            }
             return new UpaiyunOssApiClient().init(uPaiUserName, uPaiPassWord,uPaiBucketName,uPaiUrl);
         }else if(StorageTypeConst.TENGXUNYUN.getStorageType().equals(storageType)) {
             String qCloudAccessKey = fileProperties.getQCloudAccessKey();
@@ -51,6 +63,9 @@ public class FileUploader {
             String qCloudEndpoint = fileProperties.getQCloudEndpoint();
             String qCloudUrl = fileProperties.getQCloudUrl();
             String qCloudBucketName = fileProperties.getQCloudBucketName();
+            if (!fileProperties.getQCloudOpen()) {
+                throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+            }
             return new QCloudOssApiClient().init(qCloudAccessKey, qCloudSecretKey,qCloudEndpoint,qCloudBucketName,qCloudUrl);
         }else if(StorageTypeConst.HUAWEIYUN.getStorageType().equals(storageType)) {
             String huaweiAccessKey = fileProperties.getHuaweiAccessKey();
@@ -58,18 +73,30 @@ public class FileUploader {
             String huaweiEndpoint = fileProperties.getHuaweiEndpoint();
             String huaweiUrl = fileProperties.getHuaweiUrl();
             String huaweiBucketName = fileProperties.getHuaweiBucketName();
+            if (!fileProperties.getHuaweiOpen()) {
+                throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+            }
             return new HuaweiCloudOssApiClient().init(huaweiAccessKey, huaweiSecretKey,huaweiEndpoint,huaweiBucketName,huaweiUrl);
         }else if(StorageTypeConst.FASTDFS.getStorageType().equals(storageType)) {
             String fastDFSServerUrl = fileProperties.getFastDFSServerUrl();
             String fastDFSUrl = fileProperties.getFastDFSUrl();
+            if (!fileProperties.getFastDFSOpen()) {
+                throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+            }
             return new FastDfsOssApiClient().init(fastDFSServerUrl, fastDFSUrl);
         }else if(StorageTypeConst.SMMS.getStorageType().equals(storageType)) {
             String smmsUserName = fileProperties.getSmmsUserName();
             String smmsPassWord = fileProperties.getSmmsPassWord();
             String smmsToken = fileProperties.getSmmsToken();
+            if (!fileProperties.getSmmsOpen()) {
+                throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+            }
             return new SmMsApiClient().init(smmsUserName, smmsPassWord, smmsToken);
         }else if(StorageTypeConst.XMLY.getStorageType().equals(storageType)) {
             String xmlyCookie = fileProperties.getXmlyCookie();
+            if (!fileProperties.getXmlyOpen()) {
+                throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+            }
             return new XMLYApiClient().init(xmlyCookie);
         }else{
             throw new ServiceException("[文件服务]请选择文件存储类型！");

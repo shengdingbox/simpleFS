@@ -38,7 +38,7 @@ public class XMLYApiClient extends BaseApiClient {
         if (StringUtils.isEmpty(token)) {
 //            //获取token
 //            final String s1 = "username="+accessKey+"&password="+secretKey;
-//            final String s = HttpNewUtils.DataPost(requestUrl + "/token", s1);
+//            final String s = HttpUtils.DataPost(requestUrl + "/token", s1);
 //            final JSONObject jsonObject = JSONObject.parseObject(s);
 //            if(!(Boolean) jsonObject.get("success")){
             throw new ServiceException("[" + this.storageType + "]初始化失败");
@@ -77,7 +77,7 @@ public class XMLYApiClient extends BaseApiClient {
         try (InputStream uploadIs = StreamUtil.clone(inputStream)) {
             Map<String, String> hears = new HashMap<>();
             hears.put("Cookie", token);
-            String result = HttpUtils.postFile(requestUrl, hears, "file", uploadIs, fileName);
+            String result = HttpUtils.filePost(requestUrl, hears, "file", uploadIs, fileName);
             final JSONObject parse = JSONObject.parseObject(result);
             if (null == parse) {
                 throw new RuntimeException();
@@ -146,7 +146,7 @@ public class XMLYApiClient extends BaseApiClient {
         final VirtualFile virtualFile = init.uploadFile(new File("/Users/Dabao/Downloads/qrcode_for_gh_da74abc7de78_258.jpg"));
         System.out.println(virtualFile);
 //        final String s1 = "username=17600004572&password=zhoudabao521.";
-//        final String s = HttpNewUtils.DataPost(requestUrl + "/token", s1);
+//        final String s = HttpUtils.DataPost(requestUrl + "/token", s1);
 //        final JSONObject jsonObject = JSONObject.parseObject(s);
     }
 }

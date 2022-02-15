@@ -84,7 +84,7 @@ public class LocalApiClient extends BaseApiClient {
     @Override
     protected void check() {
         String realFilePath = this.rootPath + this.newFileName;
-        FileUtil.checkFilePath(realFilePath);
+        FileUtil.newFiles(realFilePath);
     }
 
     @Override
