@@ -98,6 +98,14 @@ public class FileUploader {
                 throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
             }
             return new XMLYApiClient().init(xmlyCookie);
+        }else if(StorageTypeConst.GITHUB.getStorageType().equals(storageType)) {
+            String githubRepository = fileProperties.getGithubRepository();
+            String githubToken = fileProperties.getGithubToken();
+            String githubUser = fileProperties.getGithubUser();
+            if (!fileProperties.getXmlyOpen()) {
+                throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+            }
+            return new GithubApiClient().init(githubToken,githubUser,githubRepository);
         }else{
             throw new ServiceException("[文件服务]请选择文件存储类型！");
         }

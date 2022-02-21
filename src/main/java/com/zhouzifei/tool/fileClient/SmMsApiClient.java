@@ -2,6 +2,7 @@ package com.zhouzifei.tool.fileClient;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.ServiceException;
+import com.zhouzifei.tool.common.Response;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
@@ -145,7 +146,8 @@ public class SmMsApiClient extends BaseApiClient {
         final HashMap<String, String> map = new HashMap<>();
         map.put("Content-Type","multipart/form-data");
         map.put("Authorization",token);
-        final String data = HttpData.getData(requestUrl + "upload_history", map, 300);
+        final Response<String> data1 = HttpData.getData(requestUrl + "upload_history", map, 300);
+        final String data = data1.getData();
         System.out.println(data);
         return null;
     }

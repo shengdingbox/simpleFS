@@ -20,6 +20,7 @@ public enum StorageTypeConst {
     FASTDFS("fastdfs", "FAST-DFS"),
     SMMS("smms", "SMMS"),
     XMLY("xmly", "喜马拉雅图床"),
+    GITHUB("github", "github图床"),
     ;
 
     private String storageType;

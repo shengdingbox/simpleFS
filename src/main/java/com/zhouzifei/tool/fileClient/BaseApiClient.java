@@ -142,7 +142,7 @@ public abstract class BaseApiClient implements ApiClient {
     }
 
     void createNewFileName() {
-        this.suffix = "." + FileUtil.getSuffix(this.newFileName);
+        this.suffix = FileUtil.getSuffix(this.newFileName);
         this.newFileName = folder + RandomsUtil.alpha(16) + suffix;
     }
 

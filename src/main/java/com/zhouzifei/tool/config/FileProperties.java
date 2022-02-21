@@ -71,4 +71,9 @@ public class FileProperties {
 
     private Boolean xmlyOpen;
     private String xmlyCookie;
+
+    private Boolean githubOpen;
+    private String githubToken;
+    private String githubUser;
+    private String githubRepository;
 }

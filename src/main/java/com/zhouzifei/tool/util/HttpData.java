@@ -1,5 +1,6 @@
 package com.zhouzifei.tool.util;
 
+import com.zhouzifei.tool.common.Response;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class HttpData {
      * @param urlPath 要访问的地址
      * @return
      */
-    public static String getData(String urlPath, Map<String,String> hears,Integer readTime) {
+    public static Response<String> getData(String urlPath, Map<String,String> hears,Integer readTime) {
         StringBuilder sb = new StringBuilder();
         try {
             // 统一资源
@@ -45,14 +46,12 @@ public class HttpData {
             final InputStream inputStream = connection.getInputStream();
             final String string = StreamUtil.toString(inputStream, "UTF-8");
             connection.disconnect();
-            return string;
-//            byte[] buf = new byte[4096];
-//            while (bin.read(buf) != -1) {
-//                String temp = new String(buf);
-//                sb.append(temp);
-//            }
-//            bin.close();
-
+            final int responseCode = connection.getResponseCode();
+            if(200 == responseCode){
+                return new Response().withCode("200").withData(string);
+            }else{
+                return new Response().withCode(String.valueOf(responseCode));
+            }
         } catch (IOException e) {
             return null;
         }

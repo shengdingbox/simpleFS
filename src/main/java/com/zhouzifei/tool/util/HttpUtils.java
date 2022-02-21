@@ -32,6 +32,7 @@ public class HttpUtils {
 
     public static String METHOD_GET = "GET";
     public static String METHOD_POST = "POST";
+    public static String METHOD_PUT = "PUT";
 
     public static int DEF_CONNECT_TIMEOUT = 2 * 1000;
     public static int DEF_READ_TIMEOUT = 8 * 1000;
@@ -140,6 +141,10 @@ public class HttpUtils {
     public static String JsonPost(String urlString, String content,Map<String, String> headers) {
         headers.put("Content-Type", String.format("application/json; charset=%s", DEF_CHARSET.name()));
         return HttpsGo(urlString, METHOD_POST, headers, content.getBytes(DEF_CHARSET), DEF_CONNECT_TIMEOUT, DEF_READ_TIMEOUT);
+    }
+    public static String JsonPut(String urlString, String content,Map<String, String> headers) {
+        headers.put("Content-Type", String.format("application/json; charset=%s", DEF_CHARSET.name()));
+        return HttpsGo(urlString, METHOD_PUT, headers, content.getBytes(DEF_CHARSET), DEF_CONNECT_TIMEOUT, DEF_READ_TIMEOUT);
     }
     public static String DataPost(String url,String param){
         final HashMap<String, String> headers = new HashMap<>();
