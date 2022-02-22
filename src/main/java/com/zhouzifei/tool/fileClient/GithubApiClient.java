@@ -149,7 +149,8 @@ public class GithubApiClient extends BaseApiClient {
 
     public static void main(String[] args) throws IOException {
         final FileInputStream fileInputStream = new FileInputStream("/Users/Dabao/Downloads/videoplayback.mp4");
-        final GithubApiClient githubApiClient = new GithubApiClient().init("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","shengdingbox","static");
+        final GithubApiClient githubApiClient1 = new GithubApiClient();
+        final GithubApiClient githubApiClient = githubApiClient1.init("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","shengdingbox","static");
         final String s = githubApiClient.uploadInputStream(fileInputStream, "videoplayback.mp4");
         System.out.println(s);
     }
