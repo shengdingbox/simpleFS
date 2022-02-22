@@ -1,6 +1,7 @@
 package com.zhouzifei.tool.fileClient;
 
 import com.zhouzifei.tool.common.ServiceException;
+import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
@@ -23,25 +24,34 @@ import java.util.List;
  */
 public class LocalApiClient extends BaseApiClient {
 
-    private String url;
-    private String rootPath;
+    private String localUrl;
+    private String localFilePath;
 
     public LocalApiClient() {
         super("Nginx文件服务器");
     }
+    public LocalApiClient(FileProperties fileProperties) {
+        super("Nginx文件服务器");
+        init(fileProperties);
+    }
 
-    public LocalApiClient init(String domainUrl, String rootPath) {
-        if (StringUtils.isEmpty(url) || StringUtils.isEmpty(rootPath)) {
+    public LocalApiClient init(FileProperties fileProperties) {
+        String localUrl = fileProperties.getLocalUrl();
+        String localFilePath = fileProperties.getLocalFilePath();
+        if (!fileProperties.getLocalOpen()) {
+            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+        }
+        if (StringUtils.isEmpty(localUrl) || StringUtils.isEmpty(localFilePath)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置Nginx文件服务器，文件上传功能暂时不可用！");
         }
-        this.url = checkDomainUrl(domainUrl);
-        this.rootPath = rootPath;
+        this.localUrl = checkDomainUrl(localUrl);
+        this.localFilePath = localFilePath;
         return this;
     }
 
     @Override
     public String uploadInputStream(InputStream is, String userName) {
-        String realFilePath = this.rootPath + this.newFileName;
+        String realFilePath = this.localFilePath + this.newFileName;
         try (FileOutputStream fos = new FileOutputStream(realFilePath)) {
             FileCopyUtils.copy(is, fos);
             return this.newFileName;
@@ -55,9 +65,9 @@ public class LocalApiClient extends BaseApiClient {
         if (StringUtils.isEmpty(key)) {
             throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
-        File file = new File(this.rootPath + key);
+        File file = new File(this.localFilePath + key);
         if (!file.exists()) {
-            throw new ServiceException("[" + this.storageType + "]删除文件失败：文件不存在[" + this.rootPath + key + "]");
+            throw new ServiceException("[" + this.storageType + "]删除文件失败：文件不存在[" + this.localFilePath + key + "]");
         }
         try {
             return file.delete();
@@ -83,12 +93,12 @@ public class LocalApiClient extends BaseApiClient {
 
     @Override
     protected void check() {
-        String realFilePath = this.rootPath + this.newFileName;
+        String realFilePath = this.localFilePath + this.newFileName;
         FileUtil.newFiles(realFilePath);
     }
 
     @Override
     public InputStream downloadFileStream(String userName) {
-        return FileUtil.getInputStreamByUrl(url + userName, "");
+        return FileUtil.getInputStreamByUrl(localUrl + userName, "");
     }
 }

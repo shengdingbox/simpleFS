@@ -12,6 +12,7 @@ import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.storage.model.FileInfo;
 import com.qiniu.util.Auth;
 import com.zhouzifei.tool.common.ServiceException;
+import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
@@ -36,19 +37,30 @@ public class QiniuApiClient extends BaseApiClient {
     private BucketManager bucketManager;
     private Auth auth;
     private String bucket;
-    private String domainUrl;
+    private String qiniuUrl;
 
     public QiniuApiClient() {
         super("七牛云");
     }
+    public QiniuApiClient(FileProperties fileProperties) {
+        super("七牛云");
+        init(fileProperties);
+    }
 
-    public QiniuApiClient init(String accessKey, String secretKey, String bucketName, String domainUrl) {
-        if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
+    public QiniuApiClient init(FileProperties fileProperties) {
+        String qiniuAccessKey = fileProperties.getQiniuAccessKey();
+        String qiniuSecretKey = fileProperties.getQiniuSecretKey();
+        String qiniuBucketName = fileProperties.getQiniuBucketName();
+        String qiniuUrl = fileProperties.getQiniuUrl();
+        if (!fileProperties.getQiniuOpen()) {
+            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+        }
+        if (StringUtils.isNullOrEmpty(qiniuAccessKey) || StringUtils.isNullOrEmpty(qiniuSecretKey) || StringUtils.isNullOrEmpty(qiniuBucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
         }
-        auth = Auth.create(accessKey, secretKey);
-        this.bucket = bucketName;
-        this.domainUrl = checkDomainUrl(domainUrl);
+        auth = Auth.create(qiniuAccessKey, qiniuSecretKey);
+        this.bucket = qiniuBucketName;
+        this.qiniuUrl = checkDomainUrl(qiniuUrl);
         return this;
     }
 
@@ -109,7 +121,7 @@ public class QiniuApiClient extends BaseApiClient {
     @Override
     public boolean exists(String fileName) {
         try {
-            FileInfo stat = bucketManager.stat(bucket,domainUrl + fileName);
+            FileInfo stat = bucketManager.stat(bucket,qiniuUrl + fileName);
             if (stat != null && stat.md5 != null) {
                 return true;
             }
@@ -128,7 +140,7 @@ public class QiniuApiClient extends BaseApiClient {
     public InputStream downloadFileStream(String key) {
         try {
             String encodedFileName = URLEncoder.encode(key, "utf-8").replace("+", "%20");
-            String publicUrl = String.format("%s/%s", domainUrl, encodedFileName);
+            String publicUrl = String.format("%s/%s", qiniuUrl, encodedFileName);
             long expireInSeconds = 3600;
             String finalUrl = auth.privateDownloadUrl(publicUrl, expireInSeconds);
             return FileUtil.getInputStreamByUrl(finalUrl, "");

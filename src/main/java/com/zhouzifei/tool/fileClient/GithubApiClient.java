@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.ServiceException;
 import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.zhouzifei.tool.common.Response;
+import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
@@ -41,6 +42,10 @@ public class GithubApiClient extends BaseApiClient {
 
     public GithubApiClient() {
         super("github");
+    }
+    public GithubApiClient(FileProperties fileProperties) {
+        super("github");
+        init()
     }
 
     public GithubApiClient init(String token, String user, String repository) {
