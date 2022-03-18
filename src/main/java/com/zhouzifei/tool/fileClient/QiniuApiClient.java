@@ -37,7 +37,6 @@ public class QiniuApiClient extends BaseApiClient {
     private BucketManager bucketManager;
     private Auth auth;
     private String bucket;
-    private String qiniuUrl;
 
     public QiniuApiClient() {
         super("七牛云");
@@ -47,6 +46,7 @@ public class QiniuApiClient extends BaseApiClient {
         init(fileProperties);
     }
 
+    @Override
     public QiniuApiClient init(FileProperties fileProperties) {
         String qiniuAccessKey = fileProperties.getQiniuAccessKey();
         String qiniuSecretKey = fileProperties.getQiniuSecretKey();
@@ -60,7 +60,7 @@ public class QiniuApiClient extends BaseApiClient {
         }
         auth = Auth.create(qiniuAccessKey, qiniuSecretKey);
         this.bucket = qiniuBucketName;
-        this.qiniuUrl = checkDomainUrl(qiniuUrl);
+        checkDomainUrl(qiniuUrl);
         return this;
     }
 
@@ -121,7 +121,7 @@ public class QiniuApiClient extends BaseApiClient {
     @Override
     public boolean exists(String fileName) {
         try {
-            FileInfo stat = bucketManager.stat(bucket,qiniuUrl + fileName);
+            FileInfo stat = bucketManager.stat(bucket,this.newFileUrl + fileName);
             if (stat != null && stat.md5 != null) {
                 return true;
             }
@@ -140,7 +140,7 @@ public class QiniuApiClient extends BaseApiClient {
     public InputStream downloadFileStream(String key) {
         try {
             String encodedFileName = URLEncoder.encode(key, "utf-8").replace("+", "%20");
-            String publicUrl = String.format("%s/%s", qiniuUrl, encodedFileName);
+            String publicUrl = String.format("%s/%s", this.newFileUrl, encodedFileName);
             long expireInSeconds = 3600;
             String finalUrl = auth.privateDownloadUrl(publicUrl, expireInSeconds);
             return FileUtil.getInputStreamByUrl(finalUrl, "");

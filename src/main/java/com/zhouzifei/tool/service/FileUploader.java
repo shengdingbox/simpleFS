@@ -19,5 +19,35 @@ public class FileUploader {
 
     ProgressListener progressListener;
 
-
+    public ApiClient getApiClient(StorageTypeConst storageTypeConst,FileProperties fileProperties) {
+        String storageType = storageTypeConst.getStorageType();
+        if(StorageTypeConst.LOCAL.getStorageType().equals(storageType)) {
+            final LocalApiClient localApiClient = new LocalApiClient(fileProperties);
+            return localApiClient.setProgressListener(progressListener);
+        }else if(StorageTypeConst.QINIUYUN.getStorageType().equals(storageType)){
+            return new QiniuApiClient(fileProperties);
+        }else if(StorageTypeConst.ALIYUN.getStorageType().equals(storageType)){
+            return new AliyunOssApiClient(fileProperties);
+        }else if(StorageTypeConst.AWSS3.getStorageType().equals(storageType)) {
+            return new AwsS3ApiClient(fileProperties);}
+        else if(StorageTypeConst.BAIDUBOS.getStorageType().equals(storageType)) {
+            return new BaiduBosApiClient(fileProperties);}
+        else if(StorageTypeConst.YOUPAIYUN.getStorageType().equals(storageType)) {
+            return new UpaiyunOssApiClient(fileProperties);
+        }else if(StorageTypeConst.TENGXUNYUN.getStorageType().equals(storageType)) {
+            return new QCloudOssApiClient().init(fileProperties);
+        }else if(StorageTypeConst.HUAWEIYUN.getStorageType().equals(storageType)) {
+            return new HuaweiCloudOssApiClient().init(fileProperties);
+        }else if(StorageTypeConst.FASTDFS.getStorageType().equals(storageType)) {
+            return new FastDfsOssApiClient(fileProperties);
+        }else if(StorageTypeConst.SMMS.getStorageType().equals(storageType)) {
+            return new SmMsApiClient().init(fileProperties);
+        }else if(StorageTypeConst.XMLY.getStorageType().equals(storageType)) {
+            return new XMLYApiClient(fileProperties);
+        }else if(StorageTypeConst.GITHUB.getStorageType().equals(storageType)) {
+            return new GithubApiClient(fileProperties);
+        }else{
+            throw new ServiceException("[文件服务]请选择文件存储类型！");
+        }
+    }
 }

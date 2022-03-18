@@ -12,6 +12,8 @@ import java.util.Map;
 public enum StorageTypeConst {
 
     ALIYUN("aliyun","阿里云OSS"),
+    AWSS3("awss3","AWSS3"),
+    BAIDUBOS("baidu","百度BOS"),
     QINIUYUN("qiniu", "七牛云存储"),
     LOCAL("local", "本地上传"),
     TENGXUNYUN("tengxunyun", "腾讯云COS"),

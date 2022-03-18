@@ -3,6 +3,7 @@ package com.zhouzifei.tool.fileClient;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.ServiceException;
 import com.zhouzifei.tool.common.Response;
+import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
@@ -34,12 +35,23 @@ public class SmMsApiClient extends BaseApiClient {
     public SmMsApiClient() {
         super("阿里云OSS");
     }
+    public SmMsApiClient(FileProperties fileProperties) {
+        super("阿里云OSS");
+        init(fileProperties);
+    }
 
-    public SmMsApiClient init(String accessKey, String secretKey, String token) {
-        SmMsApiClient.token = token;
+    @Override
+    public SmMsApiClient init(FileProperties fileProperties) {
+        String smmsUserName = fileProperties.getSmmsUserName();
+        String smmsPassWord = fileProperties.getSmmsPassWord();
+        String smmsToken = fileProperties.getSmmsToken();
+        if (!fileProperties.getSmmsOpen()) {
+            throw new com.zhouzifei.tool.common.ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+        }
+        SmMsApiClient.token = smmsToken;
         if (StringUtils.isEmpty(token)) {
             //获取token
-            final String s1 = "username="+accessKey+"&password="+secretKey;
+            final String s1 = "username="+smmsUserName+"&password="+smmsPassWord;
             final String s = HttpUtils.DataPost(requestUrl + "/token", s1);
             final JSONObject jsonObject = JSONObject.parseObject(s);
             if(!(Boolean) jsonObject.get("success")){

@@ -6,6 +6,7 @@ import com.obs.services.model.DeleteObjectResult;
 import com.obs.services.model.ObsObject;
 import com.obs.services.model.PutObjectResult;
 import com.zhouzifei.tool.common.ServiceException;
+import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
@@ -37,15 +38,29 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
     public HuaweiCloudOssApiClient() {
         super("华为云");
     }
+    public HuaweiCloudOssApiClient(FileProperties fileProperties) {
+        super("华为云");
+        init(fileProperties);
+    }
 
-    public HuaweiCloudOssApiClient init(String accessKey, String secretKey, String endpoint, String bucketName, String domainUrl) {
-        if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(endpoint)) {
+    @Override
+    public HuaweiCloudOssApiClient init(FileProperties fileProperties) {
+
+        String huaweiAccessKey = fileProperties.getHuaweiAccessKey();
+        String huaweiSecretKey = fileProperties.getHuaweiSecretKey();
+        String huaweiEndpoint = fileProperties.getHuaweiEndpoint();
+        String huaweiUrl = fileProperties.getHuaweiUrl();
+        String huaweiBucketName = fileProperties.getHuaweiBucketName();
+        if (!fileProperties.getHuaweiOpen()) {
+            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+        }
+        if (StringUtils.isNullOrEmpty(huaweiAccessKey) || StringUtils.isNullOrEmpty(huaweiSecretKey) || StringUtils.isNullOrEmpty(huaweiEndpoint)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置华为云，文件上传功能暂时不可用！");
         }
         // 创建ObsClient实例
-        obsClient = new ObsClient(accessKey, secretKey, endpoint);
-        this.bucket = bucketName;
-        this.path = checkDomainUrl(domainUrl);
+        obsClient = new ObsClient(huaweiAccessKey, huaweiSecretKey, huaweiEndpoint);
+        this.bucket = huaweiBucketName;
+        checkDomainUrl(huaweiUrl);
         return this;
     }
 

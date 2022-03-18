@@ -4,6 +4,7 @@ import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.ServiceException;
 import com.aliyun.oss.model.*;
+import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
@@ -34,7 +35,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class AliyunOssApiClient extends BaseApiClient {
 
     private OSS client;
-    private String domainUrl;
     private String bucketName;
     private String endpoint;
     private String accessKey;
@@ -43,13 +43,25 @@ public class AliyunOssApiClient extends BaseApiClient {
     public AliyunOssApiClient() {
         super("阿里云OSS");
     }
+    public AliyunOssApiClient(FileProperties fileProperties) {
+        super("阿里云OSS");
+        init(fileProperties);
+    }
 
-    public AliyunOssApiClient init(String endpoint, String accessKey, String secretKey, String domainUrl, String bucketName) {
-        this.domainUrl = checkDomainUrl(domainUrl);
-        this.bucketName = bucketName;
-        this.endpoint = endpoint;
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
+    @Override
+    public AliyunOssApiClient init(FileProperties fileProperties) {
+        String aliEndpoint = fileProperties.getAliEndpoint();
+        String aliAccessKey = fileProperties.getAliAccessKey();
+        String aliSecretKey = fileProperties.getAliSecretKey();
+        String aliUrl = fileProperties.getAliUrl();
+        String aliBucketName = fileProperties.getAliBucketName();
+        if (!fileProperties.getAliOpen()) {
+            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+        }
+        this.bucketName = aliBucketName;
+        this.endpoint = aliEndpoint;
+        this.accessKey = aliAccessKey;
+        this.secretKey = aliSecretKey;
         return this;
     }
 
@@ -134,7 +146,7 @@ public class AliyunOssApiClient extends BaseApiClient {
                 .uploadEndTime(new Date())
                 .filePath(this.newFileName)
                 .fileHash(null)
-                .fullFilePath(this.domainUrl + this.newFileName).build();
+                .fullFilePath(this.newFileUrl + this.newFileName).build();
         progressListener.end(virtualFile);
         return virtualFile;
     }
@@ -189,7 +201,7 @@ public class AliyunOssApiClient extends BaseApiClient {
                         .filePath(decodedKey)
                         .size(s.getSize())
                         .fileHash(s.getETag())
-                        .fullFilePath(domainUrl+decodedKey)
+                        .fullFilePath(this.newFileUrl+decodedKey)
                         .build();
                 virtualFiles.add(virtualFile);
             }

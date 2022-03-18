@@ -12,68 +12,21 @@ import org.springframework.stereotype.Component;
  * @Description
  */
 @Component
-@ConfigurationProperties(prefix = "tool.file")
+@ConfigurationProperties(prefix = "simple-fs")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Order(-1)
 public class FileProperties {
-    /**
-     * 云存储类型
-     */
-    private Boolean localOpen;
-    private String localUrl;
-    private String localFilePath;
+    LocalFileProperties local = new LocalFileProperties();
+    OssFileProperties oss = new OssFileProperties();
+    FastDfsFileProperties fast = new FastDfsFileProperties();
+    HuaweiFileProperties huawei = new HuaweiFileProperties();
+    QcloudFileProperties tengxun = new QcloudFileProperties();
+    QiniuFileProperties qiniu = new QiniuFileProperties();
+    UpaiFileProperties upai = new UpaiFileProperties();
+    SmmsFileProperties smms = new SmmsFileProperties();
+    XmlyFileProperties xmly = new XmlyFileProperties();
+    GithubFileProperties github = new GithubFileProperties();
+    AwsFileProperties aws = new AwsFileProperties();
 
-    private Boolean aliOpen;
-    private String aliUrl;
-    private String aliBucketName;
-    private String aliEndpoint;
-    private String aliAccessKey;
-    private String aliSecretKey;
-
-    private Boolean fastDFSOpen;
-    private String fastDFSUrl;
-    private String fastDFSServerUrl;
-    private String fastDFSUserName;
-    private String fastDFSPassWord;
-
-    private Boolean huaweiOpen;
-    private String huaweiUrl;
-    private String huaweiEndpoint;
-    private String huaweiBucketName;
-    private String huaweiAccessKey;
-    private String huaweiSecretKey;
-
-    private Boolean qCloudOpen;
-    private String qCloudUrl;
-    private String qCloudBucketName;
-    private String qCloudEndpoint;
-    private String qCloudAccessKey;
-    private String qCloudSecretKey;
-
-    private Boolean qiniuOpen;
-    private String qiniuUrl;
-    private String qiniuBucketName;
-    private String qiniuAccessKey;
-    private String qiniuSecretKey;
-
-
-    private Boolean smmsOpen;
-    private String smmsToken;
-    private String smmsUserName;
-    private String smmsPassWord;
-
-    private Boolean uPaiOpen;
-    private String uPaiUrl;
-    private String uPaiBucketName;
-    private String uPaiUserName;
-    private String uPaiPassWord;
-
-    private Boolean xmlyOpen;
-    private String xmlyCookie;
-
-    private Boolean githubOpen;
-    private String githubToken;
-    private String githubUser;
-    private String githubRepository;
 }

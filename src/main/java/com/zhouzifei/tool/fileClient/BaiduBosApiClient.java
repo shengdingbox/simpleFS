@@ -6,9 +6,11 @@ import com.baidubce.services.bos.BosClient;
 import com.baidubce.services.bos.BosClientConfiguration;
 import com.baidubce.services.bos.model.BosObject;
 import com.zhouzifei.tool.common.ServiceException;
+import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
+import com.zhouzifei.tool.service.ApiClient;
 import com.zhouzifei.tool.util.StringUtils;
 
 import java.io.IOException;
@@ -28,8 +30,9 @@ public class BaiduBosApiClient extends BaseApiClient {
     private String endPoint;
     private String bucketName;
 
+
     public BaiduBosApiClient init(String endPoint, String accessKey, String secretKey, String domainUrl, String bucketName) {
-        this.newFileUrl = checkDomainUrl(domainUrl);
+        checkDomainUrl(domainUrl);
         this.bucketName = bucketName;
         this.endPoint = endPoint;
         this.accessKey = accessKey;
@@ -39,6 +42,15 @@ public class BaiduBosApiClient extends BaseApiClient {
 
     public BaiduBosApiClient(String storageType) {
         super(storageType);
+    }
+
+    @Override
+    public ApiClient init(FileProperties fileProperties) {
+        return null;
+    }
+
+    public BaiduBosApiClient(FileProperties fileProperties) {
+        super("storageType");
     }
 
     @Override

@@ -9,17 +9,17 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.zhouzifei.tool.common.ServiceException;
+import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
-import com.zhouzifei.tool.util.FileUtil;
-import com.zhouzifei.tool.util.RandomsUtil;
 import com.zhouzifei.tool.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -29,6 +29,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * @author 周子斐
@@ -41,15 +43,26 @@ public class AwsS3ApiClient extends BaseApiClient {
     private String region;
     private String endpoint;
     private String bucketName;
-    private String domainUrl;
     private AmazonS3 amazonS3;
 
     public AwsS3ApiClient() {
         super("AWS-S3");
     }
 
-    public AwsS3ApiClient init(String endpoint, String accessKey, String secretKey, String domainUrl, String bucketName, String region) {
-        this.domainUrl = checkDomainUrl(domainUrl);
+    public AwsS3ApiClient(FileProperties fileProperties) {
+        super("AWS-S3");
+        init(fileProperties);
+    }
+
+    @Override
+    public AwsS3ApiClient init(FileProperties fileProperties) {
+        final String accessKey = fileProperties.getAccessKey();
+        final String secretKey = fileProperties.getSecretKey();
+        final String domainUrl = fileProperties.getDomainUrl();
+        String endpoint = fileProperties.getEndpoint();
+        String region = fileProperties.getRegion();
+        String bucketName = fileProperties.getBucketName();
+        checkDomainUrl(domainUrl);
         this.bucketName = bucketName;
         this.endpoint = endpoint;
         this.accessKey = accessKey;
@@ -61,7 +74,8 @@ public class AwsS3ApiClient extends BaseApiClient {
     @Override
     public String uploadInputStream(InputStream is, String imageUrl) {
         try (InputStream uploadIs = StreamUtil.clone(is)) {
-            amazonS3.putObject(bucketName, imageUrl, uploadIs, null);
+            final PutObjectResult putObjectResult = amazonS3.putObject(bucketName, imageUrl, uploadIs, null);
+            System.out.println(putObjectResult);
             return this.newFileName;
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
@@ -69,6 +83,7 @@ public class AwsS3ApiClient extends BaseApiClient {
             this.amazonS3.shutdown();
         }
     }
+
     /**
      * 删除文件
      *
@@ -131,14 +146,7 @@ public class AwsS3ApiClient extends BaseApiClient {
         ((CopyOnWriteArrayList) cacheEngine.get(storageType, md5 + SLASH + TAG)).add(uploadPartResult.getPartETag());
         // 关闭OSSClient。
         amazonS3.shutdown();
-        final VirtualFile virtualFile = VirtualFile.builder()
-                .originalFileName(this.newFileName)
-                .suffix(this.suffix)
-                .uploadStartTime(startDate)
-                .uploadEndTime(new Date())
-                .filePath(this.newFileName)
-                .fileHash(null)
-                .fullFilePath(this.domainUrl + this.newFileName).build();
+        final VirtualFile virtualFile = VirtualFile.builder().originalFileName(this.newFileName).suffix(this.suffix).uploadStartTime(startDate).uploadEndTime(new Date()).filePath(this.newFileName).fileHash(null).fullFilePath(this.newFileUrl + this.newFileName).build();
         progressListener.end(virtualFile);
         return virtualFile;
     }
@@ -154,7 +162,7 @@ public class AwsS3ApiClient extends BaseApiClient {
     }
 
     @Override
-    public List<VirtualFile> fileList(FileListRequesr fileListRequesr){
+    public List<VirtualFile> fileList(FileListRequesr fileListRequesr) {
         this.check();
         // 设置最大个数。
         final int maxKeys = 200;
@@ -174,15 +182,7 @@ public class AwsS3ApiClient extends BaseApiClient {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                VirtualFile virtualFile = VirtualFile.builder()
-                        .originalFileName(decodedKey)
-                        .suffix(this.suffix)
-                        .uploadStartTime(s3ObjectSummary.getLastModified())
-                        .uploadEndTime(s3ObjectSummary.getLastModified())
-                        .filePath(this.newFileName)
-                        .size(s3ObjectSummary.getSize())
-                        .fileHash(s3ObjectSummary.getETag())
-                        .fullFilePath(domainUrl + decodedKey).build();
+                VirtualFile virtualFile = VirtualFile.builder().originalFileName(decodedKey).suffix(this.suffix).uploadStartTime(s3ObjectSummary.getLastModified()).uploadEndTime(s3ObjectSummary.getLastModified()).filePath(this.newFileName).size(s3ObjectSummary.getSize()).fileHash(s3ObjectSummary.getETag()).fullFilePath(this.newFileUrl + decodedKey).build();
                 virtualFiles.add(virtualFile);
             }
             nextContinuationToken = result.getNextContinuationToken();
@@ -194,7 +194,7 @@ public class AwsS3ApiClient extends BaseApiClient {
 
     @Override
     public boolean exists(String fileName) {
-        return amazonS3.doesObjectExist(bucketName, domainUrl + folder + fileName);
+        return amazonS3.doesObjectExist(bucketName, this.newFileUrl + folder + fileName);
     }
 
     @Override
@@ -202,8 +202,7 @@ public class AwsS3ApiClient extends BaseApiClient {
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置阿里云，文件上传功能暂时不可用！");
         }
-        AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)));
+        AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)));
         if (StringUtils.isNotBlank(endpoint)) {
             builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region));
         } else if (StringUtils.isNotBlank(region)) {
@@ -245,4 +244,19 @@ public class AwsS3ApiClient extends BaseApiClient {
             this.amazonS3.shutdown();
         }
     }
+
+    public static void main(String[] args) {
+        final FileProperties fileProperties = new FileProperties();
+        fileProperties.setAccessKey("LTAI5tFpTDE26XYiPmH9dxDz");
+        fileProperties.setSecretKey("9gC7gs5kEJJmZec6a6QupoefIL82Kr");
+        fileProperties.setEndpoint("oss-cn-beijing.aliyuncs.com");
+        fileProperties.setBucketName("simple-fs");
+        fileProperties.setDomainUrl("https://simple-fs.oss-cn-beijing.aliyuncs.com/");
+        final AwsS3ApiClient awsS3ApiClient = new AwsS3ApiClient(fileProperties);
+        final File file = new File("/Users/Dabao/Downloads/videoplayback.mp4");
+        final VirtualFile virtualFile = awsS3ApiClient.uploadFile(file);
+        System.out.println(virtualFile);
+        System.out.println(1);
+    }
+
 }

@@ -1,20 +1,14 @@
 package com.zhouzifei.tool.fileClient;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.aliyun.oss.ServiceException;
-import com.sun.org.apache.bcel.internal.generic.NEW;
-import com.zhouzifei.tool.common.Response;
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
 import com.zhouzifei.tool.util.FileUtil;
-import com.zhouzifei.tool.util.HttpData;
 import com.zhouzifei.tool.util.HttpUtils;
-import com.zhouzifei.tool.util.StringUtils;
-import org.apache.commons.codec.binary.Base64InputStream;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
 
@@ -45,13 +39,20 @@ public class GithubApiClient extends BaseApiClient {
     }
     public GithubApiClient(FileProperties fileProperties) {
         super("github");
-        init()
+        init(fileProperties);
     }
 
-    public GithubApiClient init(String token, String user, String repository) {
-        this.token = token;
-        this.user = user;
-        this.repository = repository;
+    @Override
+    public GithubApiClient init(FileProperties fileProperties) {
+        String githubRepository = fileProperties.getGithubRepository();
+        String githubToken = fileProperties.getGithubToken();
+        String githubUser = fileProperties.getGithubUser();
+        if (!fileProperties.getGithubOpen()) {
+            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+        }
+        this.token = githubToken;
+        this.user = githubUser;
+        this.repository = githubRepository;
         return this;
     }
 
@@ -153,10 +154,14 @@ public class GithubApiClient extends BaseApiClient {
     }
 
     public static void main(String[] args) throws IOException {
-        final FileInputStream fileInputStream = new FileInputStream("/Users/Dabao/Downloads/videoplayback.mp4");
-        final GithubApiClient githubApiClient1 = new GithubApiClient();
-        final GithubApiClient githubApiClient = githubApiClient1.init("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","shengdingbox","static");
-        final String s = githubApiClient.uploadInputStream(fileInputStream, "videoplayback.mp4");
+        final FileInputStream fileInputStream = new FileInputStream("/Users/Dabao/Downloads/123.png");
+        final FileProperties fileProperties = new FileProperties();
+        fileProperties.setGithubOpen(true);
+        fileProperties.setGithubToken("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");
+        fileProperties.setGithubUser("shengdingbox");
+        fileProperties.setGithubRepository("static");
+        final GithubApiClient githubApiClient = new GithubApiClient(fileProperties);
+        final String s = githubApiClient.uploadInputStream(fileInputStream, "123.png");
         System.out.println(s);
     }
 }

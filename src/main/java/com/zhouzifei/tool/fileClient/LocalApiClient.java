@@ -6,6 +6,7 @@ import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
+import com.zhouzifei.tool.service.ApiClient;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.MediaFormat;
 import com.zhouzifei.tool.util.StringUtils;
@@ -35,7 +36,8 @@ public class LocalApiClient extends BaseApiClient {
         init(fileProperties);
     }
 
-    public LocalApiClient init(FileProperties fileProperties) {
+    @Override
+    public ApiClient init(FileProperties fileProperties) {
         String localUrl = fileProperties.getLocalUrl();
         String localFilePath = fileProperties.getLocalFilePath();
         if (!fileProperties.getLocalOpen()) {
@@ -44,7 +46,7 @@ public class LocalApiClient extends BaseApiClient {
         if (StringUtils.isEmpty(localUrl) || StringUtils.isEmpty(localFilePath)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置Nginx文件服务器，文件上传功能暂时不可用！");
         }
-        this.localUrl = checkDomainUrl(localUrl);
+        checkDomainUrl(localUrl);
         this.localFilePath = localFilePath;
         return this;
     }

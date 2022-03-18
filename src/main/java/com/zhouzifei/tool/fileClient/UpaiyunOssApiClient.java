@@ -3,6 +3,7 @@ package com.zhouzifei.tool.fileClient;
 
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.common.upaiyun.UpaiManager;
+import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
@@ -25,18 +26,29 @@ public class UpaiyunOssApiClient extends BaseApiClient {
 
 
     private UpaiManager upaiManager;
-    private String domainUrl;
 
     public UpaiyunOssApiClient() {
         super("又拍云");
     }
+    public UpaiyunOssApiClient(FileProperties fileProperties) {
+        super("又拍云");
+        init(fileProperties);
+    }
 
-    public UpaiyunOssApiClient init(String operatorName, String operatorPwd, String bucketName, String domainUrl) {
-        if (StringUtils.isNullOrEmpty(operatorName) || StringUtils.isNullOrEmpty(operatorPwd) || StringUtils.isNullOrEmpty(bucketName)) {
+    @Override
+    public UpaiyunOssApiClient init(FileProperties fileProperties) {
+        String uPaiUserName = fileProperties.getUPaiUserName();
+        String uPaiPassWord = fileProperties.getUPaiPassWord();
+        String uPaiUrl = fileProperties.getUPaiUrl();
+        String uPaiBucketName = fileProperties.getUPaiBucketName();
+        if (!fileProperties.getUPaiOpen()) {
+            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
+        }
+        if (StringUtils.isNullOrEmpty(uPaiUserName) || StringUtils.isNullOrEmpty(uPaiPassWord) || StringUtils.isNullOrEmpty(uPaiBucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置又拍云，文件上传功能暂时不可用！");
         }
-        upaiManager = new UpaiManager(bucketName, operatorName, operatorPwd);
-        this.domainUrl = checkDomainUrl(domainUrl);
+        upaiManager = new UpaiManager(uPaiBucketName, uPaiUserName, uPaiPassWord);
+        checkDomainUrl(uPaiUrl);
         return this;
     }
     @Override
@@ -81,7 +93,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
 
     @Override
     public boolean exists(String fileName) {
-        try (Response response = upaiManager.getFileInfo(domainUrl + fileName)) {
+        try (Response response = upaiManager.getFileInfo(this.newFileUrl + fileName)) {
             return StringUtils.isNotBlank(response.header("x-upyun-file-size"));
         } catch (IOException e) {
             throw new ServiceException("判断文件是否存在失败！fileInfo：" + fileName);
@@ -99,7 +111,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
             throw new ServiceException("[" + this.storageType + "]下载文件失败：文件key为空");
         }
         try {
-            return Objects.requireNonNull(upaiManager.readFile(domainUrl + key).body()).byteStream();
+            return Objects.requireNonNull(upaiManager.readFile(this.newFileUrl + key).body()).byteStream();
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件下载失败：" + e.getMessage());
         }
