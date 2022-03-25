@@ -17,5 +17,6 @@ public class AwsFileProperties {
     private String accessKey;
     private String secretKey;
     private String endpoint;
+    private String region;
     private String bucketName;
 }

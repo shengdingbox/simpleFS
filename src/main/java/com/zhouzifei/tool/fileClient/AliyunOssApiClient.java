@@ -50,15 +50,11 @@ public class AliyunOssApiClient extends BaseApiClient {
 
     @Override
     public AliyunOssApiClient init(FileProperties fileProperties) {
-        String aliEndpoint = fileProperties.getAliEndpoint();
-        String aliAccessKey = fileProperties.getAliAccessKey();
-        String aliSecretKey = fileProperties.getAliSecretKey();
-        String aliUrl = fileProperties.getAliUrl();
-        String aliBucketName = fileProperties.getAliBucketName();
-        if (!fileProperties.getAliOpen()) {
-            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
-        }
-        this.bucketName = aliBucketName;
+        String aliEndpoint = fileProperties.getOss().getEndpoint();
+        String aliAccessKey = fileProperties.getOss().getAccessKey();
+        String aliSecretKey = fileProperties.getOss().getSecretKey();
+        String aliUrl = fileProperties.getOss().getUrl();
+        this.bucketName = fileProperties.getOss().getBucketName();
         this.endpoint = aliEndpoint;
         this.accessKey = aliAccessKey;
         this.secretKey = aliSecretKey;

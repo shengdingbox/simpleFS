@@ -13,6 +13,7 @@ import com.qcloud.cos.transfer.TransferManagerConfiguration;
 import com.qcloud.cos.transfer.Upload;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.FileProperties;
+import com.zhouzifei.tool.config.QcloudFileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
@@ -47,23 +48,20 @@ public class QCloudOssApiClient extends BaseApiClient {
 
     @Override
     public QCloudOssApiClient init(FileProperties fileProperties) {
-        String qCloudAccessKey = fileProperties.getQCloudAccessKey();
-        String qCloudSecretKey = fileProperties.getQCloudSecretKey();
-        String qCloudEndpoint = fileProperties.getQCloudEndpoint();
-        String qCloudUrl = fileProperties.getQCloudUrl();
-        String qCloudBucketName = fileProperties.getQCloudBucketName();
-        if (!fileProperties.getQCloudOpen()) {
-            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
-        }
-        if (StringUtils.isNullOrEmpty(qCloudAccessKey) || StringUtils.isNullOrEmpty(qCloudSecretKey) || StringUtils.isNullOrEmpty(qCloudBucketName)) {
+        final QcloudFileProperties qcloudFileProperties = fileProperties.getTengxun();
+        String accessKey = qcloudFileProperties.getAccessKey();
+        String secretKey = qcloudFileProperties.getSecretKey();
+        String endpoint = qcloudFileProperties.getEndpoint();
+        String url = qcloudFileProperties.getUrl();
+        this.bucketName = qcloudFileProperties.getBucketName();
+        checkDomainUrl(url);
+        if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置腾讯云，文件上传功能暂时不可用！");
         }
-        COSCredentials cred = new BasicCOSCredentials(qCloudAccessKey, qCloudSecretKey);
-        Region region = new Region(qCloudEndpoint);
+        COSCredentials cred = new BasicCOSCredentials(accessKey, secretKey);
+        Region region = new Region(endpoint);
         ClientConfig clientConfig = new ClientConfig(region);
         cosClient = new COSClient(cred, clientConfig);
-        this.bucketName = qCloudBucketName;
-        checkDomainUrl(qCloudUrl);
         return this;
     }
 

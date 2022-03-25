@@ -14,6 +14,12 @@ public class StringUtils{
     public static boolean isBlank(String str) {
         return str == null || str.length() == 0;
     }
+    public static boolean isBlank(String... strs) {
+        for (String str : strs) {
+            return str == null || str.length() == 0;
+        }
+        return true;
+    }
 
     public static boolean isEmpty(String str) {
         return str == null || str.trim().length() == 0;

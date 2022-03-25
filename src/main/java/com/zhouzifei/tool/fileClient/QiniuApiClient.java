@@ -13,6 +13,7 @@ import com.qiniu.storage.model.FileInfo;
 import com.qiniu.util.Auth;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.FileProperties;
+import com.zhouzifei.tool.config.QiniuFileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
@@ -48,19 +49,18 @@ public class QiniuApiClient extends BaseApiClient {
 
     @Override
     public QiniuApiClient init(FileProperties fileProperties) {
-        String qiniuAccessKey = fileProperties.getQiniuAccessKey();
-        String qiniuSecretKey = fileProperties.getQiniuSecretKey();
-        String qiniuBucketName = fileProperties.getQiniuBucketName();
-        String qiniuUrl = fileProperties.getQiniuUrl();
-        if (!fileProperties.getQiniuOpen()) {
-            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
-        }
-        if (StringUtils.isNullOrEmpty(qiniuAccessKey) || StringUtils.isNullOrEmpty(qiniuSecretKey) || StringUtils.isNullOrEmpty(qiniuBucketName)) {
+        final QiniuFileProperties qiniuFileProperties = fileProperties.getQiniu();
+        String accessKey = qiniuFileProperties.getAccessKey();
+        String secretKey = qiniuFileProperties.getSecretKey();
+        this.bucket = qiniuFileProperties.getBucketName();
+        String url = qiniuFileProperties.getUrl();
+        checkDomainUrl(url);
+        if (StringUtils.isNullOrEmpty(accessKey)
+                || StringUtils.isNullOrEmpty(secretKey)
+                || StringUtils.isNullOrEmpty(bucket)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
         }
-        auth = Auth.create(qiniuAccessKey, qiniuSecretKey);
-        this.bucket = qiniuBucketName;
-        checkDomainUrl(qiniuUrl);
+        auth = Auth.create(accessKey, secretKey);
         return this;
     }
 

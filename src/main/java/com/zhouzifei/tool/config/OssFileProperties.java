@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 @Data
 @ConfigurationProperties(prefix = "simple-fs.oss")
 public class OssFileProperties {
+    private String url;
     private String domainUrl;
     private String accessKey;
     private String secretKey;

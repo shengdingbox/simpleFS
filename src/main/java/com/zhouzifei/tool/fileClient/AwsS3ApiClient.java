@@ -9,6 +9,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.zhouzifei.tool.common.ServiceException;
+import com.zhouzifei.tool.config.AwsFileProperties;
 import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.dto.CheckFileResult;
@@ -43,6 +44,7 @@ public class AwsS3ApiClient extends BaseApiClient {
     private String region;
     private String endpoint;
     private String bucketName;
+    private String domainUrl;
     private AmazonS3 amazonS3;
 
     public AwsS3ApiClient() {
@@ -56,18 +58,14 @@ public class AwsS3ApiClient extends BaseApiClient {
 
     @Override
     public AwsS3ApiClient init(FileProperties fileProperties) {
-        final String accessKey = fileProperties.getAccessKey();
-        final String secretKey = fileProperties.getSecretKey();
-        final String domainUrl = fileProperties.getDomainUrl();
-        String endpoint = fileProperties.getEndpoint();
-        String region = fileProperties.getRegion();
-        String bucketName = fileProperties.getBucketName();
+        final AwsFileProperties awsFileProperties = fileProperties.getAws();
+        this.accessKey = awsFileProperties.getSecretKey();
+        this.secretKey = awsFileProperties.getSecretKey();
+        this.domainUrl = awsFileProperties.getDomainUrl();
+        this.endpoint = awsFileProperties.getEndpoint();
+        this.region = awsFileProperties.getRegion();
+        this.bucketName = awsFileProperties.getBucketName();
         checkDomainUrl(domainUrl);
-        this.bucketName = bucketName;
-        this.endpoint = endpoint;
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
-        this.region = region;
         return this;
     }
 
@@ -247,11 +245,12 @@ public class AwsS3ApiClient extends BaseApiClient {
 
     public static void main(String[] args) {
         final FileProperties fileProperties = new FileProperties();
-        fileProperties.setAccessKey("LTAI5tFpTDE26XYiPmH9dxDz");
-        fileProperties.setSecretKey("9gC7gs5kEJJmZec6a6QupoefIL82Kr");
-        fileProperties.setEndpoint("oss-cn-beijing.aliyuncs.com");
-        fileProperties.setBucketName("simple-fs");
-        fileProperties.setDomainUrl("https://simple-fs.oss-cn-beijing.aliyuncs.com/");
+        final AwsFileProperties awsFileProperties = fileProperties.getAws();
+        awsFileProperties.setAccessKey("LTAI5tFpTDE26XYiPmH9dxDz");
+        awsFileProperties.setSecretKey("9gC7gs5kEJJmZec6a6QupoefIL82Kr");
+        awsFileProperties.setEndpoint("oss-cn-beijing.aliyuncs.com");
+        awsFileProperties.setBucketName("simple-fs");
+        awsFileProperties.setDomainUrl("https://simple-fs.oss-cn-beijing.aliyuncs.com/");
         final AwsS3ApiClient awsS3ApiClient = new AwsS3ApiClient(fileProperties);
         final File file = new File("/Users/Dabao/Downloads/videoplayback.mp4");
         final VirtualFile virtualFile = awsS3ApiClient.uploadFile(file);

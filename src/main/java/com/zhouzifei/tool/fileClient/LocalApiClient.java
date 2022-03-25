@@ -2,6 +2,7 @@ package com.zhouzifei.tool.fileClient;
 
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.FileProperties;
+import com.zhouzifei.tool.config.LocalFileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
@@ -38,11 +39,9 @@ public class LocalApiClient extends BaseApiClient {
 
     @Override
     public ApiClient init(FileProperties fileProperties) {
-        String localUrl = fileProperties.getLocalUrl();
-        String localFilePath = fileProperties.getLocalFilePath();
-        if (!fileProperties.getLocalOpen()) {
-            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
-        }
+        final LocalFileProperties localFileProperties = fileProperties.getLocal();
+        String localUrl = localFileProperties.getLocalUrl();
+        String localFilePath = localFileProperties.getLocalFilePath();
         if (StringUtils.isEmpty(localUrl) || StringUtils.isEmpty(localFilePath)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置Nginx文件服务器，文件上传功能暂时不可用！");
         }

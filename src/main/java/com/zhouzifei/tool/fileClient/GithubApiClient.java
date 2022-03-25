@@ -3,6 +3,7 @@ package com.zhouzifei.tool.fileClient;
 import com.alibaba.fastjson.JSONObject;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.FileProperties;
+import com.zhouzifei.tool.config.GithubFileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
@@ -44,15 +45,10 @@ public class GithubApiClient extends BaseApiClient {
 
     @Override
     public GithubApiClient init(FileProperties fileProperties) {
-        String githubRepository = fileProperties.getGithubRepository();
-        String githubToken = fileProperties.getGithubToken();
-        String githubUser = fileProperties.getGithubUser();
-        if (!fileProperties.getGithubOpen()) {
-            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
-        }
-        this.token = githubToken;
-        this.user = githubUser;
-        this.repository = githubRepository;
+        final GithubFileProperties githubFileProperties = fileProperties.getGithub();
+        this.repository = githubFileProperties.getRepository();
+        this.token = githubFileProperties.getToken();
+        this.user = githubFileProperties.getUser();
         return this;
     }
 
@@ -156,10 +152,10 @@ public class GithubApiClient extends BaseApiClient {
     public static void main(String[] args) throws IOException {
         final FileInputStream fileInputStream = new FileInputStream("/Users/Dabao/Downloads/123.png");
         final FileProperties fileProperties = new FileProperties();
-        fileProperties.setGithubOpen(true);
-        fileProperties.setGithubToken("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");
-        fileProperties.setGithubUser("shengdingbox");
-        fileProperties.setGithubRepository("static");
+        final GithubFileProperties githubFileProperties = fileProperties.getGithub();
+        githubFileProperties.setToken("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");
+        githubFileProperties.setUser("shengdingbox");
+        githubFileProperties.setRepository("static");
         final GithubApiClient githubApiClient = new GithubApiClient(fileProperties);
         final String s = githubApiClient.uploadInputStream(fileInputStream, "123.png");
         System.out.println(s);

@@ -27,7 +27,8 @@ public class ApiClientBuild {
         this.fileConfig = fileConfig;
         return this;
     }
-    public ApiClientBuild build() {
 
+    public ApiClientBuild build() {
+        return new ApiClientBuild();
     }
 }

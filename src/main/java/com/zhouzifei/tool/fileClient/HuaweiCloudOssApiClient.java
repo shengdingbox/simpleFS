@@ -46,14 +46,11 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
     @Override
     public HuaweiCloudOssApiClient init(FileProperties fileProperties) {
 
-        String huaweiAccessKey = fileProperties.getHuaweiAccessKey();
-        String huaweiSecretKey = fileProperties.getHuaweiSecretKey();
-        String huaweiEndpoint = fileProperties.getHuaweiEndpoint();
-        String huaweiUrl = fileProperties.getHuaweiUrl();
-        String huaweiBucketName = fileProperties.getHuaweiBucketName();
-        if (!fileProperties.getHuaweiOpen()) {
-            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
-        }
+        String huaweiAccessKey = fileProperties.getHuawei().getAccessKey();
+        String huaweiSecretKey = fileProperties.getOss().getSecretKey();
+        String huaweiEndpoint = fileProperties.getHuawei().getEndpoint();
+        String huaweiUrl = fileProperties.getHuawei().getUrl();
+        String huaweiBucketName = fileProperties.getOss().getBucketName();
         if (StringUtils.isNullOrEmpty(huaweiAccessKey) || StringUtils.isNullOrEmpty(huaweiSecretKey) || StringUtils.isNullOrEmpty(huaweiEndpoint)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置华为云，文件上传功能暂时不可用！");
         }

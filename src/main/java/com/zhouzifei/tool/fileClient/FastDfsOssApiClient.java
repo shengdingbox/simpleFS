@@ -6,6 +6,7 @@ import com.zhouzifei.cache.FileCacheEngine;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.common.fastdfs.*;
 import com.zhouzifei.tool.common.fastdfs.common.NameValuePair;
+import com.zhouzifei.tool.config.FastDfsFileProperties;
 import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.consts.UpLoadConstant;
@@ -51,20 +52,17 @@ public class FastDfsOssApiClient extends BaseApiClient {
 
     @Override
     public FastDfsOssApiClient init(FileProperties fileProperties) {
-        String fastDFSServerUrl = fileProperties.getFastDFSServerUrl();
-        String fastDFSUrl = fileProperties.getFastDFSUrl();
-        if (!fileProperties.getFastDFSOpen()) {
-            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
-        }
+        final FastDfsFileProperties fastDfsFileProperties = fileProperties.getFast();
+        this.serverUrl = fastDfsFileProperties.getServerUrl();
+        this.domainUrl = fastDfsFileProperties.getUrl();
+        checkDomainUrl(domainUrl);
         Properties props = new Properties();
-        props.put(ClientGlobal.PROP_KEY_TRACKER_SERVERS, fastDFSServerUrl);
+        props.put(ClientGlobal.PROP_KEY_TRACKER_SERVERS, serverUrl);
         try {
             ClientGlobal.initByProperties(props);
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]尚未配置阿里云FastDfs，文件上传功能暂时不可用！");
         }
-        this.serverUrl = fastDFSServerUrl;
-        checkDomainUrl(fastDFSUrl);
         return this;
     }
 

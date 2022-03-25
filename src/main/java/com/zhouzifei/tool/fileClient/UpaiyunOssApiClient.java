@@ -4,6 +4,7 @@ package com.zhouzifei.tool.fileClient;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.common.upaiyun.UpaiManager;
 import com.zhouzifei.tool.config.FileProperties;
+import com.zhouzifei.tool.config.UpaiFileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
@@ -37,18 +38,18 @@ public class UpaiyunOssApiClient extends BaseApiClient {
 
     @Override
     public UpaiyunOssApiClient init(FileProperties fileProperties) {
-        String uPaiUserName = fileProperties.getUPaiUserName();
-        String uPaiPassWord = fileProperties.getUPaiPassWord();
-        String uPaiUrl = fileProperties.getUPaiUrl();
-        String uPaiBucketName = fileProperties.getUPaiBucketName();
-        if (!fileProperties.getUPaiOpen()) {
-            throw new ServiceException("[" + storageType + "]尚未开启，文件功能暂时不可用！");
-        }
-        if (StringUtils.isNullOrEmpty(uPaiUserName) || StringUtils.isNullOrEmpty(uPaiPassWord) || StringUtils.isNullOrEmpty(uPaiBucketName)) {
+        final UpaiFileProperties upaiFileProperties = fileProperties.getUpai();
+        String userName = upaiFileProperties.getUserName();
+        String passWord = upaiFileProperties.getPassWord();
+        String url = upaiFileProperties.getUrl();
+        String bucketName = upaiFileProperties.getBucketName();
+        checkDomainUrl(url);
+        if (StringUtils.isNullOrEmpty(userName)
+                || StringUtils.isNullOrEmpty(passWord)
+                || StringUtils.isNullOrEmpty(bucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置又拍云，文件上传功能暂时不可用！");
         }
-        upaiManager = new UpaiManager(uPaiBucketName, uPaiUserName, uPaiPassWord);
-        checkDomainUrl(uPaiUrl);
+        upaiManager = new UpaiManager(bucketName, userName, passWord);
         return this;
     }
     @Override
