@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Data
-@ConfigurationProperties(prefix = "simple-fs.oss")
-public class OssFileProperties {
-    private String domainUrl;
-    private String accessKey;
-    private String secretKey;
+@ConfigurationProperties(prefix = "simple-fs.bos")
+public class BosFileProperties {
+    private String url;
     private String endpoint;
     private String bucketName;
+    private String accessKey;
+    private String secretKey;
 }

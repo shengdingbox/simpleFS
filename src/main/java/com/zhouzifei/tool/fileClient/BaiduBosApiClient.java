@@ -6,6 +6,7 @@ import com.baidubce.services.bos.BosClient;
 import com.baidubce.services.bos.BosClientConfiguration;
 import com.baidubce.services.bos.model.BosObject;
 import com.zhouzifei.tool.common.ServiceException;
+import com.zhouzifei.tool.config.BosFileProperties;
 import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
@@ -31,28 +32,24 @@ public class BaiduBosApiClient extends BaseApiClient {
     private String bucketName;
 
 
-    public BaiduBosApiClient init(String endPoint, String accessKey, String secretKey, String domainUrl, String bucketName) {
-        checkDomainUrl(domainUrl);
-        this.bucketName = bucketName;
-        this.endPoint = endPoint;
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
+    @Override
+    public BaiduBosApiClient init(FileProperties fileProperties) {
+        BosFileProperties bosFileProperties = fileProperties.getBos();
+        checkDomainUrl(bosFileProperties.getUrl());
+        this.bucketName = bosFileProperties.getBucketName();
+        this.endPoint = bosFileProperties.getEndpoint();
+        this.accessKey = bosFileProperties.getAccessKey();
+        this.secretKey = bosFileProperties.getSecretKey();
         return this;
     }
 
+    public BaiduBosApiClient(FileProperties fileProperties) {
+        super("百度云");
+        init(fileProperties);
+    }
     public BaiduBosApiClient(String storageType) {
         super(storageType);
     }
-
-    @Override
-    public ApiClient init(FileProperties fileProperties) {
-        return null;
-    }
-
-    public BaiduBosApiClient(FileProperties fileProperties) {
-        super("storageType");
-    }
-
     @Override
     protected void check() {
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {

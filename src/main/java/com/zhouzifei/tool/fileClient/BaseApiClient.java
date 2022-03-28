@@ -96,6 +96,7 @@ public abstract class BaseApiClient implements ApiClient {
         Date startTime = new Date();
         this.newFileName = fileName;
         this.checkName();
+        getMeta();
         try (InputStream uploadIs = StreamUtil.clone(is);
              InputStream fileHashIs = StreamUtil.clone(is)) {
             final String filePath = this.uploadInputStream(uploadIs, newFileName);
@@ -103,6 +104,10 @@ public abstract class BaseApiClient implements ApiClient {
         } catch (IOException ex) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + ex.getMessage());
         }
+    }
+
+    private void getMeta() {
+
     }
 
     /**

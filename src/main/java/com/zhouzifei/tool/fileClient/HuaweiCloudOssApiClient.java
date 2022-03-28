@@ -45,7 +45,6 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
 
     @Override
     public HuaweiCloudOssApiClient init(FileProperties fileProperties) {
-
         String huaweiAccessKey = fileProperties.getHuawei().getAccessKey();
         String huaweiSecretKey = fileProperties.getOss().getSecretKey();
         String huaweiEndpoint = fileProperties.getHuawei().getEndpoint();

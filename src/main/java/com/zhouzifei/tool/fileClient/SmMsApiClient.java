@@ -62,6 +62,7 @@ public class SmMsApiClient extends BaseApiClient {
         }
         hears.put("token", SmMsApiClient.token);
         hears.put("Content-Type", "multipart/form-data");
+        checkDomainUrl(requestUrl);
         return this;
     }
 

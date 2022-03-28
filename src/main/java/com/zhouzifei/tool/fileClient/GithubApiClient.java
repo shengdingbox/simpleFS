@@ -49,6 +49,7 @@ public class GithubApiClient extends BaseApiClient {
         this.repository = githubFileProperties.getRepository();
         this.token = githubFileProperties.getToken();
         this.user = githubFileProperties.getUser();
+        checkDomainUrl(domianUrl);
         return this;
     }
 
@@ -94,7 +95,7 @@ public class GithubApiClient extends BaseApiClient {
                 jsonObject.put("sha", UUID.randomUUID().toString().replace("-",""));
             }
             final String s = HttpUtils.JsonPut(uploadUrl, toString, hears);
-            return domianUrl + user + "/" + repository +"/"+  fileName;
+            return user + "/" + repository +"/"+  fileName;
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         }
@@ -147,17 +148,5 @@ public class GithubApiClient extends BaseApiClient {
             return false;
         }
         return true;
-    }
-
-    public static void main(String[] args) throws IOException {
-        final FileInputStream fileInputStream = new FileInputStream("/Users/Dabao/Downloads/123.png");
-        final FileProperties fileProperties = new FileProperties();
-        final GithubFileProperties githubFileProperties = fileProperties.getGithub();
-        githubFileProperties.setToken("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");
-        githubFileProperties.setUser("shengdingbox");
-        githubFileProperties.setRepository("static");
-        final GithubApiClient githubApiClient = new GithubApiClient(fileProperties);
-        final String s = githubApiClient.uploadInputStream(fileInputStream, "123.png");
-        System.out.println(s);
     }
 }

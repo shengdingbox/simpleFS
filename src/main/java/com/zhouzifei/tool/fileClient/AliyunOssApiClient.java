@@ -53,11 +53,11 @@ public class AliyunOssApiClient extends BaseApiClient {
         String aliEndpoint = fileProperties.getOss().getEndpoint();
         String aliAccessKey = fileProperties.getOss().getAccessKey();
         String aliSecretKey = fileProperties.getOss().getSecretKey();
-        String aliUrl = fileProperties.getOss().getUrl();
         this.bucketName = fileProperties.getOss().getBucketName();
         this.endpoint = aliEndpoint;
         this.accessKey = aliAccessKey;
         this.secretKey = aliSecretKey;
+        checkDomainUrl(fileProperties.getOss().getDomainUrl());
         return this;
     }
 

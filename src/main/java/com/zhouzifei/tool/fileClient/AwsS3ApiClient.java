@@ -44,7 +44,6 @@ public class AwsS3ApiClient extends BaseApiClient {
     private String region;
     private String endpoint;
     private String bucketName;
-    private String domainUrl;
     private AmazonS3 amazonS3;
 
     public AwsS3ApiClient() {
@@ -61,11 +60,10 @@ public class AwsS3ApiClient extends BaseApiClient {
         final AwsFileProperties awsFileProperties = fileProperties.getAws();
         this.accessKey = awsFileProperties.getSecretKey();
         this.secretKey = awsFileProperties.getSecretKey();
-        this.domainUrl = awsFileProperties.getDomainUrl();
         this.endpoint = awsFileProperties.getEndpoint();
         this.region = awsFileProperties.getRegion();
         this.bucketName = awsFileProperties.getBucketName();
-        checkDomainUrl(domainUrl);
+        checkDomainUrl(awsFileProperties.getDomainUrl());
         return this;
     }
 

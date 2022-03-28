@@ -21,6 +21,7 @@ public class FileProperties {
     OssFileProperties oss = new OssFileProperties();
     FastDfsFileProperties fast = new FastDfsFileProperties();
     HuaweiFileProperties huawei = new HuaweiFileProperties();
+    BosFileProperties bos = new BosFileProperties();
     QcloudFileProperties tengxun = new QcloudFileProperties();
     QiniuFileProperties qiniu = new QiniuFileProperties();
     UpaiFileProperties upai = new UpaiFileProperties();
