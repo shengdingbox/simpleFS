@@ -11,6 +11,8 @@ import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
+import com.zhouzifei.tool.service.ApiClient;
+import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,14 +37,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class AliyunOssApiClient extends BaseApiClient {
 
     private OSS client;
-    private String bucketName;
-    private String endpoint;
-    private String accessKey;
-    private String secretKey;
 
     public AliyunOssApiClient() {
         super("阿里云OSS");
     }
+
     public AliyunOssApiClient(FileProperties fileProperties) {
         super("阿里云OSS");
         init(fileProperties);
@@ -66,13 +65,14 @@ public class AliyunOssApiClient extends BaseApiClient {
         this.check();
         try (InputStream uploadIs = StreamUtil.clone(is)) {
             this.client.putObject(bucketName, this.newFileName, uploadIs);
-            return  newFileName;
+            return newFileName;
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + e.getMessage());
         } finally {
             this.client.shutdown();
         }
     }
+
     /**
      * 删除文件
      *
@@ -135,14 +135,7 @@ public class AliyunOssApiClient extends BaseApiClient {
         ((CopyOnWriteArrayList) cacheEngine.get(storageType, md5 + SLASH + TAG)).add(uploadPartResult.getPartETag());
         // 关闭OSSClient。
         client.shutdown();
-        VirtualFile virtualFile =  VirtualFile.builder()
-                .originalFileName(this.newFileName)
-                .suffix(this.suffix)
-                .uploadStartTime(startDate)
-                .uploadEndTime(new Date())
-                .filePath(this.newFileName)
-                .fileHash(null)
-                .fullFilePath(this.newFileUrl + this.newFileName).build();
+        VirtualFile virtualFile = VirtualFile.builder().originalFileName(this.newFileName).suffix(this.suffix).uploadStartTime(startDate).uploadEndTime(new Date()).filePath(this.newFileName).fileHash(null).fullFilePath(this.domainUrl + this.newFileName).build();
         progressListener.end(virtualFile);
         return virtualFile;
     }
@@ -158,7 +151,7 @@ public class AliyunOssApiClient extends BaseApiClient {
     }
 
     @Override
-    public List<VirtualFile> fileList(FileListRequesr fileListRequesr){
+    public List<VirtualFile> fileList(FileListRequesr fileListRequesr) {
         this.check();
         // 设置最大个数。
         final int maxKeys = 200;
@@ -183,22 +176,16 @@ public class AliyunOssApiClient extends BaseApiClient {
                     e.printStackTrace();
                 }
                 assert decodedKey != null;
-                if(decodedKey.contains("/")){
+                boolean isFold;
+                if (decodedKey.contains("/")) {
                     final String[] split = decodedKey.split("");
-                    this.newFileName = split[split.length-1];
-                }else{
+                    this.newFileName = split[split.length - 1];
+                    isFold = true;
+                } else {
                     this.newFileName = decodedKey;
+                    isFold = false;
                 }
-                VirtualFile virtualFile =  VirtualFile.builder()
-                        .originalFileName(this.newFileName)
-                        .suffix(this.suffix)
-                        .uploadStartTime(s.getLastModified())
-                        .uploadEndTime(s.getLastModified())
-                        .filePath(decodedKey)
-                        .size(s.getSize())
-                        .fileHash(s.getETag())
-                        .fullFilePath(this.newFileUrl+decodedKey)
-                        .build();
+                VirtualFile virtualFile = VirtualFile.builder().originalFileName(this.newFileName).suffix(FileUtil.getSuffixName(this.newFileName)).uploadStartTime(s.getLastModified()).uploadEndTime(s.getLastModified()).filePath(decodedKey).size(s.getSize()).fileHash(s.getETag()).fullFilePath(this.domainUrl + decodedKey).isFold(isFold).build();
                 virtualFiles.add(virtualFile);
             }
             nextContinuationToken = result.getNextContinuationToken();
@@ -214,7 +201,7 @@ public class AliyunOssApiClient extends BaseApiClient {
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置阿里云，文件上传功能暂时不可用！");
         }
-        this.client =ossClientBuilder.build(endpoint, accessKey, secretKey);
+        this.client = ossClientBuilder.build(endpoint, accessKey, secretKey);
         boolean bucketExist = client.doesBucketExist(bucketName);
         if (!bucketExist) {
             client.createBucket(bucketName);
@@ -223,7 +210,7 @@ public class AliyunOssApiClient extends BaseApiClient {
 
     @Override
     public boolean exists(String fileName) {
-        return client.doesObjectExist(bucketName,fileName);
+        return client.doesObjectExist(bucketName, fileName);
     }
 
     /**

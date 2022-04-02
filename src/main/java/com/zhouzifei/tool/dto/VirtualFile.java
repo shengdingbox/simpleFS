@@ -6,6 +6,7 @@ import java.util.Date;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 
 /**
  * 
@@ -50,6 +51,10 @@ public class VirtualFile implements Serializable {
      * 文件上传结束的时间
      */
     private Date uploadEndTime;
+    /**
+     * 文件是否为文件夹
+     */
+    private Boolean isFold;
 
     public VirtualFile setFileHash(String fileHash) {
         this.fileHash = fileHash;
@@ -99,4 +104,5 @@ public class VirtualFile implements Serializable {
         this.suffix = suffix;
         return this;
     }
+
 }

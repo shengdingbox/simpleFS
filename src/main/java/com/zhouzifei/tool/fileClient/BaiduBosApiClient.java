@@ -11,7 +11,6 @@ import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
-import com.zhouzifei.tool.service.ApiClient;
 import com.zhouzifei.tool.util.StringUtils;
 
 import java.io.IOException;
@@ -26,18 +25,13 @@ import java.util.List;
 public class BaiduBosApiClient extends BaseApiClient {
 
     private BosClient bos;
-    private String accessKey;
-    private String secretKey;
-    private String endPoint;
-    private String bucketName;
-
 
     @Override
     public BaiduBosApiClient init(FileProperties fileProperties) {
         BosFileProperties bosFileProperties = fileProperties.getBos();
         checkDomainUrl(bosFileProperties.getUrl());
         this.bucketName = bosFileProperties.getBucketName();
-        this.endPoint = bosFileProperties.getEndpoint();
+        this.endpoint = bosFileProperties.getEndpoint();
         this.accessKey = bosFileProperties.getAccessKey();
         this.secretKey = bosFileProperties.getSecretKey();
         return this;
@@ -47,9 +41,11 @@ public class BaiduBosApiClient extends BaseApiClient {
         super("百度云");
         init(fileProperties);
     }
+
     public BaiduBosApiClient(String storageType) {
         super(storageType);
     }
+
     @Override
     protected void check() {
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
@@ -57,7 +53,7 @@ public class BaiduBosApiClient extends BaseApiClient {
         }
         BosClientConfiguration config = new BosClientConfiguration();
         config.setCredentials(new DefaultBceCredentials(accessKey, secretKey));
-        config.setEndpoint(endPoint);
+        config.setEndpoint(endpoint);
         config.setProtocol(Protocol.HTTPS);
         this.bos = new BosClient(config);
         boolean bucketExist = bos.doesBucketExist(bucketName);

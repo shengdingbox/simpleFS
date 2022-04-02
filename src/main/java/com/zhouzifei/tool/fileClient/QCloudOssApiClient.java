@@ -35,7 +35,6 @@ import java.util.concurrent.Executors;
 public class QCloudOssApiClient extends BaseApiClient {
 
     private COSClient cosClient;
-    private String bucketName;
     private TransferManager transferManager;
 
     public QCloudOssApiClient() {

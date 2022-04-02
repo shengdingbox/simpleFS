@@ -8,6 +8,7 @@ import com.zhouzifei.tool.config.UpaiFileProperties;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
+import com.zhouzifei.tool.service.ApiClient;
 import com.zhouzifei.tool.util.StringUtils;
 import okhttp3.Response;
 
@@ -24,7 +25,6 @@ import java.util.Objects;
  * @Description
  */
 public class UpaiyunOssApiClient extends BaseApiClient {
-
 
     private UpaiManager upaiManager;
 
@@ -94,7 +94,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
 
     @Override
     public boolean exists(String fileName) {
-        try (Response response = upaiManager.getFileInfo(this.newFileUrl + fileName)) {
+        try (Response response = upaiManager.getFileInfo(this.domainUrl + fileName)) {
             return StringUtils.isNotBlank(response.header("x-upyun-file-size"));
         } catch (IOException e) {
             throw new ServiceException("判断文件是否存在失败！fileInfo：" + fileName);
@@ -112,9 +112,13 @@ public class UpaiyunOssApiClient extends BaseApiClient {
             throw new ServiceException("[" + this.storageType + "]下载文件失败：文件key为空");
         }
         try {
-            return Objects.requireNonNull(upaiManager.readFile(this.newFileUrl + key).body()).byteStream();
+            return Objects.requireNonNull(upaiManager.readFile(this.domainUrl + key).body()).byteStream();
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件下载失败：" + e.getMessage());
         }
+    }
+    @Override
+    public ApiClient getAwsApiClient(){
+        throw new ServiceException("[" + this.storageType + "]暂不支持AWS3协议！");
     }
 }

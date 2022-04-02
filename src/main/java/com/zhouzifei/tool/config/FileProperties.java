@@ -26,7 +26,6 @@ public class FileProperties {
     QiniuFileProperties qiniu = new QiniuFileProperties();
     UpaiFileProperties upai = new UpaiFileProperties();
     SmmsFileProperties smms = new SmmsFileProperties();
-    XmlyFileProperties xmly = new XmlyFileProperties();
     GithubFileProperties github = new GithubFileProperties();
     AwsFileProperties aws = new AwsFileProperties();
 

@@ -102,4 +102,8 @@ public class LocalApiClient extends BaseApiClient {
     public InputStream downloadFileStream(String userName) {
         return FileUtil.getInputStreamByUrl(localUrl + userName, "");
     }
+    @Override
+    public ApiClient getAwsApiClient(){
+        throw new ServiceException("[" + this.storageType + "]暂不支持AWS3协议！");
+    }
 }

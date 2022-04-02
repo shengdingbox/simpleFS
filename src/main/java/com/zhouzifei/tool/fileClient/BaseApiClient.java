@@ -32,7 +32,12 @@ public abstract class BaseApiClient implements ApiClient {
     public ProgressListener progressListener = newListener();
     protected String suffix;
     protected String newFileName;
-    protected String newFileUrl;
+    protected String domainUrl;
+    protected String accessKey;
+    protected String secretKey;
+    protected String region;
+    protected String endpoint;
+    protected String bucketName;
     protected final Object LOCK = new Object();
     protected final FileCacheEngine cacheEngine = new FileCacheEngine();
     protected static final String SLASH = "/";
@@ -100,7 +105,7 @@ public abstract class BaseApiClient implements ApiClient {
         try (InputStream uploadIs = StreamUtil.clone(is);
              InputStream fileHashIs = StreamUtil.clone(is)) {
             final String filePath = this.uploadInputStream(uploadIs, newFileName);
-            return VirtualFile.builder().originalFileName(this.newFileName).suffix(this.suffix).uploadStartTime(startTime).uploadEndTime(new Date()).filePath(filePath).fileHash(DigestUtils.md5DigestAsHex(fileHashIs)).fullFilePath(this.newFileUrl+filePath).build();
+            return VirtualFile.builder().originalFileName(this.newFileName).suffix(this.suffix).uploadStartTime(startTime).uploadEndTime(new Date()).filePath(filePath).fileHash(DigestUtils.md5DigestAsHex(fileHashIs)).fullFilePath(this.domainUrl+filePath).build();
         } catch (IOException ex) {
             throw new ServiceException("[" + this.storageType + "]文件上传失败：" + ex.getMessage());
         }
@@ -157,7 +162,7 @@ public abstract class BaseApiClient implements ApiClient {
         if(StringUtils.isEmpty(domainUrl)){
             throw new ServiceException("业务域名不能为空");
         }
-        this.newFileUrl =  domainUrl.endsWith("/") ? domainUrl : domainUrl + "/";
+        this.domainUrl =  domainUrl.endsWith("/") ? domainUrl : domainUrl + "/";
     }
 
     @Override
@@ -190,5 +195,13 @@ public abstract class BaseApiClient implements ApiClient {
     @Override
     public VirtualFile resumeUpload(InputStream inputStream, String fileName) {
         return null;
+    }
+    public  ApiClient getAwsApiClient() {
+        return new AwsS3ApiClient(this.accessKey
+                ,secretKey
+                ,region
+                ,endpoint
+                ,bucketName
+                ,this.domainUrl);
     }
 }

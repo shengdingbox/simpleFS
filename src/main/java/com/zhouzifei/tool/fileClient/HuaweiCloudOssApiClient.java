@@ -32,9 +32,7 @@ import java.util.List;
 public class HuaweiCloudOssApiClient extends BaseApiClient {
 
     private ObsClient obsClient;
-    private String bucket;
-    private String path;
-
+    
     public HuaweiCloudOssApiClient() {
         super("华为云");
     }
@@ -55,14 +53,14 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
         }
         // 创建ObsClient实例
         obsClient = new ObsClient(huaweiAccessKey, huaweiSecretKey, huaweiEndpoint);
-        this.bucket = huaweiBucketName;
+        this.bucketName = huaweiBucketName;
         checkDomainUrl(huaweiUrl);
         return this;
     }
 
     @Override
     public String uploadInputStream(InputStream is, String fileName) {
-        PutObjectResult putObjectResult = obsClient.putObject(bucket, this.newFileName, is);
+        PutObjectResult putObjectResult = obsClient.putObject(bucketName, this.newFileName, is);
         return putObjectResult.getObjectKey();
     }
 
@@ -72,10 +70,10 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
             throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
         if(!exists(fileName)){
-            throw new ServiceException("[阿里云OSS] 文件删除失败！文件不存在：" + bucket + "/" + fileName);
+            throw new ServiceException("[阿里云OSS] 文件删除失败！文件不存在：" + bucketName + "/" + fileName);
         }
         // 删除文件
-        DeleteObjectResult deleteObjectResult = obsClient.deleteObject(bucket, fileName);
+        DeleteObjectResult deleteObjectResult = obsClient.deleteObject(bucketName, fileName);
         return deleteObjectResult.isDeleteMarker();
     }
 
@@ -96,7 +94,7 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
 
     @Override
     public boolean exists(String fileName) {
-        return obsClient.doesObjectExist(bucket, fileName);
+        return obsClient.doesObjectExist(bucketName, fileName);
     }
 
     @Override
@@ -106,7 +104,7 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
 
     @Override
     public InputStream downloadFileStream(String key) {
-        ObsObject obsObject = obsClient.getObject(bucket, key);
+        ObsObject obsObject = obsClient.getObject(bucketName, key);
         System.out.println("Object content:");
         return obsObject.getObjectContent();
 

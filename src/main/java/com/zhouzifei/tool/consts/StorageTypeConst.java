@@ -11,18 +11,17 @@ import java.util.Map;
  */
 public enum StorageTypeConst {
 
+    LOCAL("local", "本地上传"),
     ALIYUN("aliyun","阿里云OSS"),
     AWSS3("awss3","AWSS3"),
     BAIDUBOS("baidu","百度BOS"),
     QINIUYUN("qiniu", "七牛云存储"),
-    LOCAL("local", "本地上传"),
     TENGXUNYUN("tengxunyun", "腾讯云COS"),
     YOUPAIYUN("youpaiyun", "又拍云存储"),
     HUAWEIYUN("huaweiyun", "华为云存储"),
     FASTDFS("fastdfs", "FAST-DFS"),
-    SMMS("smms", "SMMS"),
-    XMLY("xmly", "喜马拉雅图床"),
-    GITHUB("github", "github图床"),
+    SMMS("smms", "SMMS图床"),
+    GITHUB("github", "github存储"),
     ;
 
     private String storageType;

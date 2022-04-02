@@ -104,11 +104,11 @@ public interface ApiClient {
      * @return 断点续传
      */
     abstract CheckFileResult checkFile(MetaDataRequest metaDataRequest, HttpServletRequest request);
+
     /**
-     * InputStream
-     * @param metaDataRequest 文件
-     * @param request 文件名称
-     * @return 断点续传
+     * 文件列表
+     * @param fileListRequesr
+     * @return
      */
     abstract List<VirtualFile> fileList(FileListRequesr fileListRequesr);
 

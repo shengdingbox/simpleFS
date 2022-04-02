@@ -1,7 +1,7 @@
 package com.zhouzifei.tool.service;
 
 import com.zhouzifei.tool.common.ServiceException;
-import com.zhouzifei.tool.config.FileProperties;
+import com.zhouzifei.tool.config.*;
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.fileClient.*;
 import com.zhouzifei.tool.listener.ProgressListener;
@@ -42,8 +42,6 @@ public class FileUploader {
             return new FastDfsOssApiClient(fileProperties);
         }else if(StorageTypeConst.SMMS.getStorageType().equals(storageType)) {
             return new SmMsApiClient().init(fileProperties);
-        }else if(StorageTypeConst.XMLY.getStorageType().equals(storageType)) {
-            return new XMLYApiClient(fileProperties);
         }else if(StorageTypeConst.GITHUB.getStorageType().equals(storageType)) {
             return new GithubApiClient(fileProperties);
         }else{

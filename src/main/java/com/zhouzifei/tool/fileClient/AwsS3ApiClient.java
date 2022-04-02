@@ -39,11 +39,7 @@ import java.util.function.Predicate;
  * @Description
  */
 public class AwsS3ApiClient extends BaseApiClient {
-    private String accessKey;
-    private String secretKey;
-    private String region;
-    private String endpoint;
-    private String bucketName;
+    
     private AmazonS3 amazonS3;
 
     public AwsS3ApiClient() {
@@ -53,6 +49,15 @@ public class AwsS3ApiClient extends BaseApiClient {
     public AwsS3ApiClient(FileProperties fileProperties) {
         super("AWS-S3");
         init(fileProperties);
+    }
+    public AwsS3ApiClient(String accessKey,String secretKey,String region,String endpoint,String bucketName,String domainUrl) {
+        super("AWS-S3");
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
+        this.endpoint = endpoint;
+        this.region = region;
+        this.bucketName = bucketName;
+        checkDomainUrl(domainUrl);
     }
 
     @Override
@@ -142,7 +147,7 @@ public class AwsS3ApiClient extends BaseApiClient {
         ((CopyOnWriteArrayList) cacheEngine.get(storageType, md5 + SLASH + TAG)).add(uploadPartResult.getPartETag());
         // 关闭OSSClient。
         amazonS3.shutdown();
-        final VirtualFile virtualFile = VirtualFile.builder().originalFileName(this.newFileName).suffix(this.suffix).uploadStartTime(startDate).uploadEndTime(new Date()).filePath(this.newFileName).fileHash(null).fullFilePath(this.newFileUrl + this.newFileName).build();
+        final VirtualFile virtualFile = VirtualFile.builder().originalFileName(this.newFileName).suffix(this.suffix).uploadStartTime(startDate).uploadEndTime(new Date()).filePath(this.newFileName).fileHash(null).fullFilePath(this.domainUrl + this.newFileName).build();
         progressListener.end(virtualFile);
         return virtualFile;
     }
@@ -164,12 +169,18 @@ public class AwsS3ApiClient extends BaseApiClient {
         final int maxKeys = 200;
         String nextContinuationToken = null;
         // 指定前缀，例如exampledir/object。
-        final String keyPrefix = fileListRequesr.getPrefix();
+        final String prefix = fileListRequesr.getPrefix();
         ListObjectsV2Result result = null;
         List<VirtualFile> virtualFiles = new ArrayList<>();
         // 指定返回结果使用URL编码，则您需要对结果中的prefix、delemiter、startAfter、key和commonPrefix进行URL解码。
+        final ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request();
+        listObjectsV2Request.setBucketName(bucketName);
+        listObjectsV2Request.setEncodingType("UTF-8");
+        listObjectsV2Request.setMaxKeys(maxKeys);
+        listObjectsV2Request.setPrefix(prefix);
+        //listObjectsV2Request.set
         do {
-            result = amazonS3.listObjectsV2(bucketName);
+            result = amazonS3.listObjectsV2(listObjectsV2Request);
             // 文件名称解码。
             for (S3ObjectSummary s3ObjectSummary : result.getObjectSummaries()) {
                 String decodedKey = null;
@@ -178,7 +189,7 @@ public class AwsS3ApiClient extends BaseApiClient {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                VirtualFile virtualFile = VirtualFile.builder().originalFileName(decodedKey).suffix(this.suffix).uploadStartTime(s3ObjectSummary.getLastModified()).uploadEndTime(s3ObjectSummary.getLastModified()).filePath(this.newFileName).size(s3ObjectSummary.getSize()).fileHash(s3ObjectSummary.getETag()).fullFilePath(this.newFileUrl + decodedKey).build();
+                VirtualFile virtualFile = VirtualFile.builder().originalFileName(decodedKey).suffix(this.suffix).uploadStartTime(s3ObjectSummary.getLastModified()).uploadEndTime(s3ObjectSummary.getLastModified()).filePath(this.newFileName).size(s3ObjectSummary.getSize()).fileHash(s3ObjectSummary.getETag()).fullFilePath(this.domainUrl + decodedKey).build();
                 virtualFiles.add(virtualFile);
             }
             nextContinuationToken = result.getNextContinuationToken();
@@ -190,7 +201,7 @@ public class AwsS3ApiClient extends BaseApiClient {
 
     @Override
     public boolean exists(String fileName) {
-        return amazonS3.doesObjectExist(bucketName, this.newFileUrl + folder + fileName);
+        return amazonS3.doesObjectExist(bucketName, this.domainUrl + folder + fileName);
     }
 
     @Override
@@ -240,20 +251,4 @@ public class AwsS3ApiClient extends BaseApiClient {
             this.amazonS3.shutdown();
         }
     }
-
-    public static void main(String[] args) {
-        final FileProperties fileProperties = new FileProperties();
-        final AwsFileProperties awsFileProperties = fileProperties.getAws();
-        awsFileProperties.setAccessKey("LTAI5tFpTDE26XYiPmH9dxDz");
-        awsFileProperties.setSecretKey("9gC7gs5kEJJmZec6a6QupoefIL82Kr");
-        awsFileProperties.setEndpoint("oss-cn-beijing.aliyuncs.com");
-        awsFileProperties.setBucketName("simple-fs");
-        awsFileProperties.setDomainUrl("https://simple-fs.oss-cn-beijing.aliyuncs.com/");
-        final AwsS3ApiClient awsS3ApiClient = new AwsS3ApiClient(fileProperties);
-        final File file = new File("/Users/Dabao/Downloads/videoplayback.mp4");
-        final VirtualFile virtualFile = awsS3ApiClient.uploadFile(file);
-        System.out.println(virtualFile);
-        System.out.println(1);
-    }
-
 }

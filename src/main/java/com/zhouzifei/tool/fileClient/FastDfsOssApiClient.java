@@ -14,6 +14,7 @@ import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
+import com.zhouzifei.tool.service.ApiClient;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +40,6 @@ import static com.zhouzifei.tool.consts.UpLoadConstant.ZERO_INT;
 public class FastDfsOssApiClient extends BaseApiClient {
 
     private String serverUrl;
-    private String domainUrl;
-
 
     public FastDfsOssApiClient() {
         super(StorageTypeConst.FASTDFS.getStorageType());
@@ -61,7 +60,7 @@ public class FastDfsOssApiClient extends BaseApiClient {
         try {
             ClientGlobal.initByProperties(props);
         } catch (IOException e) {
-            throw new ServiceException("[" + this.storageType + "]尚未配置阿里云FastDfs，文件上传功能暂时不可用！");
+            throw new ServiceException("[" + this.storageType + "]尚未配置FastDfs，文件上传功能暂时不可用！");
         }
         return this;
     }
@@ -279,9 +278,8 @@ public class FastDfsOssApiClient extends BaseApiClient {
         }
     }
 
-    public static void main(String[] args) {
-        String historyUploadStr = "213902139";
-        long historyUpload = Long.parseLong(historyUploadStr);
-        System.out.println(historyUpload);
+    @Override
+    public ApiClient getAwsApiClient(){
+        throw new ServiceException("[" + this.storageType + "]暂不支持AWS3协议！");
     }
 }

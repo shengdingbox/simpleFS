@@ -37,7 +37,6 @@ public class QiniuApiClient extends BaseApiClient {
 
     private BucketManager bucketManager;
     private Auth auth;
-    private String bucket;
 
     public QiniuApiClient() {
         super("七牛云");
@@ -50,14 +49,14 @@ public class QiniuApiClient extends BaseApiClient {
     @Override
     public QiniuApiClient init(FileProperties fileProperties) {
         final QiniuFileProperties qiniuFileProperties = fileProperties.getQiniu();
-        String accessKey = qiniuFileProperties.getAccessKey();
-        String secretKey = qiniuFileProperties.getSecretKey();
-        this.bucket = qiniuFileProperties.getBucketName();
+        this.accessKey = qiniuFileProperties.getAccessKey();
+        this.secretKey = qiniuFileProperties.getSecretKey();
+        this.bucketName = qiniuFileProperties.getBucketName();
         String url = qiniuFileProperties.getUrl();
         checkDomainUrl(url);
         if (StringUtils.isNullOrEmpty(accessKey)
                 || StringUtils.isNullOrEmpty(secretKey)
-                || StringUtils.isNullOrEmpty(bucket)) {
+                || StringUtils.isNullOrEmpty(bucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
         }
         auth = Auth.create(accessKey, secretKey);
@@ -80,7 +79,7 @@ public class QiniuApiClient extends BaseApiClient {
         Configuration cfg = new Configuration(Region.autoRegion());
         UploadManager uploadManager = new UploadManager(cfg);
         try {
-            String upToken = auth.uploadToken(this.bucket);
+            String upToken = auth.uploadToken(this.bucketName);
             Response response = uploadManager.put(is, this.newFileName, upToken, null, null);
             //解析上传成功的结果
             DefaultPutRet putRet = JSON.parseObject(response.bodyString(), DefaultPutRet.class);
@@ -101,7 +100,7 @@ public class QiniuApiClient extends BaseApiClient {
             throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
         try {
-            Response re = bucketManager.delete(this.bucket, key);
+            Response re = bucketManager.delete(this.bucketName, key);
             return re.isOK();
         } catch (QiniuException e) {
             Response r = e.response;
@@ -121,7 +120,7 @@ public class QiniuApiClient extends BaseApiClient {
     @Override
     public boolean exists(String fileName) {
         try {
-            FileInfo stat = bucketManager.stat(bucket,this.newFileUrl + fileName);
+            FileInfo stat = bucketManager.stat(bucketName,this.domainUrl + fileName);
             if (stat != null && stat.md5 != null) {
                 return true;
             }
@@ -140,7 +139,7 @@ public class QiniuApiClient extends BaseApiClient {
     public InputStream downloadFileStream(String key) {
         try {
             String encodedFileName = URLEncoder.encode(key, "utf-8").replace("+", "%20");
-            String publicUrl = String.format("%s/%s", this.newFileUrl, encodedFileName);
+            String publicUrl = String.format("%s/%s", this.domainUrl, encodedFileName);
             long expireInSeconds = 3600;
             String finalUrl = auth.privateDownloadUrl(publicUrl, expireInSeconds);
             return FileUtil.getInputStreamByUrl(finalUrl, "");

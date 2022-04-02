@@ -1,24 +1,25 @@
 package com.zhouzifei.tool.fileClient;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.ServiceException;
 import com.zhouzifei.tool.common.Response;
 import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.config.SmmsFileProperties;
+import com.zhouzifei.tool.dto.GithubFileList;
+import com.zhouzifei.tool.dto.SmmFileList;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
+import com.zhouzifei.tool.service.ApiClient;
 import com.zhouzifei.tool.util.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author 周子斐 (17600004572@163.com)
@@ -51,7 +52,7 @@ public class SmMsApiClient extends BaseApiClient {
         if (StringUtils.isEmpty(token)) {
             //获取token
             final String s1 = "username=" + userName + "&password=" + passWord;
-            final String s = HttpUtils.DataPost(requestUrl + "/token", s1);
+            final String s = HttpUtils.DataPost(this.domainUrl + "token", s1);
             final JSONObject jsonObject = JSONObject.parseObject(s);
             if (!(Boolean) jsonObject.get("success")) {
                 throw new ServiceException("[" + this.storageType + "]初始化失败：" + jsonObject);
@@ -78,7 +79,7 @@ public class SmMsApiClient extends BaseApiClient {
             // 定义数据分隔线
             String BOUNDARY = "========7d4a6d158c9";
             // 服务器的域名
-            URL url = new URL(requestUrl + "/upload");
+            URL url = new URL(this.domainUrl + "/upload");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             // 设置为POST情
             conn.setRequestMethod("POST");
@@ -154,10 +155,33 @@ public class SmMsApiClient extends BaseApiClient {
         final HashMap<String, String> map = new HashMap<>();
         map.put("Content-Type", "multipart/form-data");
         map.put("Authorization", token);
-        final Response<String> data1 = HttpData.getData(requestUrl + "upload_history", map, 300);
-        final String data = data1.getData();
-        System.out.println(data);
-        return null;
+        final String resultString = HttpUtils.Get(this.domainUrl + "upload_history", map);
+        if(StringUtils.isEmpty(resultString)){
+            return new ArrayList<>();
+        }
+        final JSONObject jsonObject = JSONObject.parseObject(resultString);
+        final Boolean success = jsonObject.getBoolean("success");
+        if(!success){
+            return new ArrayList<>();
+        }
+        final JSONArray jsonArray = jsonObject.getJSONArray("data");
+        final List<SmmFileList> smmFileLists = jsonArray.toJavaList(SmmFileList.class);
+        List<VirtualFile> virtualFiles = new ArrayList<>();
+        for (SmmFileList smmFileList : smmFileLists) {
+            final VirtualFile file = VirtualFile.builder()
+                    .fileHash(smmFileList.getHash())
+                    .filePath(smmFileList.getPath())
+                    .fullFilePath(smmFileList.getUrl())
+                    .originalFileName(smmFileList.getFilename())
+                    .suffix(FileUtil.getSuffixName(smmFileList.getFilename()))
+                    .size(Long.parseLong(smmFileList.getSize()))
+                    .isFold(false)
+                    .uploadStartTime(new Date(smmFileList.getCreated_at()))
+                    .uploadEndTime(new Date(smmFileList.getCreated_at()))
+                    .build();
+            virtualFiles.add(file);
+        }
+        return virtualFiles;
     }
 
     @Override
@@ -175,7 +199,8 @@ public class SmMsApiClient extends BaseApiClient {
         return null;
     }
 
-    public static void main(String[] args) throws IOException {
-
+    @Override
+    public ApiClient getAwsApiClient(){
+        throw new com.zhouzifei.tool.common.ServiceException("[" + this.storageType + "]暂不支持AWS3协议！");
     }
 }
