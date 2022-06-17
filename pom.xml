@@ -14,7 +14,7 @@
     <name>simpleFS</name>
     <description>小型整合型的工具类</description>
     <properties>
-        <fastjson.version>1.2.68</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <aliyun.oss.version>3.13.2</aliyun.oss.version>
         <aliyun.sdk.version>4.6.0</aliyun.sdk.version>
         <qiniu.version>7.2.19</qiniu.version>
