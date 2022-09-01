@@ -18,7 +18,7 @@
         <aliyun.oss.version>3.13.2</aliyun.oss.version>
         <aliyun.sdk.version>4.6.0</aliyun.sdk.version>
         <qiniu.version>7.2.19</qiniu.version>
-        <jsoup.version>1.14.2</jsoup.version>
+        <jsoup.version>1.15.3</jsoup.version>
         <crazycake.version>2.4.2.1-RELEASE</crazycake.version>
         <lombok.version>1.18.12</lombok.version>
         <common.version>2.5</common.version>
