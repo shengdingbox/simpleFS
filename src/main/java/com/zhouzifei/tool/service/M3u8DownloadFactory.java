@@ -3,7 +3,6 @@ package com.zhouzifei.tool.service;
 
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.FileProperties;
-import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.dto.M3u8DTO;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.media.file.service.DownloadListener;
@@ -229,8 +228,11 @@ public class M3u8DownloadFactory {
         }
 
         private void saveM3u8() {
-            FileUploader uploader = new FileUploader();
-            ApiClient apiClient = uploader.getApiClient(StorageTypeConst.LOCAL,fileProperties);
+            final FileUploader fileUploader = FileUploader.builder()
+//                    .simpleFsProperties(simpleFsProperties)
+//                    .secretKey(fileType)
+                    .build();
+            ApiClient apiClient = fileUploader.execute();
             final StringBuilder stringBuffer = new StringBuilder();
             for (String s : tsSetAll) {
                 stringBuffer.append(s);

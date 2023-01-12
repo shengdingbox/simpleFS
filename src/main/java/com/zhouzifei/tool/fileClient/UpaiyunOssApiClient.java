@@ -38,7 +38,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
 
     @Override
     public UpaiyunOssApiClient init(FileProperties fileProperties) {
-        final UpaiFileProperties upaiFileProperties = fileProperties.getUpai();
+        final UpaiFileProperties upaiFileProperties = (UpaiFileProperties) fileProperties;
         String userName = upaiFileProperties.getUserName();
         String passWord = upaiFileProperties.getPassWord();
         String url = upaiFileProperties.getUrl();
@@ -89,6 +89,13 @@ public class UpaiyunOssApiClient extends BaseApiClient {
 
     @Override
     public List<VirtualFile> fileList(FileListRequesr fileListRequesr){
+        final String fold = fileListRequesr.getFold();
+        final Map<String, String> params = new HashMap<>();
+        try {
+            upaiManager.readDirIter(fold,params);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 

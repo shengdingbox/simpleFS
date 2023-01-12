@@ -1,6 +1,7 @@
 package com.zhouzifei.tool.config;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +12,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Data
+@EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = "simple-fs.local")
-public class LocalFileProperties {
+public class LocalFileProperties extends FileProperties{
     private String localUrl;
     private String localFilePath;
 }

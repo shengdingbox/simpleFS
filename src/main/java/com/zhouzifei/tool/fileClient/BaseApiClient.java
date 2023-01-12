@@ -3,6 +3,7 @@ package com.zhouzifei.tool.fileClient;
 import com.zhouzifei.cache.FileCacheEngine;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.FileProperties;
+import com.zhouzifei.tool.config.SimpleFsProperties;
 import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.MetaDataRequest;
@@ -12,6 +13,8 @@ import com.zhouzifei.tool.service.ApiClient;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.RandomsUtil;
 import com.zhouzifei.tool.util.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +28,7 @@ import java.util.Date;
  * @remark 2019年7月16日
  * @since 1.0
  */
+@Component
 public abstract class BaseApiClient implements ApiClient {
 
     protected String storageType;
@@ -43,6 +47,7 @@ public abstract class BaseApiClient implements ApiClient {
     protected static final String SLASH = "/";
     protected static final String TAG = "PartETag";
     protected static final Integer ONE_INT = 1;
+    SimpleFsProperties simpleFsProperties;
 
     protected ProgressListener newListener() {
         return new ProgressListener() {

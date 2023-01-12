@@ -10,11 +10,11 @@ import org.springframework.context.annotation.Configuration;
  * @date 2021/01/25 15:32
  */
 @Configuration
-@EnableConfigurationProperties(FileProperties.class)
+@EnableConfigurationProperties(SimpleFsProperties.class)
 public class FileAutoConfiguration {
 
     @Bean
-    public FileProperties fileProperties(FileProperties fileProperties){
-        return fileProperties;
+    public SimpleFsProperties simpleFsProperties(SimpleFsProperties simpleFsProperties){
+        return simpleFsProperties;
     }
 }

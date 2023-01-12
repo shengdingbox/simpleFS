@@ -1,6 +1,7 @@
 package com.zhouzifei.tool.config;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +12,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Data
+@EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = "simple-fs.qcloud")
-public class QcloudFileProperties {
+public class QcloudFileProperties extends FileProperties{
     private String url;
     private String endpoint;
     private String bucketName;

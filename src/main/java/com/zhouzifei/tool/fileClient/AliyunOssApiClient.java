@@ -5,13 +5,13 @@ import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.ServiceException;
 import com.aliyun.oss.model.*;
 import com.zhouzifei.tool.config.FileProperties;
+import com.zhouzifei.tool.config.OssFileProperties;
 import com.zhouzifei.tool.consts.StorageTypeConst;
 import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
-import com.zhouzifei.tool.service.ApiClient;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -49,14 +49,12 @@ public class AliyunOssApiClient extends BaseApiClient {
 
     @Override
     public AliyunOssApiClient init(FileProperties fileProperties) {
-        String aliEndpoint = fileProperties.getOss().getEndpoint();
-        String aliAccessKey = fileProperties.getOss().getAccessKey();
-        String aliSecretKey = fileProperties.getOss().getSecretKey();
-        this.bucketName = fileProperties.getOss().getBucketName();
-        this.endpoint = aliEndpoint;
-        this.accessKey = aliAccessKey;
-        this.secretKey = aliSecretKey;
-        checkDomainUrl(fileProperties.getOss().getDomainUrl());
+        OssFileProperties ossFileProperties = (OssFileProperties) fileProperties;
+        this.bucketName = ossFileProperties.getBucketName();
+        this.endpoint = ossFileProperties.getEndpoint();;
+        this.accessKey = ossFileProperties.getAccessKey();
+        this.secretKey = ossFileProperties.getSecretKey();
+        checkDomainUrl(ossFileProperties.getDomainUrl());
         return this;
     }
 

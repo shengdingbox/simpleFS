@@ -18,6 +18,7 @@ import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.util.StringUtils;
+import org.junit.Test;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -47,7 +48,7 @@ public class QCloudOssApiClient extends BaseApiClient {
 
     @Override
     public QCloudOssApiClient init(FileProperties fileProperties) {
-        final QcloudFileProperties qcloudFileProperties = fileProperties.getTengxun();
+        final QcloudFileProperties qcloudFileProperties = (QcloudFileProperties) fileProperties;
         String accessKey = qcloudFileProperties.getAccessKey();
         String secretKey = qcloudFileProperties.getSecretKey();
         String endpoint = qcloudFileProperties.getEndpoint();

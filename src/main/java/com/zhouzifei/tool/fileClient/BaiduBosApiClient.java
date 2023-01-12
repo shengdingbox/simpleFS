@@ -28,7 +28,7 @@ public class BaiduBosApiClient extends BaseApiClient {
 
     @Override
     public BaiduBosApiClient init(FileProperties fileProperties) {
-        BosFileProperties bosFileProperties = fileProperties.getBos();
+        BosFileProperties bosFileProperties = (BosFileProperties) fileProperties;
         checkDomainUrl(bosFileProperties.getUrl());
         this.bucketName = bosFileProperties.getBucketName();
         this.endpoint = bosFileProperties.getEndpoint();
@@ -42,8 +42,8 @@ public class BaiduBosApiClient extends BaseApiClient {
         init(fileProperties);
     }
 
-    public BaiduBosApiClient(String storageType) {
-        super(storageType);
+    public BaiduBosApiClient() {
+        super("百度云");
     }
 
     @Override

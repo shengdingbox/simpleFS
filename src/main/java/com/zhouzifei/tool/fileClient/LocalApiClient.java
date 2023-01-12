@@ -39,7 +39,7 @@ public class LocalApiClient extends BaseApiClient {
 
     @Override
     public ApiClient init(FileProperties fileProperties) {
-        final LocalFileProperties localFileProperties = fileProperties.getLocal();
+        final LocalFileProperties localFileProperties = (LocalFileProperties)fileProperties;
         String localUrl = localFileProperties.getLocalUrl();
         String localFilePath = localFileProperties.getLocalFilePath();
         if (StringUtils.isEmpty(localUrl) || StringUtils.isEmpty(localFilePath)) {

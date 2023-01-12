@@ -43,7 +43,7 @@ public class GithubApiClient extends BaseApiClient {
 
     @Override
     public GithubApiClient init(FileProperties fileProperties) {
-        final GithubFileProperties githubFileProperties = fileProperties.getGithub();
+        final GithubFileProperties githubFileProperties = (GithubFileProperties)fileProperties;
         this.repository = githubFileProperties.getRepository();
         this.token = githubFileProperties.getToken();
         this.user = githubFileProperties.getUser();

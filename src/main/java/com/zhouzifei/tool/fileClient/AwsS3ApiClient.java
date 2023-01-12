@@ -20,7 +20,6 @@ import com.zhouzifei.tool.media.file.util.StreamUtil;
 import com.zhouzifei.tool.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -30,8 +29,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * @author 周子斐
@@ -62,7 +59,7 @@ public class AwsS3ApiClient extends BaseApiClient {
 
     @Override
     public AwsS3ApiClient init(FileProperties fileProperties) {
-        final AwsFileProperties awsFileProperties = fileProperties.getAws();
+        final AwsFileProperties awsFileProperties = (AwsFileProperties)fileProperties;
         this.accessKey = awsFileProperties.getSecretKey();
         this.secretKey = awsFileProperties.getSecretKey();
         this.endpoint = awsFileProperties.getEndpoint();

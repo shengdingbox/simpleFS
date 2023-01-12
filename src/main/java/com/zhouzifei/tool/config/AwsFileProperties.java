@@ -1,6 +1,7 @@
 package com.zhouzifei.tool.config;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -9,10 +10,11 @@ import org.springframework.stereotype.Component;
  * @remark 2021/1/26
  * @Description
  */
+@EqualsAndHashCode(callSuper = true)
 @Component
 @Data
 @ConfigurationProperties(prefix = "simple-fs.aws")
-public class AwsFileProperties {
+public class AwsFileProperties extends FileProperties{
     private String domainUrl;
     private String accessKey;
     private String secretKey;

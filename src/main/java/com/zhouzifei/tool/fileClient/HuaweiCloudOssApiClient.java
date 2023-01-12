@@ -7,6 +7,7 @@ import com.obs.services.model.ObsObject;
 import com.obs.services.model.PutObjectResult;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.FileProperties;
+import com.zhouzifei.tool.config.HuaweiFileProperties;
 import com.zhouzifei.tool.dto.CheckFileResult;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
@@ -32,10 +33,11 @@ import java.util.List;
 public class HuaweiCloudOssApiClient extends BaseApiClient {
 
     private ObsClient obsClient;
-    
+
     public HuaweiCloudOssApiClient() {
         super("华为云");
     }
+
     public HuaweiCloudOssApiClient(FileProperties fileProperties) {
         super("华为云");
         init(fileProperties);
@@ -43,11 +45,12 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
 
     @Override
     public HuaweiCloudOssApiClient init(FileProperties fileProperties) {
-        String huaweiAccessKey = fileProperties.getHuawei().getAccessKey();
-        String huaweiSecretKey = fileProperties.getOss().getSecretKey();
-        String huaweiEndpoint = fileProperties.getHuawei().getEndpoint();
-        String huaweiUrl = fileProperties.getHuawei().getUrl();
-        String huaweiBucketName = fileProperties.getOss().getBucketName();
+        HuaweiFileProperties huaweiFileProperties = (HuaweiFileProperties) fileProperties;
+        String huaweiAccessKey = huaweiFileProperties.getAccessKey();
+        String huaweiSecretKey = huaweiFileProperties.getSecretKey();
+        String huaweiEndpoint = huaweiFileProperties.getEndpoint();
+        String huaweiUrl = huaweiFileProperties.getUrl();
+        String huaweiBucketName = huaweiFileProperties.getBucketName();
         if (StringUtils.isNullOrEmpty(huaweiAccessKey) || StringUtils.isNullOrEmpty(huaweiSecretKey) || StringUtils.isNullOrEmpty(huaweiEndpoint)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置华为云，文件上传功能暂时不可用！");
         }
@@ -69,7 +72,7 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
         if (StringUtils.isNullOrEmpty(fileName)) {
             throw new ServiceException("[" + this.storageType + "]删除文件失败：文件key为空");
         }
-        if(!exists(fileName)){
+        if (!exists(fileName)) {
             throw new ServiceException("[阿里云OSS] 文件删除失败！文件不存在：" + bucketName + "/" + fileName);
         }
         // 删除文件
@@ -78,7 +81,7 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
     }
 
     @Override
-    public VirtualFile multipartUpload(InputStream inputStream,MetaDataRequest metaDataRequest) {
+    public VirtualFile multipartUpload(InputStream inputStream, MetaDataRequest metaDataRequest) {
         return null;
     }
 
@@ -88,7 +91,7 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
     }
 
     @Override
-    public List<VirtualFile> fileList(FileListRequesr fileListRequesr){
+    public List<VirtualFile> fileList(FileListRequesr fileListRequesr) {
         return null;
     }
 

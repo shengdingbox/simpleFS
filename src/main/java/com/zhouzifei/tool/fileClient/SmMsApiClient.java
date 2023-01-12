@@ -45,7 +45,7 @@ public class SmMsApiClient extends BaseApiClient {
 
     @Override
     public SmMsApiClient init(FileProperties fileProperties) {
-        final SmmsFileProperties smmsFileProperties = fileProperties.getSmms();
+        final SmmsFileProperties smmsFileProperties = (SmmsFileProperties)fileProperties;
         String userName = smmsFileProperties.getUserName();
         String passWord = smmsFileProperties.getPassWord();
         SmMsApiClient.token = smmsFileProperties.getToken();

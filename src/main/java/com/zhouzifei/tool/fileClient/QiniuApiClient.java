@@ -48,7 +48,7 @@ public class QiniuApiClient extends BaseApiClient {
 
     @Override
     public QiniuApiClient init(FileProperties fileProperties) {
-        final QiniuFileProperties qiniuFileProperties = fileProperties.getQiniu();
+        final QiniuFileProperties qiniuFileProperties = (QiniuFileProperties)fileProperties;
         this.accessKey = qiniuFileProperties.getAccessKey();
         this.secretKey = qiniuFileProperties.getSecretKey();
         this.bucketName = qiniuFileProperties.getBucketName();
