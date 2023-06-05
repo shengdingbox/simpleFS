@@ -10,7 +10,7 @@
     <groupId>com.zhouzifei</groupId>
     <artifactId>simpleFS</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.2.RELEASES</version>
+    <version>1.0.4.RELEASES</version>
     <name>simpleFS</name>
     <description>小型整合型的工具类</description>
     <properties>
