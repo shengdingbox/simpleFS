@@ -168,10 +168,7 @@ public class GithubApiClient extends BaseApiClient {
         String uploadUrl = requestUrl + "repos/" + user + "/" + repository + "/contents/" + fileName;
         //查询是否存在
         final String get = HttpUtils.Get(uploadUrl, hears);
-        if (null == get) {
-            return false;
-        }
-        return true;
+        return null != get;
     }
     @Override
     public ApiClient getAwsApiClient(){
