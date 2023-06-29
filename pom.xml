@@ -14,20 +14,21 @@
     <name>simpleFS</name>
     <description>小型整合型的工具类</description>
     <properties>
-        <fastjson.version>1.2.68</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <aliyun.oss.version>3.13.2</aliyun.oss.version>
         <aliyun.sdk.version>4.6.0</aliyun.sdk.version>
         <qiniu.version>7.2.19</qiniu.version>
-        <jsoup.version>1.14.2</jsoup.version>
+        <jsoup.version>1.15.3</jsoup.version>
         <crazycake.version>2.4.2.1-RELEASE</crazycake.version>
         <lombok.version>1.18.12</lombok.version>
         <common.version>2.5</common.version>
-        <common.net.version>3.8.0</common.net.version>
+        <common.net.version>3.9.0</common.net.version>
         <expiringmap.version>0.5.10</expiringmap.version>
         <aspectj.version>1.9.7</aspectj.version>
         <jedis.version>2.8.2</jedis.version>
         <huawei.version>3.21.11</huawei.version>
         <qcloud.version>5.6.66</qcloud.version>
+        <spring.version>2.2.11.RELEASE</spring.version>
     </properties>
     <dependencies>
         <!-- jedis -->
@@ -60,7 +61,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
-            <version>2.1.8.RELEASE</version>
+            <version>${spring.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.lettuce</groupId>
@@ -103,7 +104,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>2.1.8.RELEASE</version>
+            <version>${spring.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -125,13 +126,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>2.1.8.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-autoconfigure -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>2.6.2</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.zhouzifei</groupId>
@@ -151,7 +152,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>2.1.8.RELEASE</version>
+            <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- AWS S3 -->
@@ -173,6 +174,11 @@
                     <artifactId>spring-core</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>ch.ethz.ganymed</groupId>
+            <artifactId>ganymed-ssh2</artifactId>
+            <version>262</version>
         </dependency>
     </dependencies>
     <dependencyManagement>

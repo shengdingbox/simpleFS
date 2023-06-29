@@ -13,6 +13,7 @@ import com.zhouzifei.tool.media.file.util.StreamUtil;
 import com.zhouzifei.tool.service.ApiClient;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.HttpUtils;
+import com.zhouzifei.tool.util.StringUtils;
 import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
@@ -43,13 +44,14 @@ public class GithubApiClient extends BaseApiClient {
 
     @Override
     public GithubApiClient init(FileProperties fileProperties) {
-        final GithubFileProperties githubFileProperties = (GithubFileProperties)fileProperties;
+        final GithubFileProperties githubFileProperties = (GithubFileProperties) fileProperties;
         this.repository = githubFileProperties.getRepository();
         this.token = githubFileProperties.getToken();
         this.user = githubFileProperties.getUser();
         checkDomainUrl(domianUrl);
         return this;
     }
+
     @Override
     public String uploadInputStream(InputStream inputStream, String fileName) {
         try (InputStream uploadIs = StreamUtil.clone(inputStream)) {
@@ -83,7 +85,7 @@ public class GithubApiClient extends BaseApiClient {
         Map<String, String> hears = new HashMap<>();
         hears.put("Authorization", "Bearer " + token);
         hears.put("Content-Type", "text/plain");
-        hears.put("Accept","application/vnd.github.v3+json");
+        hears.put("Accept", "application/vnd.github.v3+json");
         String deleteUrl = requestUrl + "repos/" + user + "/" + repository + "/contents/" + fileName;
         //查询是否存在
         final String get = HttpUtils.Get(deleteUrl, hears);
@@ -94,7 +96,7 @@ public class GithubApiClient extends BaseApiClient {
         final List<GithubFileList> githubFileLists = objects.toJavaList(GithubFileList.class);
         for (GithubFileList githubFileList : githubFileLists) {
             final JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "删除文件:"+fileName);
+            jsonObject.put("message", "删除文件:" + fileName);
             jsonObject.put("sha", githubFileList.getSha());
 //            jsonObject.put("committer", githubFileList.getSha());
 //            jsonObject.put("sha", githubFileList.getSha());
@@ -134,7 +136,7 @@ public class GithubApiClient extends BaseApiClient {
         Map<String, String> hears = new HashMap<>();
         hears.put("Authorization", "Bearer " + token);
         hears.put("Content-Type", "text/plain");
-        hears.put("Accept","application/vnd.github.v3+json");
+        hears.put("Accept", "application/vnd.github.v3+json");
         final String listRequesrFold = fileListRequesr.getFold();
         String uploadUrl = requestUrl + "repos/" + user + "/" + repository + "/contents/" + listRequesrFold;
         //查询是否存在
@@ -149,11 +151,11 @@ public class GithubApiClient extends BaseApiClient {
             final VirtualFile file = VirtualFile.builder()
                     .fileHash(githubFileList.getSha())
                     .filePath(listRequesrFold + githubFileList.getPath())
-                    .fullFilePath(githubFileList.getDownload_url())
+                    .fullFilePath(StringUtils.isNotEmpty(githubFileList.getDownload_url())?githubFileList.getDownload_url().replace("https://raw.githubusercontent.com", domianUrl):githubFileList.getDownload_url())
                     .originalFileName(githubFileList.getName())
                     .suffix(FileUtil.getSuffixName(githubFileList.getName()))
                     .size(Long.parseLong(githubFileList.getSize()))
-                    .isFold(!githubFileList.getType().equals("file"))
+                    .isFold(!"file".equals(githubFileList.getType()))
                     .build();
             virtualFiles.add(file);
         }
@@ -171,7 +173,7 @@ public class GithubApiClient extends BaseApiClient {
         return null != get;
     }
     @Override
-    public ApiClient getAwsApiClient(){
+    public ApiClient getAwsApiClient() {
         throw new ServiceException("[" + this.storageType + "]暂不支持AWS3协议！");
     }
 }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Upload</title>
+    <script>
+        // JavaScript code for file upload
+        // Place the code from the previous response here
+
+        // Function to handle the file upload
+        function handleFileUpload() {
+            const fileInput = document.getElementById("file-input");
+            const file = fileInput.files[0];
+            const fileName = file.name;
+            const headers = {
+                "Authorization": "Bearer " + "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",
+                "Content-Type": "text/plain"
+            };
+            const jsonObject = {
+                "message": fileName,
+                "content": file
+            };
+            const jsonString = JSON.stringify(jsonObject);
+            const uploadUrl = "https://api.github.com/" + "repos/" + "shengdingbox" + "/" + "static" + "/contents/" + fileName;
+            $.ajax({
+                url: uploadUrl,
+                data: jsonString,
+                type: 'post',
+                datatype: "json",
+                headers: headers,
+                contentType: false,//必须false才会自动加上正确的Content-Type
+                processData: false,//必须false才会避开jQuery对 formdata 的默认处理，XMLHttpRequest会对 formdata 进行正确的处理
+                success: function (jdata) {
+                    if (jdata.data.status == 200) {
+                        alert("成功")
+                    } else {
+                        alert("失败")
+                    }
+                }
+            });
+            return "shengdingbox" + "/" + "static" + "/" + fileName;
+        }
+    </script>
+    <script type="text/javascript" src = 'https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js'></script>
+</head>
+<body>
+<h1>File Upload</h1>
+<input type="file" id="file-input"/>
+<button onclick="handleFileUpload()">Upload</button>
+</body>
+</html>
