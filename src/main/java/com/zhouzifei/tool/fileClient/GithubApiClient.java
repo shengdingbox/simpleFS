@@ -63,7 +63,8 @@ public class GithubApiClient extends BaseApiClient {
             uploadIs.read(data);
             // 对字节数组Base64编码
             BASE64Encoder encoder = new BASE64Encoder();
-            final String baseContent = encoder.encode(data);// 返回Base64编码过的字节数组字符串
+            // 返回Base64编码过的字节数组字符串
+            final String baseContent = encoder.encode(data);
             final JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", fileName);
             jsonObject.put("content", baseContent);
@@ -144,6 +145,11 @@ public class GithubApiClient extends BaseApiClient {
         if (null == get) {
             return new ArrayList<>();
         }
+        if (!get.contains("[") && !get.contains("]")) {
+            final JSONObject jsonObject = JSONObject.parseObject(get);
+            final String message = jsonObject.getString("message");
+            throw new ServiceException("[" + this.storageType + "]" + message);
+        }
         final JSONArray objects = JSONObject.parseArray(get);
         final List<GithubFileList> githubFileLists = objects.toJavaList(GithubFileList.class);
         List<VirtualFile> virtualFiles = new ArrayList<>();
@@ -151,7 +157,7 @@ public class GithubApiClient extends BaseApiClient {
             final VirtualFile file = VirtualFile.builder()
                     .fileHash(githubFileList.getSha())
                     .filePath(listRequesrFold + githubFileList.getPath())
-                    .fullFilePath(StringUtils.isNotEmpty(githubFileList.getDownload_url())?githubFileList.getDownload_url().replace("https://raw.githubusercontent.com", domianUrl):githubFileList.getDownload_url())
+                    .fullFilePath(StringUtils.isNotEmpty(githubFileList.getDownload_url()) ? githubFileList.getDownload_url().replace("https://raw.githubusercontent.com", domianUrl) : githubFileList.getDownload_url())
                     .originalFileName(githubFileList.getName())
                     .suffix(FileUtil.getSuffixName(githubFileList.getName()))
                     .size(Long.parseLong(githubFileList.getSize()))
@@ -172,6 +178,7 @@ public class GithubApiClient extends BaseApiClient {
         final String get = HttpUtils.Get(uploadUrl, hears);
         return null != get;
     }
+
     @Override
     public ApiClient getAwsApiClient() {
         throw new ServiceException("[" + this.storageType + "]暂不支持AWS3协议！");
