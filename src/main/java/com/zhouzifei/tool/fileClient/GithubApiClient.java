@@ -14,10 +14,12 @@ import com.zhouzifei.tool.service.ApiClient;
 import com.zhouzifei.tool.util.FileUtil;
 import com.zhouzifei.tool.util.HttpUtils;
 import com.zhouzifei.tool.util.StringUtils;
+import lombok.var;
 import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.spec.DSAParameterSpec;
 import java.util.*;
 
 /**
@@ -154,18 +156,26 @@ public class GithubApiClient extends BaseApiClient {
         final List<GithubFileList> githubFileLists = objects.toJavaList(GithubFileList.class);
         List<VirtualFile> virtualFiles = new ArrayList<>();
         for (GithubFileList githubFileList : githubFileLists) {
-            final VirtualFile file = VirtualFile.builder()
-                    .fileHash(githubFileList.getSha())
-                    .filePath(listRequesrFold + githubFileList.getPath())
-                    .fullFilePath(StringUtils.isNotEmpty(githubFileList.getDownload_url()) ? githubFileList.getDownload_url().replace("https://raw.githubusercontent.com", domianUrl) : githubFileList.getDownload_url())
-                    .originalFileName(githubFileList.getName())
-                    .suffix(FileUtil.getSuffixName(githubFileList.getName()))
-                    .size(Long.parseLong(githubFileList.getSize()))
-                    .isFold(!"file".equals(githubFileList.getType()))
-                    .build();
+            final VirtualFile file = VirtualFile.builder().fileHash(githubFileList.getSha()).filePath(listRequesrFold + githubFileList.getPath()).fullFilePath(getFileUrl(repository, githubFileList)).originalFileName(githubFileList.getName()).suffix(FileUtil.getSuffixName(githubFileList.getName())).size(Long.parseLong(githubFileList.getSize())).isFold(!"file".equals(githubFileList.getType())).build();
             virtualFiles.add(file);
         }
         return virtualFiles;
+    }
+
+    private String getFileUrl(String repository, GithubFileList githubFileList) {
+        final String url = githubFileList.getUrl();
+        if (StringUtils.isNotEmpty(url)) {
+            String replace = url.replace("https://api.github.com/repos/", domianUrl);
+            final String[] split = replace.split("\\?");
+            final String branch = split[1];
+            replace = replace.replace("?" + branch, "");
+            final String[] split1 = branch.split("=");
+            final String branchName = split1[1];
+            replace = replace.replace(repository + "/contents", repository + "@" + branchName);
+            return replace;
+        } else {
+            return url;
+        }
     }
 
     @Override

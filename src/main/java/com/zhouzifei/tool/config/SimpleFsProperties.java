@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class SimpleFsProperties {
     public String storageType;
     LocalFileProperties local = new LocalFileProperties();
-    OssFileProperties oss = new OssFileProperties();
+    OssFileProperties aliYunOss = new OssFileProperties();
     FastDfsFileProperties fast = new FastDfsFileProperties();
     HuaweiFileProperties huawei = new HuaweiFileProperties();
     BosFileProperties bos = new BosFileProperties();
