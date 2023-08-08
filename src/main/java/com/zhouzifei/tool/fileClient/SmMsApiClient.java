@@ -2,18 +2,19 @@ package com.zhouzifei.tool.fileClient;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.aliyun.oss.ServiceException;
-import com.zhouzifei.tool.common.Response;
+import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.FileProperties;
 import com.zhouzifei.tool.config.SmmsFileProperties;
-import com.zhouzifei.tool.dto.GithubFileList;
 import com.zhouzifei.tool.dto.SmmFileList;
 import com.zhouzifei.tool.dto.VirtualFile;
 import com.zhouzifei.tool.entity.FileListRequesr;
 import com.zhouzifei.tool.entity.MetaDataRequest;
 import com.zhouzifei.tool.media.file.util.StreamUtil;
 import com.zhouzifei.tool.service.ApiClient;
-import com.zhouzifei.tool.util.*;
+import com.zhouzifei.tool.util.FileUtil;
+import com.zhouzifei.tool.util.HttpUtils;
+import com.zhouzifei.tool.util.RandomsUtil;
+import com.zhouzifei.tool.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -31,7 +32,6 @@ import java.util.*;
 public class SmMsApiClient extends BaseApiClient {
 
     private Map<String, String> hears = new HashMap<>();
-    private static String token;
     private String requestUrl = "https://sm.ms/api/v2";
 
     public SmMsApiClient() {
@@ -45,13 +45,16 @@ public class SmMsApiClient extends BaseApiClient {
 
     @Override
     public SmMsApiClient init(FileProperties fileProperties) {
-        final SmmsFileProperties smmsFileProperties = (SmmsFileProperties)fileProperties;
-        String userName = smmsFileProperties.getUserName();
-        String passWord = smmsFileProperties.getPassWord();
-        SmMsApiClient.token = smmsFileProperties.getToken();
+        final SmmsFileProperties smmsFileProperties = (SmmsFileProperties) fileProperties;
+        this.username = smmsFileProperties.getUserName();
+        this.password = smmsFileProperties.getPassWord();
+        this.token = smmsFileProperties.getToken();
         if (StringUtils.isEmpty(token)) {
+            if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+                throw new ServiceException("[" + this.storageType + "]初始化失败！");
+            }
             //获取token
-            final String s1 = "username=" + userName + "&password=" + passWord;
+            final String s1 = "username=" + username + "&password=" + password;
             final String s = HttpUtils.DataPost(this.domainUrl + "token", s1);
             final JSONObject jsonObject = JSONObject.parseObject(s);
             if (!(Boolean) jsonObject.get("success")) {
@@ -59,9 +62,9 @@ public class SmMsApiClient extends BaseApiClient {
             }
             final JSONObject data = (JSONObject) jsonObject.get("data");
             final Object token1 = data.get("token");
-            SmMsApiClient.token = (String) token1;
+            this.token = (String) token1;
         }
-        hears.put("token", SmMsApiClient.token);
+        hears.put("token", token);
         hears.put("Content-Type", "multipart/form-data");
         checkDomainUrl(requestUrl);
         return this;
@@ -156,12 +159,12 @@ public class SmMsApiClient extends BaseApiClient {
         map.put("Content-Type", "multipart/form-data");
         map.put("Authorization", token);
         final String resultString = HttpUtils.Get(this.domainUrl + "upload_history", map);
-        if(StringUtils.isEmpty(resultString)){
+        if (StringUtils.isEmpty(resultString)) {
             return new ArrayList<>();
         }
         final JSONObject jsonObject = JSONObject.parseObject(resultString);
         final Boolean success = jsonObject.getBoolean("success");
-        if(!success){
+        if (!success) {
             return new ArrayList<>();
         }
         final JSONArray jsonArray = jsonObject.getJSONArray("data");
@@ -200,7 +203,7 @@ public class SmMsApiClient extends BaseApiClient {
     }
 
     @Override
-    public ApiClient getAwsApiClient(){
+    public ApiClient getAwsApiClient() {
         throw new com.zhouzifei.tool.common.ServiceException("[" + this.storageType + "]暂不支持AWS3协议！");
     }
 }

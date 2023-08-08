@@ -31,6 +31,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
     public UpaiyunOssApiClient() {
         super("又拍云");
     }
+
     public UpaiyunOssApiClient(FileProperties fileProperties) {
         super("又拍云");
         init(fileProperties);
@@ -39,19 +40,18 @@ public class UpaiyunOssApiClient extends BaseApiClient {
     @Override
     public UpaiyunOssApiClient init(FileProperties fileProperties) {
         final UpaiFileProperties upaiFileProperties = (UpaiFileProperties) fileProperties;
-        String userName = upaiFileProperties.getUserName();
-        String passWord = upaiFileProperties.getPassWord();
-        String url = upaiFileProperties.getUrl();
-        String bucketName = upaiFileProperties.getBucketName();
-        checkDomainUrl(url);
-        if (StringUtils.isNullOrEmpty(userName)
-                || StringUtils.isNullOrEmpty(passWord)
-                || StringUtils.isNullOrEmpty(bucketName)) {
+        this.username = upaiFileProperties.getUserName();
+        this.password = upaiFileProperties.getPassWord();
+        this.domainUrl = upaiFileProperties.getDomainUrl();
+        this.bucketName = upaiFileProperties.getBucketName();
+        checkDomainUrl(domainUrl);
+        if (StringUtils.isNullOrEmpty(username) || StringUtils.isNullOrEmpty(password) || StringUtils.isNullOrEmpty(bucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置又拍云，文件上传功能暂时不可用！");
         }
-        upaiManager = new UpaiManager(bucketName, userName, passWord);
+        upaiManager = new UpaiManager(bucketName, username, password);
         return this;
     }
+
     @Override
     public String uploadInputStream(InputStream is, String imageUrl) {
         // 切换 API 接口的域名接入点，默认为自动识别接入点
@@ -61,7 +61,7 @@ public class UpaiyunOssApiClient extends BaseApiClient {
         try {
             Map<String, String> param = new HashMap<>();
             final Response response = upaiManager.writeFile(this.newFileName, is, param);
-            if(!response.isSuccessful()){
+            if (!response.isSuccessful()) {
                 throw new ServiceException("[" + this.storageType + "]文件上传失败.");
             }
             return this.newFileName;
@@ -82,17 +82,18 @@ public class UpaiyunOssApiClient extends BaseApiClient {
             throw new ServiceException("[" + this.storageType + "]文件删除失败：" + e.getMessage());
         }
     }
+
     @Override
     public VirtualFile multipartUpload(InputStream inputStream, MetaDataRequest metaDataRequest) {
         return null;
     }
 
     @Override
-    public List<VirtualFile> fileList(FileListRequesr fileListRequesr){
+    public List<VirtualFile> fileList(FileListRequesr fileListRequesr) {
         final String fold = fileListRequesr.getFold();
         final Map<String, String> params = new HashMap<>();
         try {
-            upaiManager.readDirIter(fold,params);
+            upaiManager.readDirIter(fold, params);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -119,13 +120,14 @@ public class UpaiyunOssApiClient extends BaseApiClient {
             throw new ServiceException("[" + this.storageType + "]下载文件失败：文件key为空");
         }
         try {
-            return Objects.requireNonNull(upaiManager.readFile(this.domainUrl + key).body()).byteStream();
+            return Objects.requireNonNull(upaiManager.readFile(key).body()).byteStream();
         } catch (IOException e) {
             throw new ServiceException("[" + this.storageType + "]文件下载失败：" + e.getMessage());
         }
     }
+
     @Override
-    public ApiClient getAwsApiClient(){
+    public ApiClient getAwsApiClient() {
         throw new ServiceException("[" + this.storageType + "]暂不支持AWS3协议！");
     }
 }

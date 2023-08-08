@@ -26,7 +26,6 @@ import java.util.List;
  */
 public class LocalApiClient extends BaseApiClient {
 
-    private String localUrl;
     private String localFilePath;
 
     public LocalApiClient() {
@@ -40,12 +39,16 @@ public class LocalApiClient extends BaseApiClient {
     @Override
     public ApiClient init(FileProperties fileProperties) {
         final LocalFileProperties localFileProperties = (LocalFileProperties)fileProperties;
-        String localUrl = localFileProperties.getLocalUrl();
+        domainUrl = localFileProperties.getDomainUrl();
         String localFilePath = localFileProperties.getLocalFilePath();
-        if (StringUtils.isEmpty(localUrl) || StringUtils.isEmpty(localFilePath)) {
+        if (StringUtils.isEmpty(domainUrl) || StringUtils.isEmpty(localFilePath)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置Nginx文件服务器，文件上传功能暂时不可用！");
         }
-        checkDomainUrl(localUrl);
+        checkDomainUrl(domainUrl);
+        final File file = new File(localFilePath);
+        if(!file.exists()){
+            file.mkdirs();
+        }
         this.localFilePath = localFilePath;
         return this;
     }
@@ -100,7 +103,7 @@ public class LocalApiClient extends BaseApiClient {
 
     @Override
     public InputStream downloadFileStream(String userName) {
-        return FileUtil.getInputStreamByUrl(localUrl + userName, "");
+        return FileUtil.getInputStreamByUrl(domainUrl + userName, "");
     }
     @Override
     public ApiClient getAwsApiClient(){

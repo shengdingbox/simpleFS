@@ -53,7 +53,7 @@ public class FastDfsOssApiClient extends BaseApiClient {
     public FastDfsOssApiClient init(FileProperties fileProperties) {
         final FastDfsFileProperties fastDfsFileProperties = (FastDfsFileProperties) fileProperties;
         this.serverUrl = fastDfsFileProperties.getServerUrl();
-        this.domainUrl = fastDfsFileProperties.getUrl();
+        this.domainUrl = fastDfsFileProperties.getDomainUrl();
         checkDomainUrl(domainUrl);
         Properties props = new Properties();
         props.put(ClientGlobal.PROP_KEY_TRACKER_SERVERS, serverUrl);

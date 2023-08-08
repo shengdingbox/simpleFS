@@ -73,7 +73,7 @@ public class FileUploader {
         } else if (StorageTypeConst.QINIUYUN.getStorageType().equals(storageType)) {
             return simpleFsProperties.getQiniu();
         } else if (StorageTypeConst.ALIYUN.getStorageType().equals(storageType)) {
-            return simpleFsProperties.getOss();
+            return simpleFsProperties.getAliYunOss();
         } else if (StorageTypeConst.AWSS3.getStorageType().equals(storageType)) {
             return simpleFsProperties.getAws();
         } else if (StorageTypeConst.BAIDUBOS.getStorageType().equals(storageType)) {

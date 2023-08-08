@@ -29,7 +29,7 @@ public class BaiduBosApiClient extends BaseApiClient {
     @Override
     public BaiduBosApiClient init(FileProperties fileProperties) {
         BosFileProperties bosFileProperties = (BosFileProperties) fileProperties;
-        checkDomainUrl(bosFileProperties.getUrl());
+        checkDomainUrl(bosFileProperties.getDomainUrl());
         this.bucketName = bosFileProperties.getBucketName();
         this.endpoint = bosFileProperties.getEndpoint();
         this.accessKey = bosFileProperties.getAccessKey();

@@ -42,6 +42,9 @@ public abstract class BaseApiClient implements ApiClient {
     protected String region;
     protected String endpoint;
     protected String bucketName;
+    protected String username;
+    protected String password;
+    protected String token;
     protected final Object LOCK = new Object();
     protected final FileCacheEngine cacheEngine = new FileCacheEngine();
     protected static final String SLASH = "/";

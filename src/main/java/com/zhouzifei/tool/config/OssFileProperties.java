@@ -1,5 +1,6 @@
 package com.zhouzifei.tool.config;
 
+import com.zhouzifei.tool.annotation.FileTypeName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 @ConfigurationProperties(prefix = "simple-fs.oss")
+@FileTypeName("阿里云OSS")
 public class OssFileProperties extends FileProperties{
     private String domainUrl;
     private String accessKey;

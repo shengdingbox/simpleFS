@@ -49,12 +49,12 @@ public class QCloudOssApiClient extends BaseApiClient {
     @Override
     public QCloudOssApiClient init(FileProperties fileProperties) {
         final QcloudFileProperties qcloudFileProperties = (QcloudFileProperties) fileProperties;
-        String accessKey = qcloudFileProperties.getAccessKey();
-        String secretKey = qcloudFileProperties.getSecretKey();
-        String endpoint = qcloudFileProperties.getEndpoint();
-        String url = qcloudFileProperties.getUrl();
+        this.accessKey = qcloudFileProperties.getAccessKey();
+        this.secretKey = qcloudFileProperties.getSecretKey();
+        this.endpoint = qcloudFileProperties.getEndpoint();
+        this.domainUrl = qcloudFileProperties.getDomainUrl();
         this.bucketName = qcloudFileProperties.getBucketName();
-        checkDomainUrl(url);
+        checkDomainUrl(this.domainUrl);
         if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(bucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置腾讯云，文件上传功能暂时不可用！");
         }

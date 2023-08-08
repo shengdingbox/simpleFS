@@ -52,8 +52,8 @@ public class QiniuApiClient extends BaseApiClient {
         this.accessKey = qiniuFileProperties.getAccessKey();
         this.secretKey = qiniuFileProperties.getSecretKey();
         this.bucketName = qiniuFileProperties.getBucketName();
-        String url = qiniuFileProperties.getUrl();
-        checkDomainUrl(url);
+        this.domainUrl = qiniuFileProperties.getDomainUrl();
+        checkDomainUrl(domainUrl);
         if (StringUtils.isNullOrEmpty(accessKey)
                 || StringUtils.isNullOrEmpty(secretKey)
                 || StringUtils.isNullOrEmpty(bucketName)) {

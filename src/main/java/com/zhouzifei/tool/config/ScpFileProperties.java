@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = "simple-fs.scp")
 public class ScpFileProperties extends FileProperties{
-    private String url;
+    private String domainUrl;
     private String localFilePath;
     private String remotePath;
     private String userName;

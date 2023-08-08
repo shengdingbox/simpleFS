@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = "simple-fs.smms")
 public class SmmsFileProperties extends FileProperties{
-    private String url;
+    private String domainUrl;
     private String token;
     private String userName;
     private String passWord;

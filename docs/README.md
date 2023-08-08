@@ -1,4 +1,4 @@
-# simpleFS初认识
+# 	simpleFS初认识
 
 > 如你所见，它是一个小型整合型的工具类，带有整合(阿里云,七牛云,又拍云,腾讯云,华为云,~~百度云~~,本地上传)OSS上传,短信发送(阿里云,腾讯云,七牛云),文件加工类,，它可以让我们脱离繁琐的开发流程，让开发变得**So easy!**.
 
@@ -32,7 +32,10 @@
 | **其它兼容 S3 协议的平台**  |✔|✖|✖|✔|✔|
 
 # 快速开始
--  安装方式(1)-引入依赖
+## 安装方式
+
+### 依赖包方式引入
+
 ```xml
 <dependency>
   <groupId>com.zhouzifei</groupId>
@@ -68,46 +71,145 @@
 >         </snapshots>
 > ```
 
-- 安装方式(2)-使用源码安装到本地仓库
+### 源码安装方式引入
+
 ```shell
 git clone https://gitee.com/zifeiZhou/simpleFS.git(Gitee)
 git clone https://github.com/shengdingbox/simpleFS.git(Github)
 mvn clean install
 ```
-## 功能介绍
-### 文件上传oss(支持阿里云,七牛云,又拍云,腾讯云,华为云,~~百度云~~,本地上传)
+## 配置存储配置信息
 
-配置服务器信息
+### 阿里云oss配置
 
 - `application.yml`方式
 ```yaml
-tool:
-  file:
-    storage-type-const: 存储类型(枚举可选择)
-    bucket-name: 空间名称
+simple-fs:
+  local:
     local-file-path: 本地路径
-    path-prefix: 图片文件夹
-    domain-url: 图片外网地址
-    operator-name: 又拍云账号
-    operator-pwd: 又拍云密码
-    access-key: 授权AK
-    secret-key: 授权SK
-    endpoint: 地域
+    local-url: 本机访问地址
+  oss:
+    access-key: 阿里云OSS授权AK
+    secret-key: 阿里云OSS授权SK
+    endpoint: 阿里云OSS地域
+    domain-url: 阿里云OSS访问地址
+    bucket-name: 阿里云OSS空间名称
+  fast:
+    user-name: FASTDFS用户名
+    pass-word: FASTDFS密码
+    server-url: FASTDFS上传地址
+    domain-url: FASTDFS访问地址
+  huawei:
+    access-key: 华为对象存储授权AK
+    secret-key: 华为对象存储授权SK
+    endpoint: 华为对象存储地域
+    domain-url: 华为对象存储访问地址
+    bucket-name: 华为对象存储空间名称
+  bos:
+    access-key: 百度bos授权AK
+    secret-key: 百度bos授权SK
+    endpoint: 百度bos地域
+    domain-url: 百度bos访问地址
+    bucket-name: 百度bos空间名称
+  qcloud:
+    access-key: 腾讯云cos授权AK
+    secret-key: 腾讯云cos授权SK
+    endpoint: 腾讯云cos地域
+    domain-url: 腾讯云cos访问地址
+    bucket-name: 腾讯云cos空间名称
+    region: 腾讯云cos地域
+  qiniu:
+    access-key: 七牛云授权AK
+    secret-key: 七牛云授权SK
+    endpoint: 七牛云地域
+    domain-url: 七牛云访问地址
+    bucket-name: 七牛云空间名称
+  upai:
+    user-name: 又拍云用户名
+    pass-word: 又拍云密码
+    domain-url: 又拍云访问地址
+    bucket-name: 又拍云空间名称
+  smms:
+    user-name: smms用户名
+    token: smms-Token
+    pass-word: smms密码
+  github:
+    repository: github仓库
+    user: github用户名
+    token: githubToken
+  aws:
+    access-key: AWS授权AK
+    secret-key: AWS授权SK
+    endpoint: AWS地域
+    bucket-name: AWS空间名称
+    region: AWS地域
+    domain-url: AWS访问地址
 ```
 - `application.properties`方式
 ```properties
-tool.file.storage-type-const=存储类型(枚举可选择)
-tool.file.bucket-name=空间名称
-tool.file.local-file-path=本地路径
-tool.file.path-prefix=图片文件夹
-tool.file.domain-url=图片外网地址
-tool.file.operator-name=又拍云账号
-tool.file.operator-pwd=又拍云密码
-tool.file.access-key=授权AK
-tool.file.secret-key=授权SK
-tool.file.endpoint=地域
+simple-fs.oss.accessKey=授权AK
+simple-fs.oss.secretKey=授权SK
+simple-fs.oss.endpoint=地域
+simple-fs.oss.domain-url=图片外网地址
+simple-fs.oss.bucket-name=空间名称
 ```
+启动配置类赋值
+
+```java
+import com.zhouzifei.tool.config.OssFileProperties;
+import com.zhouzifei.tool.config.SimpleFsProperties;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
+@Slf4j
+@Configurable
+public class OssConfig {
+    @Autowired
+    SimpleFsProperties simpleFsProperties;
+
+    @PostConstruct
+    public void init() {
+        log.info("项目启动中，赋值存储配置类");
+        final OssFileProperties aliYunOss = simpleFsProperties.getAliYunOss();
+        aliYunOss.setAccessKey("授权AK");
+        aliYunOss.setSecretKey("授权SK");
+        aliYunOss.setEndpoint("地域");
+        aliYunOss.setDomainUrl("图片外网地址");
+        aliYunOss.setBucketName("空间名称");
+        log.info("项目启动中，加载配置数据数据完成-->" + simpleFsProperties);
+    }
+}
+```
+
+`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 获取ApiClient对象
+
 ```java
     @Autowired
     FileProperties fileProperties;

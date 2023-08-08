@@ -1,5 +1,6 @@
 package com.zhouzifei.tool.config;
 
+import com.zhouzifei.tool.annotation.FileTypeName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = "simple-fs.upai")
 public class UpaiFileProperties extends FileProperties{
-    private String url;
+    private String domainUrl;
     private String bucketName;
     private String userName;
     private String passWord;

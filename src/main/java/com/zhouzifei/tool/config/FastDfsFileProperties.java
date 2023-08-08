@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = "simple-fs.fast")
 public class FastDfsFileProperties extends FileProperties{
-    private String url;
+    private String domainUrl;
     private String serverUrl;
     private String userName;
     private String passWord;

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = "simple-fs.qiniu")
 public class QiniuFileProperties extends FileProperties{
-    private String url;
+    private String domainUrl;
     private String endpoint;
     private String bucketName;
     private String accessKey;

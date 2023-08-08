@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = "simple-fs.bos")
 public class BosFileProperties extends FileProperties{
-    private String url;
+    private String domainUrl;
     private String endpoint;
     private String bucketName;
     private String accessKey;

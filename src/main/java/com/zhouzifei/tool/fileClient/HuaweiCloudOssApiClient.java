@@ -46,18 +46,17 @@ public class HuaweiCloudOssApiClient extends BaseApiClient {
     @Override
     public HuaweiCloudOssApiClient init(FileProperties fileProperties) {
         HuaweiFileProperties huaweiFileProperties = (HuaweiFileProperties) fileProperties;
-        String huaweiAccessKey = huaweiFileProperties.getAccessKey();
-        String huaweiSecretKey = huaweiFileProperties.getSecretKey();
-        String huaweiEndpoint = huaweiFileProperties.getEndpoint();
-        String huaweiUrl = huaweiFileProperties.getUrl();
-        String huaweiBucketName = huaweiFileProperties.getBucketName();
-        if (StringUtils.isNullOrEmpty(huaweiAccessKey) || StringUtils.isNullOrEmpty(huaweiSecretKey) || StringUtils.isNullOrEmpty(huaweiEndpoint)) {
+        this.accessKey = huaweiFileProperties.getAccessKey();
+        this.secretKey = huaweiFileProperties.getSecretKey();
+        this.endpoint = huaweiFileProperties.getEndpoint();
+        this.domainUrl = huaweiFileProperties.getDomainUrl();
+        this.bucketName = huaweiFileProperties.getBucketName();
+        if (StringUtils.isNullOrEmpty(accessKey) || StringUtils.isNullOrEmpty(secretKey) || StringUtils.isNullOrEmpty(endpoint)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置华为云，文件上传功能暂时不可用！");
         }
         // 创建ObsClient实例
-        obsClient = new ObsClient(huaweiAccessKey, huaweiSecretKey, huaweiEndpoint);
-        this.bucketName = huaweiBucketName;
-        checkDomainUrl(huaweiUrl);
+        obsClient = new ObsClient(accessKey, secretKey, endpoint);
+        checkDomainUrl(domainUrl);
         return this;
     }
 
