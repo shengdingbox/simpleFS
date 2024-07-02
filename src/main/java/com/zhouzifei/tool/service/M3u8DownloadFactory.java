@@ -820,15 +820,15 @@ public class M3u8DownloadFactory {
 
     public static void main(String[] args) {
         M3u8DTO m3u8Download = M3u8DTO.builder()
-                .m3u8Url("https://cdn.oss-cn-hangzhou.myqcloud.com.xuetuiguang.cn/m3u8video/shouquan.m3u8")
-                .fileName("miaozhun")
+                .m3u8Url("https://btt-vod.xiaoeknow.com/529d8d60vodtransbj1252524126/c015f012243791580849303623/drm/v.f421220.m3u8?type=mpegts&sign=270df470a4632f4c97dd44b8d22a8247&t=654d091e&us=BsZvAdcSbk")
+                .fileName("1")
                 .filePath("/Users/Dabao/mp4")
                 .retryCount("3")
                 .threadCount("3")
                 .timeout("5").build();
         M3u8DownloadFactory.M3u8Download instance = M3u8DownloadFactory.getInstance(m3u8Download);
         final String tsUrl = instance.runM3u8ToCloudTask(new FileProperties());//开始下载
-//        final Set<String> tsSet = instance.getTsSet();
-//        System.out.println(tsSet);
+        final Set<String> tsSet = instance.getTsSet();
+        System.out.println(tsUrl);
     }
 }
