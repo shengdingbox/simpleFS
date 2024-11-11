@@ -20,4 +20,5 @@ public class QiniuFileProperties extends FileProperties{
     private String bucketName;
     private String accessKey;
     private String secretKey;
+    private String region;
 }

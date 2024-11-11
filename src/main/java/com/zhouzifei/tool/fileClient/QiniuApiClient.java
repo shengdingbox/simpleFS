@@ -3,10 +3,10 @@ package com.zhouzifei.tool.fileClient;
 
 import com.alibaba.fastjson.JSON;
 import com.qiniu.common.QiniuException;
-import com.qiniu.common.Region;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
+import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.storage.model.FileInfo;
@@ -37,10 +37,12 @@ public class QiniuApiClient extends BaseApiClient {
 
     private BucketManager bucketManager;
     private Auth auth;
+    private Configuration cfg;
 
     public QiniuApiClient() {
         super("七牛云");
     }
+
     public QiniuApiClient(FileProperties fileProperties) {
         super("七牛云");
         init(fileProperties);
@@ -48,7 +50,8 @@ public class QiniuApiClient extends BaseApiClient {
 
     @Override
     public QiniuApiClient init(FileProperties fileProperties) {
-        final QiniuFileProperties qiniuFileProperties = (QiniuFileProperties)fileProperties;
+
+        final QiniuFileProperties qiniuFileProperties = (QiniuFileProperties) fileProperties;
         this.accessKey = qiniuFileProperties.getAccessKey();
         this.secretKey = qiniuFileProperties.getSecretKey();
         this.bucketName = qiniuFileProperties.getBucketName();
@@ -59,7 +62,22 @@ public class QiniuApiClient extends BaseApiClient {
                 || StringUtils.isNullOrEmpty(bucketName)) {
             throw new ServiceException("[" + this.storageType + "]尚未配置七牛云，文件上传功能暂时不可用！");
         }
+        if (StringUtils.isEmpty(qiniuFileProperties.getRegion())) {
+            cfg = new Configuration(Region.autoRegion());
+        } else {
+            String zone = qiniuFileProperties.getRegion();
+            Region region = new Region.Builder()
+                    .region(zone)
+                    .accUpHost("up-" + zone + ".qiniup.com")
+                    .iovipHost("iovip-" + zone + ".qiniuio.com")
+                    .rsHost("rs-" + zone + ".qiniuapi.com")
+                    .rsfHost("rsf-" + zone + ".qiniuapi.com")
+                    .apiHost("api.qiniuapi.com")
+                    .build();
+            cfg = new Configuration(region);
+        }
         auth = Auth.create(accessKey, secretKey);
+        bucketManager = new BucketManager(auth, cfg);
         return this;
     }
 
@@ -76,7 +94,6 @@ public class QiniuApiClient extends BaseApiClient {
         //Zone.zone1:华北
         //Zone.zone2:华南
         //Zone.zoneNa0:北美
-        Configuration cfg = new Configuration(Region.autoRegion());
         UploadManager uploadManager = new UploadManager(cfg);
         try {
             String upToken = auth.uploadToken(this.bucketName);
@@ -107,27 +124,28 @@ public class QiniuApiClient extends BaseApiClient {
             throw new ServiceException("[" + this.storageType + "]删除文件发生异常：" + r.toString());
         }
     }
+
     @Override
     public VirtualFile multipartUpload(InputStream inputStream, MetaDataRequest metaDataRequest) {
         return null;
     }
 
     @Override
-    public List<VirtualFile> fileList(FileListRequesr fileListRequesr){
+    public List<VirtualFile> fileList(FileListRequesr fileListRequesr) {
         return null;
     }
 
     @Override
     public boolean exists(String fileName) {
-        try {
-            FileInfo stat = bucketManager.stat(bucketName,this.domainUrl + fileName);
+       /* try {
+            FileInfo stat = bucketManager.stat(bucketName, fileName);
             if (stat != null && stat.md5 != null) {
                 return true;
             }
         } catch (QiniuException e) {
             throw new ServiceException("查询文件是否存在失败！" + e.code() + "，" + e.response.toString());
-        }
-        return false;
+        }*/
+        return true;
     }
 
     @Override
