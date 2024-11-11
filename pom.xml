@@ -17,7 +17,7 @@
         <fastjson.version>1.2.83</fastjson.version>
         <aliyun.oss.version>3.13.2</aliyun.oss.version>
         <aliyun.sdk.version>4.6.0</aliyun.sdk.version>
-        <qiniu.version>7.2.19</qiniu.version>
+        <qiniu.version>7.17.0</qiniu.version>
         <jsoup.version>1.15.3</jsoup.version>
         <crazycake.version>2.4.2.1-RELEASE</crazycake.version>
         <lombok.version>1.18.12</lombok.version>
@@ -210,7 +210,7 @@
                 </executions>
             </plugin>
             <!--生成Javadoc，关闭doclint,避免注解检查不通过-->
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.0.0</version>
@@ -227,9 +227,9 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
             <!--Maven GPG插件用于使用以下配置对组件进行签名-->
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.5</version>
@@ -237,12 +237,9 @@
                     <execution>
                         <id>sign-artifacts</id>
                         <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
             <!--Nexus Staging Maven插件是将组件部署到OSSRH并将其发布到Central Repository的推荐方法-->
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
