@@ -1,9 +1,9 @@
-# 	simpleFS初认识
+# Fork目的
+因为发现原仓库更新已不活跃（上次更新已是半年前）提交的pr都未合并，故fork出来，并修复部分bug，并添加了部分功能。
+# simpleFS
+它是一个小型整合型的工具类，带有整合(阿里云，七牛云，又拍云，腾讯云，华为云，~~百度云~~，本地上传)OSS上传，短信发送(阿里云，腾讯云，七牛云)，文件加工类，它可以让我们脱离繁琐的开发流程，让开发变得**So easy!**。
 
-> 如你所见，它是一个小型整合型的工具类，带有整合(阿里云,七牛云,又拍云,腾讯云,华为云,~~百度云~~,本地上传)OSS上传,短信发送(阿里云,腾讯云,七牛云),文件加工类,，它可以让我们脱离繁琐的开发流程，让开发变得**So easy!**.
-
-# 支持站点
--------------------------------
+# 支持平台
 
 | 站点 | 文件上传 | 分片上传 | 断点续传 | 文件下载 | 文件删除 |
 | :--: | :--: | :--: | :--: | :--: | :--: |
@@ -32,7 +32,8 @@
 | **其它兼容 S3 协议的平台**  |✔|✖|✖|✔|✔|
 
 # 快速开始
-## 安装方式
+
+## 1、安装
 
 ### 依赖包方式引入
 
@@ -72,15 +73,19 @@
 > ```
 
 ### 源码安装方式引入
+拉取代码
 
 ```shell
-git clone https://gitee.com/zifeiZhou/simpleFS.git(Gitee)
-git clone https://github.com/shengdingbox/simpleFS.git(Github)
+git clone https://gitee.com/zifeiZhou/simpleFS.git(国内，版本较为落后)
+git clone https://github.com/shengdingbox/simpleFS.git(默认)
+```
+编译构建
+```shell
 mvn clean install
 ```
-## 配置存储配置信息
 
-### 阿里云oss配置
+## 2、配置
+
 
 - `application.yml`方式
 ```yaml
@@ -121,9 +126,9 @@ simple-fs:
   qiniu:
     access-key: 七牛云授权AK
     secret-key: 七牛云授权SK
-    endpoint: 七牛云地域
     domain-url: 七牛云访问地址
     bucket-name: 七牛云空间名称
+    region: 七牛云地域
   upai:
     user-name: 又拍云用户名
     pass-word: 又拍云密码
@@ -153,7 +158,7 @@ simple-fs.oss.endpoint=地域
 simple-fs.oss.domain-url=图片外网地址
 simple-fs.oss.bucket-name=空间名称
 ```
-启动配置类赋值
+- 启动配置类赋值
 
 ```java
 import com.zhouzifei.tool.config.OssFileProperties;
@@ -182,46 +187,32 @@ public class OssConfig {
 }
 ```
 
-`
 
+## 开发
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-获取ApiClient对象
+- 初始化
 
 ```java
-    @Autowired
-    FileProperties fileProperties;
+@Autowired
+private SimpleFsProperties simpleFsProperties;
 
-    BaseFileUploader uploader = new BaseFileUploader();
-    ApiClient apiClient = uploader.getApiClient(fileProperties);
+FileUploader uploader = FileUploader.builder()
+        .simpleFsProperties(simpleFsProperties)
+        .progressListener(progressListener)
+        .domainUrl(domainUrl)
+        .accessKey(accessKey)
+        .secretKey(secretKey)
+        .region(region)
+        .bucketName(bucketName)
+        .storageType(storageType)
+        .build();
+
+ApiClient apiClient = uploader.execute();
 ```
 - 文件上传
 ```java
-VirtualFile uploadFile(MultipartFile file);
-VirtualFile uploadFile(File file);
-VirtualFile uploadFile(InputStream is, String fileName);
+VirtualFile virtualFile = apiClient.uploadFile(file, TEST_OBJECT_NAME);
+
 ```
 - 文件下载
 ```java
@@ -235,37 +226,101 @@ VirtualFile multipartUpload(File file);
 ```java
 boolean removeFile(String key);
 ```
-### m3u8下载类
+
+- 文件上传最佳实践
 
 ```java
-public class M3u8DownloadUtil {
-    public static void main(String[] args) {
-        M3u8DTO m3u8Download = M3u8DTO.builder()
-                .m3u8Url("下载地址")
-                .fileName("下载完的文件名,不带后缀")
-                .filePath("下载后的地址")
-                .retryCount("重试次数")
-                .threadCount("线程数")
-                .timeout("超时时间").build();
-        M3u8DownloadFactory.M3u8Download instance = M3u8DownloadFactory.getInstance(m3u8Download);
-        instance.runDownloadTask();//开始下载
-        M3u8DownloadFactory.destroy();//销毁实例
+package com.zhouzifei.oss;
+
+import com.zhouzifei.tool.config.QiniuFileProperties;
+import com.zhouzifei.tool.config.SimpleFsProperties;
+import com.zhouzifei.tool.consts.StorageTypeConst;
+import com.zhouzifei.tool.dto.VirtualFile;
+import com.zhouzifei.tool.listener.ProgressListener;
+import com.zhouzifei.tool.service.ApiClient;
+import com.zhouzifei.tool.service.FileUploader;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.util.ResourceUtils;
+
+import java.io.FileInputStream;
+
+@SpringBootApplication(scanBasePackages = "com.zhouzifei.*")
+@SpringBootTest
+@ActiveProfiles("oss")
+public class OssTemplateTest {
+
+    @Autowired
+    private SimpleFsProperties simpleFsProperties;
+
+    /**
+     * 测试用文件名,该文件在测试资源文件夹下
+     */
+    private static final String TEST_OBJECT_NAME = "test.txt";
+
+    @Test
+    @SneakyThrows
+    public void test() {
+        System.out.println(simpleFsProperties);
+        ProgressListener progressListener = new ProgressListener() {
+            @Override
+            public void start(String s) {
+                System.out.println("开始上传");
+            }
+
+            @Override
+            public void process(int i, int i1) {
+                System.out.println("i=" + i);
+                System.out.println("i1=" + i1);
+            }
+
+            @Override
+            public void end(VirtualFile virtualFile) {
+                System.out.println("上传完成");
+                System.out.println(virtualFile);
+
+            }
+        };
+        QiniuFileProperties qiniuFileProperties = simpleFsProperties.getQiniu();
+        System.out.println(qiniuFileProperties);
+
+        String domainUrl = qiniuFileProperties.getDomainUrl();
+        String accessKey = qiniuFileProperties.getAccessKey();
+        String secretKey = qiniuFileProperties.getSecretKey();
+        String region = qiniuFileProperties.getRegion();
+        String bucketName = qiniuFileProperties.getBucketName();
+        String storageType = StorageTypeConst.QINIUYUN.getStorageType();
+        
+        FileUploader uploader = FileUploader.builder()
+                .simpleFsProperties(simpleFsProperties)
+                .progressListener(progressListener)
+                .domainUrl(domainUrl)
+                .accessKey(accessKey)
+                .secretKey(secretKey)
+                .region(region)
+                .bucketName(bucketName)
+                .storageType(storageType)
+                .build();
+
+        ApiClient apiClient = uploader.execute();
+
+
+        FileInputStream file = new FileInputStream(ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + TEST_OBJECT_NAME));
+
+        VirtualFile virtualFile = apiClient.uploadFile(file, TEST_OBJECT_NAME);
+        System.out.println(virtualFile.getFullFilePath());
+        System.out.println(virtualFile.getFileHash());
+
+
     }
+
 }
+
 ```
 
-## 特别鸣谢
-- `spring-boot-demo` 深度学习并实战 spring boot 的项目: [https://github.com/xkcoding/spring-boot-demo](https://github.com/xkcoding/spring-boot-demo)
-- `腾讯云COS`免费空间50G,免费流量10G/月 [https://cloud.tencent.com/product/cos](https://cloud.tencent.com/product/cos)
-- `七牛云`免费空间10G,免费流量10G/月,免费GET100万次/月[https://www.qiniu.com/prices](https://www.qiniu.com/prices)
-- `又拍云`免费空间10G,免费流量15G/月(非开通就有,需要额外申请又拍云联盟,限时1年）[https://www.upyun.com/league](https://www.upyun.com/league)
-- `网易云`免费空间50G,免费流量20G/月（目前发现最慷慨的一家）[https://www.163yun.com/nos/free](https://www.163yun.com/nos/free)
-- `青云`免费空间10G,免费流量1G/月,另外注意没有免费请求额度[https://www.qingcloud.com/pricing-standard](https://www.qingcloud.com/pricing-standard)
-- `阿里云`免费空间40G,免费流量10G/月 （限定新用户、限时6个月）[https://www.aliyun.com/product/oss](https://www.aliyun.com/product/oss)
-- `FASTDFS`一个开源的轻量级分布式文件系统[https://github.com/happyfish100/fastdfs/wiki/](https://github.com/happyfish100/fastdfs/wiki/)
-- `FASTDFS`一个开源的轻量级分布式文件系统[https://github.com/happyfish100/fastdfs/wiki/](https://github.com/happyfish100/fastdfs/wiki/)
 
 
-
-## 在线文档
-- <a href = "http://docs.zhouzifei.com/">http://docs.zhouzifei.com/</a>
