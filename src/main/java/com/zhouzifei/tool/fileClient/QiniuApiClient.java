@@ -9,6 +9,7 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
+import com.qiniu.storage.model.FileInfo;
 import com.qiniu.util.Auth;
 import com.zhouzifei.tool.common.ServiceException;
 import com.zhouzifei.tool.config.FileProperties;
@@ -77,6 +78,10 @@ public class QiniuApiClient extends BaseApiClient {
         }
         auth = Auth.create(accessKey, secretKey);
         bucketManager = new BucketManager(auth, cfg);
+        Configuration cfg = new Configuration(Region.autoRegion());
+
+        //实例化一个BucketManager对象
+        bucketManager = new BucketManager(auth, cfg);
         return this;
     }
 
@@ -136,15 +141,15 @@ public class QiniuApiClient extends BaseApiClient {
 
     @Override
     public boolean exists(String fileName) {
-       /* try {
-            FileInfo stat = bucketManager.stat(bucketName, fileName);
+        try {
+            FileInfo stat = bucketManager.stat(bucketName,this.domainUrl + fileName);
             if (stat != null && stat.md5 != null) {
                 return true;
             }
         } catch (QiniuException e) {
-            throw new ServiceException("查询文件是否存在失败！" + e.code() + "，" + e.response.toString());
-        }*/
-        return true;
+            return false;
+        }
+        return false;
     }
 
     @Override
